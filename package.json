@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "no-circular": "yarn madge --circular --extensions ts,tsx ./"
   },
   "dependencies": {
     "@reduxjs/toolkit": "^1.8.6",
@@ -15,7 +16,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "react-redux": "^8.0.4",
-    "redux": "^4.2.0"
+    "redux": "^4.2.0",
+    "reselect": "^4.1.6"
   },
   "devDependencies": {
     "@types/node": "18.8.3",
@@ -23,6 +25,7 @@
     "@types/react-dom": "18.0.6",
     "eslint": "8.25.0",
     "eslint-config-next": "12.3.1",
+    "madge": "^5.0.1",
     "typescript": "4.8.4"
   }
 }

@@ -11,10 +11,8 @@ import {
   setDoc,
   query,
 } from 'firebase/firestore';
-import {
-  initialState as initialUserState,
-  userState,
-} from '../redux/slices/user';
+import { userStore } from '../store';
+import { userState } from '../store/slices/user/types';
 
 // TODO: Add SDKs for Firebase products that you want to use
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -30,9 +28,9 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-const app = initializeApp(firebaseConfig);
-const auth = getAuth(app);
-const db = getFirestore(app);
+export const app = initializeApp(firebaseConfig);
+export const auth = getAuth(app);
+export const db = getFirestore(app);
 
 interface User {
   email?: string;
@@ -49,7 +47,7 @@ export async function getUser(userId: string): Promise<userState> {
   const docRef = doc(db, 'users', userId);
   const docSnap = await getDoc(docRef);
   const user = docSnap.data?.();
-  if (!user) return initialUserState;
+  if (!user) return userStore.getInitialState();
 
   const orgIds = user.organizations.map((o) => o.id);
 
@@ -70,23 +68,26 @@ export async function getUserOrgs(user: userState) {
       return getDoc(ref);
     })
   );
-  return orgs.map((org) => org.data());
+  return orgs.map((org) => {
+    const x = org.data();
+    return { id: org.id, ...org.data() };
+  });
 }
 
 export async function getSurfaces() {
   const q = query(collection(db, 'surfaces'));
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map((doc) => doc.data());
+  return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 }
 
 export async function getRoomTypes() {
   const q = query(collection(db, 'roomTypes'));
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map((doc) => doc.data());
+  return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 }
 
 export async function getActions() {
   const q = query(collection(db, 'actions'));
   const querySnapshot = await getDocs(q);
-  return querySnapshot.docs.map((doc) => doc.data());
+  return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
 }

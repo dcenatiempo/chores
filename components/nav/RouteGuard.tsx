@@ -2,10 +2,15 @@ import { useState, useEffect, FC } from 'react';
 import { useRouter } from 'next/router';
 
 import { useIsAuthenticated } from '../../libs/authentication';
+import { useSelector } from 'react-redux';
 
 const publicPaths = ['/', '/login'];
 
-const RouteGuard: FC<{}> = ({ children }) => {
+interface Props {
+  children?: React.ReactNode;
+}
+
+export default function RouteGuard({ children }: Props) {
   const router = useRouter();
   const { isAuthenticated, loading } = useIsAuthenticated();
   const [isAuthorized, setIsAuthorized] = useState(false);
@@ -56,7 +61,5 @@ const RouteGuard: FC<{}> = ({ children }) => {
     }
   }
 
-  return isAuthorized ? children : null;
-};
-
-export default RouteGuard;
+  return isAuthorized ? <>{children}</> : null;
+}

@@ -4,9 +4,8 @@ import {
   signInWithEmailAndPassword,
   User,
 } from 'firebase/auth';
-import { useEffect, useState } from 'react';
-
-const auth = getAuth();
+import { useSelector } from 'react-redux';
+import { userStore } from '../store';
 
 interface AuthUser extends User {}
 
@@ -23,7 +22,7 @@ interface LoginCredentials {
 }
 
 async function login({ email, password }: LoginCredentials) {
-  return signInWithEmailAndPassword(auth, email, password)
+  return signInWithEmailAndPassword(getAuth(), email, password)
     .then((res) => {
       return res.user;
     })
@@ -40,11 +39,11 @@ async function login({ email, password }: LoginCredentials) {
 }
 
 function logout() {
-  auth.signOut();
+  getAuth().signOut();
 }
 
 function register({ email, password }: LoginCredentials) {
-  return createUserWithEmailAndPassword(auth, email, password)
+  return createUserWithEmailAndPassword(getAuth(), email, password)
     .then((res) => res.user)
     .catch((error) => {
       if (error.message.includes('auth/network-request-failed'))
@@ -59,18 +58,9 @@ function register({ email, password }: LoginCredentials) {
 }
 
 function useIsAuthenticated() {
-  const [isAuthenticated, setIsAuthenticated] = useState(!!auth.currentUser);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const unsubscribe = auth.onAuthStateChanged((user) => {
-      const newIsAuthed = !!user;
-      if (newIsAuthed === isAuthenticated) return;
-      setLoading(false);
-      setIsAuthenticated(newIsAuthed);
-    });
-    return unsubscribe;
-  }, [isAuthenticated]);
+  const isAuthenticated = useSelector(userStore.selectors.isAuthenticated);
+  console.log('isAuthenticated', isAuthenticated);
+  const loading = false;
 
   return { loading, isAuthenticated };
 }

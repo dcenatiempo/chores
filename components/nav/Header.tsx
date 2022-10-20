@@ -3,10 +3,14 @@ import Head from 'next/head';
 import { logout, useIsAuthenticated } from '../../libs/authentication';
 import { Button } from '../base';
 import { useRouter } from 'next/router';
+import { useSelector } from 'react-redux';
+import { organizationsStore } from '../../libs/store';
 
 interface Props {}
 
 const Header: FC<Props> = () => {
+  const orgName = useSelector(organizationsStore.selectors.name);
+
   return (
     <div style={styles.container}>
       <Head>
@@ -22,7 +26,7 @@ const Header: FC<Props> = () => {
           justifyContent: 'space-between',
         }}
       >
-        <h1 style={styles.title}>Cenatiempo Kids Chores</h1>
+        <h1 style={styles.title}>{orgName} Chores</h1>
         <LogInOutButton />
       </div>
     </div>

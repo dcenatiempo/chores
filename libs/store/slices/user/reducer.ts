@@ -1,14 +1,7 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { userState } from './types';
 
-export interface userState {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  organizationIds: string[];
-  currentOrganizationdId: string;
-}
-export const initialState: userState = {
+const initialState: userState = {
   id: '',
   firstName: '',
   lastName: '',
@@ -23,10 +16,12 @@ export const user = createSlice({
     setUser: (state, action) => {
       state = Object.assign(state, action.payload);
     },
+    clearUser: (state) => {
+      state = Object.assign(state, initialState);
+    },
   },
 });
 
 // Action creators are generated for each case reducer function
-export const { setUser } = user.actions;
-
-export default user.reducer;
+const { actions, name, getInitialState, reducer } = user;
+export { actions, name, getInitialState, reducer };

@@ -1,24 +1,16 @@
-import { useState } from 'react';
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
-import {
-  Button,
-  PasswordInput,
-  Switch,
-  TextInput,
-} from '../../components/base';
+
 import Header from '../../components/nav/Header';
 import styles from '../../styles/Home.module.css';
-
-const auth = getAuth();
+import AddPeople from '../../components/people/AddPeople';
+import { useSelector } from 'react-redux';
+import { organizationsStore } from '../../libs/store';
 
 const Dashboard: NextPage = () => {
+  const people = useSelector(organizationsStore.selectors.people);
+  const orgName = useSelector(organizationsStore.selectors.name);
   return (
     <div className={styles.container}>
       <Head>
@@ -29,7 +21,8 @@ const Dashboard: NextPage = () => {
 
       <Header />
       <main className={styles.main}>
-        <h1 className={styles.title}>Dashboard</h1>
+        <h1 className={styles.title}>{orgName} Chores</h1>
+        <AddPeople people={people} />
       </main>
       <footer className={styles.footer}>
         <a

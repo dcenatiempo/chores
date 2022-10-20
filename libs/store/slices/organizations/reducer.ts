@@ -1,26 +1,35 @@
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { Surface } from '../surfaces/types';
+import { Organization, Person, Room } from './types';
+
+interface OrganizationsState {
+  data: Organization[];
+}
+
+const initialState: OrganizationsState = {
+  data: [],
+};
 
 export const organizations = createSlice({
   name: 'organizations',
-  initialState: {
-    name: '',
-    levels: [],
-    rooms: [],
-    people: [],
-  },
+  initialState,
   reducers: {
     setOrganizations: (state, action) => {
-      state = Object.assign(state, action.payload);
+      state.data = action.payload;
+    },
+    clearOrganizations: (state) => {
+      state.data = initialState.data;
+    },
+    resetOrganizations: (state) => {
+      state = Object.assign(state, initialState);
     },
   },
 });
 
-// Action creators are generated for each case reducer function
-export const { setOrganizations } = organizations.actions;
+const { actions, name, getInitialState, reducer } = organizations;
+export { actions, name, getInitialState, reducer, cleanRooms, cleanOrgs };
 
-export default organizations.reducer;
-
-export function cleanOrgs(orgs) {
+function cleanOrgs(orgs) {
   return (
     orgs?.map((org) => {
       return {
@@ -32,7 +41,7 @@ export function cleanOrgs(orgs) {
   );
 }
 
-function cleanPeople(people) {
+function cleanPeople(people): Person[] {
   return people?.map((person) => {
     return { ...person, birthday: cleanBirthday(person.birthday) };
   });
@@ -42,7 +51,7 @@ function cleanBirthday(birthday) {
   return birthday?.seconds || '';
 }
 
-export function cleanRooms(rooms) {
+function cleanRooms(rooms): Room[] {
   const newRooms =
     rooms?.map((room) => {
       return {
@@ -58,7 +67,7 @@ function cleanRoomType(type) {
   return type.id;
 }
 
-function cleanSurfaces(surfaces) {
+function cleanSurfaces(surfaces): Surface[] {
   return (
     surfaces?.map((surface) => ({ ...surface, surface: surface.surface.id })) ||
     []

@@ -10,24 +10,8 @@ import {
 } from '../../components/base';
 import Header from '../../components/nav/Header';
 import styles from '../../styles/Home.module.css';
-import {
-  createUser,
-  getActions,
-  getRoomTypes,
-  getSurfaces,
-  getUser,
-  getUserOrgs,
-} from '../../libs/firebase';
-import { useDispatch } from 'react-redux';
-import { setRoomTypes } from '../../libs/redux/slices/roomTypes';
-import { setSurfaces } from '../../libs/redux/slices/surfaces';
-import { setActions } from '../../libs/redux/slices/actions';
-import { setUser } from '../../libs/redux/slices/user';
-import {
-  cleanOrgs,
-  setOrganizations,
-} from '../../libs/redux/slices/organizations';
-import { AuthUser, login, register } from '../../libs/authentication';
+import { login, register, useIsAuthenticated } from '../../libs/authentication';
+import { useRouter } from 'next/router';
 
 interface FormErrors {
   email?: string;
@@ -40,13 +24,23 @@ const Login: NextPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const dispatch = useDispatch();
   const [errorMessage, setErrorMessage] = useState('');
   const [formErrors, setFormErrors] = useState<FormErrors>({});
   const hasClickedLogin = useRef(false);
+  const { isAuthenticated } = useIsAuthenticated();
+
+  const router = useRouter();
+
+  useEffect(() => {
+    if (!isAuthenticated) return;
+    let returnUrl = router.query.returnUrl || '/';
+    returnUrl = Array.isArray(returnUrl) ? returnUrl[0] : returnUrl;
+    router.push(returnUrl);
+  }, [isAuthenticated, router]);
 
   useEffect(() => {
     if (hasClickedLogin.current) validateForm();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [email, password, confirmPassword]);
 
   function validEmail() {
@@ -85,46 +79,17 @@ const Login: NextPage = () => {
     else loginUser();
   }
 
-  function onAuthentication(user: AuthUser) {
-    // Signed in
-    const userId = user.uid;
-    getUser(userId)
-      .then((user) => {
-        dispatch(setUser(user));
-        return getUserOrgs(user);
-      })
-      .then((orgs) => {
-        console.log(orgs);
-        dispatch(setOrganizations(cleanOrgs(orgs)));
-      });
-    getRoomTypes().then((types) => {
-      dispatch(setRoomTypes(types));
-    });
-    getSurfaces().then((surfaces) => {
-      console.log(surfaces);
-      dispatch(setSurfaces(surfaces));
-    });
-    getActions().then((actions) => {
-      console.log(actions);
-      dispatch(setActions(actions));
-    });
-  }
-
   function registerUser() {
-    register({ email, password })
-      .then(onAuthentication)
-      .catch((error) => {
-        console.log(error);
-        setErrorMessage(error?.message || 'Something went wrong, try again.');
-      });
+    register({ email, password }).catch((error) => {
+      console.log(error);
+      setErrorMessage(error?.message || 'Something went wrong, try again.');
+    });
   }
 
   function loginUser() {
-    login({ email, password })
-      .then(onAuthentication)
-      .catch((error) => {
-        setErrorMessage(error?.message || 'Something went wrong, try again.');
-      });
+    login({ email, password }).catch((error) => {
+      setErrorMessage(error?.message || 'Something went wrong, try again.');
+    });
   }
 
   return (
