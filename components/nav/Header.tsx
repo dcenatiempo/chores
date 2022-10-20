@@ -1,5 +1,8 @@
 import { FC } from 'react';
 import Head from 'next/head';
+import { logout, useIsAuthenticated } from '../../libs/authentication';
+import { Button } from '../base';
+import { useRouter } from 'next/router';
 
 interface Props {}
 
@@ -12,10 +15,15 @@ const Header: FC<Props> = () => {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <div>
-        <h1 style={styles.title}>
-          Cenatiempo Kids Chores
-        </h1>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+        }}
+      >
+        <h1 style={styles.title}>Cenatiempo Kids Chores</h1>
+        <LogInOutButton />
       </div>
     </div>
   );
@@ -31,4 +39,22 @@ const styles = {
   title: {
     color: '#0070f3',
   },
+};
+
+const LogInOutButton: FC = () => {
+  const router = useRouter();
+  const { isAuthenticated } = useIsAuthenticated();
+  if (router.asPath.startsWith('/login')) return null;
+  return isAuthenticated ? (
+    <Button onClick={logout} label="Logout" />
+  ) : (
+    <Button
+      onClick={() =>
+        router.push({
+          pathname: '/login',
+        })
+      }
+      label="Login"
+    />
+  );
 };

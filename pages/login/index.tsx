@@ -1,9 +1,4 @@
-import { useState } from 'react';
-import {
-  getAuth,
-  createUserWithEmailAndPassword,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
+import { FC, useEffect, useRef, useState } from 'react';
 import type { NextPage } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
@@ -15,75 +10,120 @@ import {
 } from '../../components/base';
 import Header from '../../components/nav/Header';
 import styles from '../../styles/Home.module.css';
+import {
+  createUser,
+  getActions,
+  getRoomTypes,
+  getSurfaces,
+  getUser,
+  getUserOrgs,
+} from '../../libs/firebase';
+import { useDispatch } from 'react-redux';
+import { setRoomTypes } from '../../libs/redux/slices/roomTypes';
+import { setSurfaces } from '../../libs/redux/slices/surfaces';
+import { setActions } from '../../libs/redux/slices/actions';
+import { setUser } from '../../libs/redux/slices/user';
+import {
+  cleanOrgs,
+  setOrganizations,
+} from '../../libs/redux/slices/organizations';
+import { AuthUser, login, register } from '../../libs/authentication';
 
-const auth = getAuth();
+interface FormErrors {
+  email?: string;
+  password?: string;
+  confirmPassword?: string;
+}
 
 const Login: NextPage = () => {
-  const [isCreate, setIsCreate] = useState(true);
+  const [isRegister, setisRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const dispatch = useDispatch();
+  const [errorMessage, setErrorMessage] = useState('');
+  const [formErrors, setFormErrors] = useState<FormErrors>({});
+  const hasClickedLogin = useRef(false);
+
+  useEffect(() => {
+    if (hasClickedLogin.current) validateForm();
+  }, [email, password, confirmPassword]);
 
   function validEmail() {
     var emailRegex = /^\w+@[a-zA-Z_]+?\.[a-zA-Z]{2,3}$/;
-    console.log('validEmail', emailRegex.test(email));
     return emailRegex.test(email);
   }
 
   function validPassword() {
-    return password.length > 8;
+    return password.length >= 8;
   }
 
   function passwordsMatch() {
-    if (!isCreate) return true;
+    if (!isRegister) return true;
     return password === confirmPassword;
   }
 
   function validateForm() {
-    if (!validEmail()) return false;
-    if (!validPassword()) return false;
-    if (!passwordsMatch()) return false;
-    return true;
+    const newFormErrors: FormErrors = {};
+    if (!validEmail()) newFormErrors.email = 'Invalid Email';
+    if (!validPassword())
+      newFormErrors.password =
+        'Password needs to be at least 8 characters long';
+    if (isRegister && !passwordsMatch())
+      newFormErrors.confirmPassword = 'Passwords must match';
+
+    setFormErrors(newFormErrors);
+    return newFormErrors;
   }
 
   function onClickLogin() {
-    console.log(email, password, confirmPassword);
-    if (!validateForm()) {
-      console.log('validation error');
-      return;
-    }
-    if (isCreate) createAccount();
-    else login();
+    hasClickedLogin.current = true;
+    const newFormErrors = validateForm();
+    if (Object.keys(newFormErrors).length) return;
+
+    if (isRegister) registerUser();
+    else loginUser();
   }
 
-  function createAccount() {
-    createUserWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        console.log(userCredential);
-        const user = userCredential.user;
-        // ...
+  function onAuthentication(user: AuthUser) {
+    // Signed in
+    const userId = user.uid;
+    getUser(userId)
+      .then((user) => {
+        dispatch(setUser(user));
+        return getUserOrgs(user);
       })
+      .then((orgs) => {
+        console.log(orgs);
+        dispatch(setOrganizations(cleanOrgs(orgs)));
+      });
+    getRoomTypes().then((types) => {
+      dispatch(setRoomTypes(types));
+    });
+    getSurfaces().then((surfaces) => {
+      console.log(surfaces);
+      dispatch(setSurfaces(surfaces));
+    });
+    getActions().then((actions) => {
+      console.log(actions);
+      dispatch(setActions(actions));
+    });
+  }
+
+  function registerUser() {
+    register({ email, password })
+      .then(onAuthentication)
       .catch((error) => {
         console.log(error);
-        const errorCode = error.code;
-        const errorMessage = error.message;
-        // ..
+        setErrorMessage(error?.message || 'Something went wrong, try again.');
       });
   }
 
-  function login() {
-    signInWithEmailAndPassword(auth, email, password)
-      .then((userCredential) => {
-        // Signed in
-        console.log(userCredential);
-        const user = userCredential.user;
-        // ...
-      })
+  function loginUser() {
+    login({ email, password })
+      .then(onAuthentication)
       .catch((error) => {
-        console.log(error);
-        const errorCode = error.code;
-        const errorMessage = error.message;
+        setErrorMessage(error?.message || 'Something went wrong, try again.');
       });
   }
 
@@ -96,22 +136,28 @@ const Login: NextPage = () => {
       </Head>
 
       <Header />
-      <Switch value={isCreate} onChange={setIsCreate} />
+      <Switch value={isRegister} onChange={setisRegister} />
       <main className={styles.main}>
         <h1 className={styles.title}>Login</h1>
 
-        <TextInput label="Email" onChange={setEmail} value={email} />
+        <TextInput
+          label="Email"
+          onChange={setEmail}
+          value={email}
+          errorMessage={formErrors.email}
+        />
+
         <PasswordInput
           label="Password"
           onChange={setPassword}
           value={password}
+          errorMessage={formErrors.password}
         />
-        {isCreate && (
+
+        {isRegister && (
           <>
             <PasswordInput
-              errorMessage={
-                password !== confirmPassword ? 'passwords need to match' : ''
-              }
+              errorMessage={formErrors.confirmPassword}
               label="Confirm Password"
               onChange={setConfirmPassword}
               value={confirmPassword}
@@ -119,9 +165,10 @@ const Login: NextPage = () => {
           </>
         )}
         <Button
-          label={isCreate ? 'Create Account' : 'Login'}
+          label={isRegister ? 'Register' : 'Login'}
           onClick={onClickLogin}
         />
+        <ErrorMessage message={errorMessage} />
       </main>
 
       <footer className={styles.footer}>
@@ -141,3 +188,21 @@ const Login: NextPage = () => {
 };
 
 export default Login;
+
+const ErrorMessage: FC<{ message?: string }> = ({ message }) => {
+  return message ? <span style={{ color: 'red' }}>{message}</span> : <span />;
+};
+
+// {
+//     "error": {
+//       "code": 400,
+//       "message": "TOO_MANY_ATTEMPTS_TRY_LATER : Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.",
+//       "errors": [
+//         {
+//           "message": "TOO_MANY_ATTEMPTS_TRY_LATER : Access to this account has been temporarily disabled due to many failed login attempts. You can immediately restore it by resetting your password or you can try again later.",
+//           "domain": "global",
+//           "reason": "invalid"
+//         }
+//       ]
+//     }
+//   }
