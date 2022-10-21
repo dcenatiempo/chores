@@ -10,6 +10,8 @@ import {
   doc,
   setDoc,
   query,
+  updateDoc,
+  arrayUnion,
 } from 'firebase/firestore';
 import { userStore } from '../store';
 import { userState } from '../store/slices/user/types';
@@ -57,7 +59,6 @@ export async function getUser(userId: string): Promise<userState> {
     email: user.email,
     id: userId,
     organizationIds: orgIds,
-    currentOrganizationdId: orgIds?.[0] || '',
   };
 }
 
@@ -90,4 +91,25 @@ export async function getActions() {
   const q = query(collection(db, 'actions'));
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map((doc) => ({ id: doc.id, ...doc.data() }));
+}
+
+export async function addPersonToOrg({
+  firstName,
+  lastName,
+  birthday,
+  orgId,
+}: {
+  firstName: string;
+  lastName?: string;
+  birthday?: number;
+  orgId: string;
+}) {
+  const orgDocRef = doc(db, 'organization', orgId);
+  const newPerson = { firstName, lastName, birthday };
+  if (!birthday) delete newPerson.birthday;
+  if (!lastName) delete newPerson.lastName;
+
+  const res = await updateDoc(orgDocRef, {
+    people: arrayUnion(newPerson),
+  });
 }

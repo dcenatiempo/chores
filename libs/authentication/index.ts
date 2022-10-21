@@ -59,7 +59,6 @@ function register({ email, password }: LoginCredentials) {
 
 function useIsAuthenticated() {
   const isAuthenticated = useSelector(userStore.selectors.isAuthenticated);
-  console.log('isAuthenticated', isAuthenticated);
   const loading = false;
 
   return { loading, isAuthenticated };

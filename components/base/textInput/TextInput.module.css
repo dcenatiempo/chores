@@ -5,6 +5,9 @@
   margin: 10px;
   color: pink;
 }
+.inline {
+  flex-direction: row;
+}
 .label {
   margin-right: 10px;
   margin-bottom: 20px;

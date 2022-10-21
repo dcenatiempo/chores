@@ -4,13 +4,24 @@ import Image from 'next/image';
 
 import Header from '../../components/nav/Header';
 import styles from '../../styles/Home.module.css';
-import AddPeople from '../../components/people/AddPeople';
+import AddPeople, { OnClickAddProps } from '../../components/people/AddPeople';
 import { useSelector } from 'react-redux';
 import { organizationsStore } from '../../libs/store';
+import { addPersonToOrg } from '../../libs/firebase';
 
 const Dashboard: NextPage = () => {
   const people = useSelector(organizationsStore.selectors.people);
   const orgName = useSelector(organizationsStore.selectors.name);
+  const orgId = useSelector(organizationsStore.selectors.id);
+  function onAddPerson({ firstName, lastName }: OnClickAddProps) {
+    if (!orgId) return;
+    addPersonToOrg({
+      firstName,
+      lastName,
+      orgId,
+    });
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -22,7 +33,7 @@ const Dashboard: NextPage = () => {
       <Header />
       <main className={styles.main}>
         <h1 className={styles.title}>{orgName} Chores</h1>
-        <AddPeople people={people} />
+        <AddPeople people={people} onClickAdd={onAddPerson} />
       </main>
       <footer className={styles.footer}>
         <a

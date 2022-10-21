@@ -6,8 +6,9 @@ const organizations = defaultMemoize(
 );
 
 const currentOrganization = defaultMemoize((state: RootState) => {
-  const currentOrgId = state.user.currentOrganizationdId;
-  return state.organizations.data.find((org) => org.id === currentOrgId);
+  const currentOrgId = state.organizations.currentOrganizationdId;
+  if (!currentOrgId) return undefined;
+  return state.organizations.data?.[currentOrgId];
 });
 
 const people = createSelector(currentOrganization, (org) => org?.people);
@@ -15,6 +16,7 @@ const levels = createSelector(currentOrganization, (org) => org?.levels);
 const rooms = createSelector(currentOrganization, (org) => org?.rooms);
 const chores = createSelector(currentOrganization, (org) => org?.chores);
 const name = createSelector(currentOrganization, (org) => org?.name);
+const id = createSelector(currentOrganization, (org) => org?.id);
 
 export {
   organizations,
@@ -24,4 +26,5 @@ export {
   rooms,
   chores,
   name,
+  id,
 };

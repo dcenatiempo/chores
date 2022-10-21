@@ -24,3 +24,11 @@ export interface Organization {
   people: Person[];
   chores: Chore[];
 }
+export interface OrganizationMap {
+  [key: string]: Organization;
+}
+
+export interface OrganizationsState {
+  data: OrganizationMap;
+  currentOrganizationdId: string | undefined;
+}

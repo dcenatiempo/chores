@@ -4,7 +4,6 @@ export interface user {
   lastName: string;
   email: string;
   organizationIds: string[];
-  currentOrganizationdId: string;
 }
 
 export interface userState extends user {}

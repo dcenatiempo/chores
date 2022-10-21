@@ -7,7 +7,6 @@ const initialState: userState = {
   lastName: '',
   email: '',
   organizationIds: [],
-  currentOrganizationdId: '',
 };
 export const user = createSlice({
   name: 'user',

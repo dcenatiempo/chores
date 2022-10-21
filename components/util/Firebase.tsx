@@ -17,9 +17,10 @@ import {
   userStore,
 } from '../../libs/store';
 import { cleanOrgs } from '../../libs/store/slices/organizations/reducer';
+import store from '../../libs/store/store';
 
 export default function Firebase() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<typeof store.dispatch>();
 
   useEffect(() => {
     function emptyStore() {
@@ -39,6 +40,8 @@ export default function Firebase() {
           dispatch(
             organizationsStore.actions.setOrganizations(cleanOrgs(orgs))
           );
+
+          dispatch(organizationsStore.asyncActions.listenForOrgChanges());
         });
       getRoomTypes().then((types) => {
         dispatch(roomTypesStore.actions.setRoomTypes(types));

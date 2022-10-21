@@ -1,21 +1,42 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { doc, onSnapshot } from 'firebase/firestore';
+import { db } from '../../../firebase';
 import { Surface } from '../surfaces/types';
-import { Organization, Person, Room } from './types';
+import {
+  Organization,
+  OrganizationMap,
+  OrganizationsState,
+  Person,
+  Room,
+} from './types';
 
-interface OrganizationsState {
-  data: Organization[];
-}
-
+let unsubscribe: () => void;
 const initialState: OrganizationsState = {
-  data: [],
+  data: {},
+  currentOrganizationdId: undefined,
 };
 
 export const organizations = createSlice({
   name: 'organizations',
   initialState,
   reducers: {
-    setOrganizations: (state, action) => {
-      state.data = action.payload;
+    setOrganizations: (state, action: PayloadAction<Organization[]>) => {
+      const mappedData = action?.payload?.reduce<OrganizationMap>(
+        (acc, org) => Object.assign({}, acc, { [org.id]: org }),
+        {}
+      );
+      state.data = mappedData;
+
+      // maybe set currentOrganizationId
+      const currentOrgId = state.currentOrganizationdId;
+      if (!currentOrgId || !mappedData?.[currentOrgId]) {
+        const newCurrentOrgId = action?.payload?.[0]?.id;
+        state.currentOrganizationdId = newCurrentOrgId;
+      }
+    },
+    updateOrganization: (state, action: PayloadAction<Organization>) => {
+      const orgId = action?.payload?.id;
+      if (orgId) state.data[orgId] = action.payload;
     },
     clearOrganizations: (state) => {
       state.data = initialState.data;
@@ -24,21 +45,56 @@ export const organizations = createSlice({
       state = Object.assign(state, initialState);
     },
   },
+  extraReducers: (builder) => {
+    builder.addCase(listenForOrgChanges.fulfilled, (state, action) => {
+      console.log('OrgChanged!!!');
+      console.log(action.payload);
+      state.data;
+    });
+  },
 });
 
+const listenForOrgChanges = createAsyncThunk(
+  'xxx',
+  async (_: undefined, thunkAPI) => {
+    const orgId = thunkAPI.getState().organizations.currentOrganizationdId;
+    unsubscribe?.();
+    return new Promise((resolve, reject) => {
+      unsubscribe = onSnapshot(doc(db, 'organization', orgId), (doc) => {
+        const newOrg: Organization = cleanOrg({ id: orgId, ...doc?.data?.() });
+        thunkAPI.dispatch(actions.updateOrganization(newOrg));
+        resolve(newOrg);
+      });
+    });
+  }
+);
+
 const { actions, name, getInitialState, reducer } = organizations;
-export { actions, name, getInitialState, reducer, cleanRooms, cleanOrgs };
+const asyncActions = { listenForOrgChanges };
+export {
+  actions,
+  asyncActions,
+  name,
+  getInitialState,
+  reducer,
+  cleanRooms,
+  cleanOrgs,
+};
 
 function cleanOrgs(orgs) {
   return (
     orgs?.map((org) => {
-      return {
-        ...org,
-        people: cleanPeople(org.people),
-        rooms: cleanRooms(org.rooms),
-      };
+      return cleanOrg(org);
     }) || []
   );
+}
+
+function cleanOrg(org) {
+  return {
+    ...org,
+    people: cleanPeople(org.people),
+    rooms: cleanRooms(org.rooms),
+  };
 }
 
 function cleanPeople(people): Person[] {
