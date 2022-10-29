@@ -1,22 +1,28 @@
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import { userState } from './types';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { User, UserState } from './types';
 
-const initialState: userState = {
-  id: '',
-  firstName: '',
-  lastName: '',
-  email: '',
-  organizationIds: [],
+export const initialState: UserState = {
+  data: {
+    id: '',
+    birthday: 0,
+    firstName: '',
+    lastName: '',
+    email: '',
+    organizationIds: [],
+  },
+  loading: false,
+  error: null,
 };
+
 export const user = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser: (state, action) => {
-      state = Object.assign(state, action.payload);
+    setUser: (state, action: PayloadAction<User>) => {
+      state.data = action.payload;
     },
     clearUser: (state) => {
-      state = Object.assign(state, initialState);
+      state.data = initialState.data;
     },
   },
 });

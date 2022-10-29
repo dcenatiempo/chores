@@ -1,20 +1,21 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { SurfacesState } from './types';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Surface, SurfacesState } from './types';
 
 const initialState: SurfacesState = {
   data: [],
+  loading: false,
+  error: null,
 };
 
-const surfaces = createSlice({
+const surfacesSlice = createSlice({
   name: 'surfaces',
   initialState,
   reducers: {
-    setSurfaces: (state, action) => {
+    setSurfaces: (state, action: PayloadAction<Surface[]>) => {
       state.data = action.payload;
     },
   },
 });
 
-// Action creators are generated for each case reducer function
-const { actions, name, getInitialState, reducer } = surfaces;
+const { actions, name, getInitialState, reducer } = surfacesSlice;
 export { actions, name, getInitialState, reducer };

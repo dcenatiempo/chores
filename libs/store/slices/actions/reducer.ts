@@ -3,6 +3,8 @@ import { ActionsState } from './types';
 
 const initialState: ActionsState = {
   data: [],
+  loading: false,
+  error: null,
 };
 
 export const actionsSlice = createSlice({

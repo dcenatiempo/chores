@@ -21,6 +21,7 @@ const Dashboard: NextPage = () => {
       orgId,
     });
   }
+  console.log(people);
 
   return (
     <div className={styles.container}>

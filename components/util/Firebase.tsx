@@ -1,26 +1,21 @@
-import { FC, useEffect } from 'react';
+import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
-import { AuthUser } from '../../libs/authentication';
-import {
-  auth,
-  getActions,
-  getRoomTypes,
-  getSurfaces,
-  getUser,
-  getUserOrgs,
-} from '../../libs/firebase';
-import {
-  actionsStore,
-  organizationsStore,
-  roomTypesStore,
-  surfacesStore,
-  userStore,
-} from '../../libs/store';
-import { cleanOrgs } from '../../libs/store/slices/organizations/reducer';
+import { auth } from '../../libs/firebase';
+import { organizationsStore, userStore } from '../../libs/store';
+import useActions from '../../libs/store/slices/actions/useActions';
+import useOrgs from '../../libs/store/slices/orgs/useOrgs';
+import { useRoomTypes } from '../../libs/store/slices/roomTypes';
+import { useSurfaces } from '../../libs/store/slices/surfaces';
+import useUser from '../../libs/store/slices/user/useUser';
 import store from '../../libs/store/store';
 
 export default function Firebase() {
   const dispatch = useDispatch<typeof store.dispatch>();
+  const { fetchSurfaces } = useSurfaces();
+  const { fetchRoomTypes } = useRoomTypes();
+  const { fetchActions } = useActions();
+  const { fetchUser } = useUser();
+  const { fetchOrgs } = useOrgs();
 
   useEffect(() => {
     function emptyStore() {
@@ -30,30 +25,13 @@ export default function Firebase() {
 
     function hydrateStore(userId: string) {
       // Signed in
-      getUser(userId)
-        .then((user) => {
-          dispatch(userStore.actions.setUser(user));
-          return getUserOrgs(user);
-        })
-        .then((orgs) => {
-          console.log(orgs);
-          dispatch(
-            organizationsStore.actions.setOrganizations(cleanOrgs(orgs))
-          );
-
-          dispatch(organizationsStore.asyncActions.listenForOrgChanges());
-        });
-      getRoomTypes().then((types) => {
-        dispatch(roomTypesStore.actions.setRoomTypes(types));
+      fetchUser(userId).then((user) => {
+        fetchOrgs(user.organizationIds);
+        dispatch(organizationsStore.asyncActions.listenForOrgChanges());
       });
-      getSurfaces().then((surfaces) => {
-        console.log(surfaces);
-        dispatch(surfacesStore.actions.setSurfaces(surfaces));
-      });
-      getActions().then((actions) => {
-        console.log(actions);
-        dispatch(actionsStore.actions.setActions(actions));
-      });
+      // fetchRoomTypes();
+      // fetchSurfaces();
+      // fetchActions();
     }
 
     const unsubscribe = auth.onAuthStateChanged((user) => {
