@@ -2,7 +2,7 @@ import { FC } from 'react';
 import useCurrentOrg from '../../libs/store/slices/orgs/useCurrentOrg';
 import { useRoomTypes } from '../../libs/store/slices/roomTypes';
 import { RoomType } from '../../libs/store/slices/roomTypes/types';
-import Dropdown from '../base/dropdown/Dropdown';
+import Dropdown from '../base/Dropdownx';
 
 export interface RoomTypeSelectorProps {
   onSelect: (roomType: RoomType | undefined) => void;

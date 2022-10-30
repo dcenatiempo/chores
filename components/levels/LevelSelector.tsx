@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import useCurrentOrg from '../../libs/store/slices/orgs/useCurrentOrg';
-import Dropdown from '../base/dropdown/Dropdown';
+import Dropdown from '../base/Dropdownx';
 
 export interface LevelSelectorProps {
   onSelect: (level: string | undefined) => void;

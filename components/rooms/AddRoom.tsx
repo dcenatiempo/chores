@@ -16,11 +16,12 @@ const AddRoom: FC<AddRoomProps> = ({}) => {
   const [level, setLevel] = useState<string>();
 
   return (
-    <div>
+    <div style={{ borderWidth: 5, borderColor: 'white', borderStyle: 'solid' }}>
       ADD ROOM
       <br />
-      <RoomTypeSelector selected={roomType} onSelect={setRoomType} />
       <TextInput value={name} label="name" onChange={setName} />
+      RoomType
+      <RoomTypeSelector selected={roomType} onSelect={setRoomType} />
       LEVEL
       <LevelSelector selected={level} onSelect={setLevel} />
       <br />
