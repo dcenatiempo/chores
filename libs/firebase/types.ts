@@ -25,7 +25,6 @@ export interface FirebaseOrg {
 export type FirebaseLevel = string;
 
 export interface FirebaseRoom {
-  id: string;
   level: string;
   name: string;
   surfaces: FirebaseRoomSurface[];

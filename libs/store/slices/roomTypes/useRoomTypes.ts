@@ -7,7 +7,7 @@ import { transformRoomTypesFromFirebase } from './transformers';
 export default function useRoomTypes() {
   const dispatch = useDispatch();
 
-  const surfaces = useSelector(selectors.roomTypes);
+  const roomTypes = useSelector(selectors.roomTypes);
 
   async function fetchRoomTypes() {
     return firebase.fetchRoomTypes().then((roomTypes) => {
@@ -18,7 +18,7 @@ export default function useRoomTypes() {
   }
 
   return {
-    surfaces,
+    roomTypes,
     fetchRoomTypes,
   };
 }

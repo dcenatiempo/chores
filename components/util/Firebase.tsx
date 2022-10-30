@@ -29,9 +29,9 @@ export default function Firebase() {
         fetchOrgs(user.organizationIds);
         dispatch(organizationsStore.asyncActions.listenForOrgChanges());
       });
-      // fetchRoomTypes();
-      // fetchSurfaces();
-      // fetchActions();
+      fetchRoomTypes();
+      fetchSurfaces();
+      fetchActions();
     }
 
     const unsubscribe = auth.onAuthStateChanged((user) => {

@@ -13,18 +13,18 @@ const currentOrgId = defaultMemoize(
   (state: RootState) => state.orgs.currentOrgId
 );
 
-const currentOrganization = createSelector(
+const currentOrg = createSelector(
   orgsMap,
   currentOrgId,
-  (orgs, currentOrgId) => orgs?.[currentOrgId || '']?.data
+  (orgs, currentOrgId) => orgs?.[currentOrgId || '']?.data || {}
 );
 
-const people = createSelector(currentOrganization, (org) => org?.people);
-const levels = createSelector(currentOrganization, (org) => org?.levels);
-const rooms = createSelector(currentOrganization, (org) => org?.rooms);
-const chores = createSelector(currentOrganization, (org) => org?.chores);
-const name = createSelector(currentOrganization, (org) => org?.name);
-const id = createSelector(currentOrganization, (org) => org?.id);
+const people = createSelector(currentOrg, (org) => org?.people || []);
+const levels = createSelector(currentOrg, (org) => org?.levels || []);
+const rooms = createSelector(currentOrg, (org) => org?.rooms || []);
+const chores = createSelector(currentOrg, (org) => org?.chores || []);
+const name = createSelector(currentOrg, (org) => org?.name || '');
+const id = createSelector(currentOrg, (org) => org?.id);
 
 const orgs = orgsArray;
-export { orgs, currentOrganization, people, levels, rooms, chores, name, id };
+export { orgs, currentOrg, people, levels, rooms, chores, name, id };

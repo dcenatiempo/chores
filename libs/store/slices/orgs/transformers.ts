@@ -116,10 +116,10 @@ function peopleTransformer(people: FirebasePerson[]): Person[] {
 
 function roomsTransformer(rooms: FirebaseRoom[]): Room[] {
   const newRooms =
-    rooms?.map((room) => {
-      const { id, level, name } = room;
+    rooms?.map((room, i) => {
+      const { level, name } = room;
       return {
-        id,
+        id: `${i}`,
         level,
         name,
         type: roomTypeRefTransformer(room.typeRef),

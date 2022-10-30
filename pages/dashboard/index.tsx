@@ -5,24 +5,21 @@ import Image from 'next/image';
 import Header from '../../components/nav/Header';
 import styles from '../../styles/Home.module.css';
 import AddPeople, { OnClickAddProps } from '../../components/people/AddPeople';
-import { useSelector } from 'react-redux';
-import { organizationsStore } from '../../libs/store';
 import { addPersonToOrg } from '../../libs/firebase';
+import useCurrentOrg from '../../libs/store/slices/orgs/useCurrentOrg';
+import RoomsList from '../../components/rooms/RoomsList';
+import AddRoom from '../../components/rooms/AddRoom';
 
 const Dashboard: NextPage = () => {
-  const people = useSelector(organizationsStore.selectors.people);
-  const orgName = useSelector(organizationsStore.selectors.name);
-  const orgId = useSelector(organizationsStore.selectors.id);
+  const { org } = useCurrentOrg();
   function onAddPerson({ firstName, lastName }: OnClickAddProps) {
-    if (!orgId) return;
+    if (!org.id) return;
     addPersonToOrg({
       firstName,
       lastName,
-      orgId,
+      orgId: org.id,
     });
   }
-  console.log(people);
-
   return (
     <div className={styles.container}>
       <Head>
@@ -33,8 +30,10 @@ const Dashboard: NextPage = () => {
 
       <Header />
       <main className={styles.main}>
-        <h1 className={styles.title}>{orgName} Chores</h1>
-        <AddPeople people={people} onClickAdd={onAddPerson} />
+        <h1 className={styles.title}>{org.name} Chores</h1>
+        <AddRoom />
+        <RoomsList rooms={org.rooms} />
+        <AddPeople people={org.people} onClickAdd={onAddPerson} />
       </main>
       <footer className={styles.footer}>
         <a
