@@ -1,7 +1,4 @@
-import {
-  referenceTransformer,
-  timestampTransformer,
-} from '../sharedTransformers';
+import { transformReference, transformTimestamp } from '../sharedTransformers';
 import { initialState } from './reducer';
 import { FirebaseUser, User } from './types';
 
@@ -11,13 +8,13 @@ export function transformUserFromFirebase(user: FirebaseUser | null): User {
   return {
     id: user.authId,
     birthday: user.birthday
-      ? timestampTransformer(user.birthday)
+      ? transformTimestamp.fromFirebase(user.birthday)
       : blankUser.birthday,
     firstName: user.firstName || user.authId,
     lastName: user.lastName || blankUser.lastName,
     email: user.email || blankUser.email,
     organizationIds: user.organizations
-      ? referenceTransformer(user.organizations)
+      ? transformReference.fromFirebase(user.organizations)
       : blankUser.organizationIds,
   };
 }

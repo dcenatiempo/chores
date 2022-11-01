@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import TextInput, { TextInputProps } from '../TextInputx';
+import TextInput, { TextInputProps } from '../TextInput';
 // import styles from './PasswordInput.module.css';
 
 interface Props extends TextInputProps {}

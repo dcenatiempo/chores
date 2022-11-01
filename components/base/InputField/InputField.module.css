@@ -1,0 +1,14 @@
+/* The switch - the box around the slider */
+.inputField {
+  display: flex;
+  flex-direction: column;
+  margin: 10px;
+  color: pink;
+}
+.inline {
+  flex-direction: row;
+}
+.errorMessage {
+  color: red;
+  align-self: flex-end;
+}

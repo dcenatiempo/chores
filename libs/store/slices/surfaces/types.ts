@@ -1,5 +1,11 @@
 export interface SurfacesState extends BaseSlice {
-  data: Surface[];
+  data: SurfaceTemplate[];
+}
+
+export interface FirebaseSurfaceTemplate {
+  id: string;
+  name: string;
+  descriptors: string[];
 }
 
 export interface SurfaceTemplate {
@@ -11,7 +17,7 @@ export interface SurfaceTemplate {
 export interface Surface {
   id: string;
   name: string;
-  descriptor?: string;
+  descriptor: string;
 }
 
 export interface FirebaseSurface {

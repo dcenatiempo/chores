@@ -2,14 +2,14 @@ import { FC } from 'react';
 import styles from './InputLabel.module.css';
 
 export interface InputLabelProps {
-  label: string;
+  children: React.ReactNode;
   id: string;
 }
 
-const InputLabel: FC<InputLabelProps> = ({ label, id }) => {
+const InputLabel: FC<InputLabelProps> = ({ children, id }) => {
   return (
     <label htmlFor={id} className={styles.label}>
-      {label}
+      {children}
     </label>
   );
 };

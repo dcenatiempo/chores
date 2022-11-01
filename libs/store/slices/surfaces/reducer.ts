@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Surface, SurfacesState } from './types';
+import { SurfaceTemplate, SurfacesState } from './types';
 
 const initialState: SurfacesState = {
   data: [],
@@ -11,7 +11,7 @@ const surfacesSlice = createSlice({
   name: 'surfaces',
   initialState,
   reducers: {
-    setSurfaces: (state, action: PayloadAction<Surface[]>) => {
+    setSurfaces: (state, action: PayloadAction<SurfaceTemplate[]>) => {
       state.data = action.payload;
     },
   },

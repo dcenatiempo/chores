@@ -1,6 +1,11 @@
-import { Action } from '../actions/types';
-import { RoomType } from '../roomTypes/types';
-import { Surface } from '../surfaces/types';
+import { FirebaseReference, FirebaseTimestamp } from '../../../firebase';
+import { Action, FirebaseAction } from '../actions/types';
+import { FirebaseRoomType, RoomType } from '../roomTypes/types';
+import {
+  FirebaseSurfaceTemplate,
+  Surface,
+  SurfaceTemplate,
+} from '../surfaces/types';
 
 export interface Person {
   lastName: string;
@@ -9,7 +14,7 @@ export interface Person {
 }
 
 export interface Room {
-  surfaceIds: string[];
+  surfaces: Surface[];
   level: string;
   name: string;
   type: string;
@@ -35,7 +40,7 @@ export interface Org {
   people: Person[];
   chores: Chore[];
   tasks: Task[];
-  customSurfaces: Surface[];
+  customSurfaces: SurfaceTemplate[];
   customActions: Action[];
   customRoomTypes: RoomType[];
 }
@@ -55,3 +60,52 @@ export interface OrgsState extends BaseSlice {
   orgsMap: OrgsMap;
   currentOrgId: string | undefined;
 }
+
+export interface FirebaseOrg {
+  id: string;
+  name: string;
+  levels: FirebaseLevel[];
+  rooms: FirebaseRoom[];
+  people: FirebasePerson[];
+  chores: FirebaseChore[];
+  tasks: FirebaseTask[];
+  customSurfaces?: FirebaseCustomSurface[];
+  customActions?: FirebaseCustomAction[];
+  customRoomTypes?: FirebaseCustomRoomType[];
+}
+
+export type FirebaseLevel = string;
+
+export interface FirebaseRoom {
+  level: string;
+  name: string;
+  surfaces: FirebaseSurface[];
+  typeRef: FirebaseReference;
+}
+
+export interface FirebaseSurface {
+  surfaceRef: FirebaseReference;
+  name: string;
+  descriptor: string;
+}
+
+export interface FirebasePerson {
+  firstName: string;
+  lastName: string;
+  birthday: FirebaseTimestamp;
+}
+
+export interface FirebaseChore {
+  name: string;
+  // ?
+}
+
+export interface FirebaseTask {
+  // ?
+}
+
+export interface FirebaseCustomSurface extends FirebaseSurfaceTemplate {}
+
+export interface FirebaseCustomAction extends FirebaseAction {}
+
+export interface FirebaseCustomRoomType extends FirebaseRoomType {}

@@ -21,5 +21,9 @@ interface RoomRowProps {
   room: Room;
 }
 const RoomRow: FC<RoomRowProps> = ({ room }) => {
-  return <div>{room.name}</div>;
+  return (
+    <div>
+      {room.name} ({room.type}) on the {room.level} level
+    </div>
+  );
 };

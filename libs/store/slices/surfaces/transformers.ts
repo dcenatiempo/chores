@@ -1,11 +1,18 @@
-import { FirebaseSurface, Surface } from './types';
+import { FirebaseSurfaceTemplate, SurfaceTemplate } from './types';
 
-export function transformSurfacesFromFirebase(
-  surfaces: FirebaseSurface[] = []
-): Surface[] {
-  return surfaces.map((s) => ({
-    id: s.id,
-    name: s.name,
-    descriptor: s?.descriptor,
-  }));
-}
+export const transformSurfaceTemplate = {
+  fromFirebase(surface: FirebaseSurfaceTemplate): SurfaceTemplate {
+    return {
+      id: surface.id,
+      name: surface.name,
+      descriptors: surface.descriptors || [],
+    };
+  },
+  toFirebase(surface: SurfaceTemplate): FirebaseSurfaceTemplate {
+    return {
+      id: surface.id,
+      name: surface.name,
+      descriptors: surface.descriptors || [],
+    };
+  },
+};

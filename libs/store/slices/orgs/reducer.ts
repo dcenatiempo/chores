@@ -1,7 +1,7 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { listenForDocChanges } from '../../../firebase';
 import { Collection } from '../../../firebase/types';
-import { transformOrgFromFirebase } from './transformers';
+import { transformOrg } from './transformers';
 import { Org, OrgMap, OrgsState } from './types';
 
 let unsubscribe: () => void;
@@ -31,7 +31,7 @@ export const orgs = createSlice({
       const orgId = action?.payload?.id;
       if (orgId) state.orgsMap[orgId] = { orgId, data: action.payload };
     },
-    clearorgs: (state) => {
+    clearOrgs: (state) => {
       state.orgsMap = initialState.orgsMap;
     },
     resetOrgsState: (state) => {
@@ -39,7 +39,9 @@ export const orgs = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(listenForOrgChanges.fulfilled, () => {});
+    builder.addCase(listenForOrgChanges.fulfilled, () => {
+      console.log('extraReducer');
+    });
   },
 });
 
@@ -48,11 +50,11 @@ const listenForOrgChanges = createAsyncThunk(
   async (_: undefined, thunkAPI) => {
     // @ts-expect-error
     const orgId: string = thunkAPI.getState().orgs.currentOrgId;
-
+    console.log('createAsyncThunk');
     listenForDocChanges({
       collectionName: Collection.ORGS,
       docId: orgId,
-      transformer: transformOrgFromFirebase,
+      transformer: transformOrg.fromFirebase,
       callback: (org: Org) => thunkAPI.dispatch(actions.updateOrg(org)),
     });
   }

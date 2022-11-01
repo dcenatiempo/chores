@@ -1,9 +1,18 @@
+import { Timestamp } from 'firebase/firestore';
 import { FirebaseReference, FirebaseTimestamp } from '../../firebase';
 
-export function timestampTransformer(firebaseTimestamp: FirebaseTimestamp) {
-  return firebaseTimestamp?.seconds || 0;
-}
+export const transformTimestamp = {
+  fromFirebase(firebaseTimestamp: FirebaseTimestamp) {
+    return firebaseTimestamp?.seconds || 0;
+  },
+  toFirebase(timestamp: number): FirebaseTimestamp {
+    return Timestamp.fromMillis(timestamp);
+  },
+};
 
-export function referenceTransformer(firebaseReference: FirebaseReference[]) {
-  return firebaseReference.map((fr) => fr.id);
-}
+export const transformReference = {
+  fromFirebase(firebaseReference: FirebaseReference[]) {
+    return firebaseReference.map((fr) => fr.id);
+  },
+  toFirebase() {},
+};

@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import useCurrentOrg from '../../libs/store/slices/orgs/useCurrentOrg';
-import Dropdown from '../base/Dropdownx';
+import Dropdown from '../base/Dropdown';
 
 export interface LevelSelectorProps {
   onSelect: (level: string | undefined) => void;
@@ -12,8 +12,9 @@ const LevelSelector: FC<LevelSelectorProps> = ({ onSelect, selected }) => {
   const levels = org.levels || [];
   return (
     <Dropdown
-      value={(option) => option || ''}
-      label={(option) => option || ''}
+      label="Level"
+      valueKey={(option) => option || ''}
+      labelKey={(option) => option || ''}
       options={levels}
       onSelect={onSelect}
       selected={selected}

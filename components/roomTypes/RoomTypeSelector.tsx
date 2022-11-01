@@ -2,7 +2,7 @@ import { FC } from 'react';
 import useCurrentOrg from '../../libs/store/slices/orgs/useCurrentOrg';
 import { useRoomTypes } from '../../libs/store/slices/roomTypes';
 import { RoomType } from '../../libs/store/slices/roomTypes/types';
-import Dropdown from '../base/Dropdownx';
+import Dropdown from '../base/Dropdown';
 
 export interface RoomTypeSelectorProps {
   onSelect: (roomType: RoomType | undefined) => void;
@@ -20,8 +20,9 @@ const RoomTypeSelector: FC<RoomTypeSelectorProps> = ({
   return (
     <div>
       <Dropdown
-        value={(option) => option?.id || ''}
-        label={(option) => option?.name || ''}
+        label="Room Type"
+        valueKey={(option) => option?.id || ''}
+        labelKey={(option) => option?.name || ''}
         options={allRoomTypes}
         onSelect={onSelect}
         selected={selected}

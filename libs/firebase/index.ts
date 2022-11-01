@@ -13,12 +13,11 @@ import {
   arrayUnion,
   onSnapshot,
   QueryConstraint,
-  where,
-  documentId,
 } from 'firebase/firestore';
-import { userStore } from '../store';
-import { FirebaseUser, User } from '../store/slices/user/types';
-import { Collection, FirebaseOrg } from './types';
+import { transformRoom } from '../store/slices/orgs/transformers';
+import { Room } from '../store/slices/orgs/types';
+import { FirebaseUser } from '../store/slices/user/types';
+import { Collection } from './types';
 export * from './types';
 
 // TODO: Add SDKs for Firebase products that you want to use
@@ -35,11 +34,11 @@ const firebaseConfig = {
 };
 
 // Initialize Firebase
-export const app = initializeApp(firebaseConfig);
-export const auth = getAuth(app);
-export const db = getFirestore(app);
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
 
-export async function fetchDocs<T>(
+async function fetchDocs<T>(
   collectionName: Collection,
   ...queryConstraints: QueryConstraint[]
 ): Promise<T[]> {
@@ -51,9 +50,7 @@ export async function fetchDocs<T>(
   })) as T[];
 }
 
-const unsubscribeMap: { [key: string]: () => void } = {};
-
-export async function fetchDoc<T>(
+async function fetchDoc<T>(
   collectionName: Collection,
   ...pathSegments: string[]
 ): Promise<T | null> {
@@ -63,7 +60,12 @@ export async function fetchDoc<T>(
   return docData as T;
 }
 
-export function listenForDocChanges<A, B>({
+const unsubscribeMap: { [key: string]: () => void } = {};
+function getUnsubscribeMap() {
+  return unsubscribeMap;
+}
+
+function listenForDocChanges<A, B>({
   collectionName,
   docId,
   transformer,
@@ -75,18 +77,18 @@ export function listenForDocChanges<A, B>({
   callback: (entity: B) => void;
 }) {
   const listenerKey = `${collectionName}-${docId}`;
-  unsubscribeMap?.[listenerKey]?.();
-  unsubscribeMap[listenerKey] = onSnapshot(
-    doc(db, collectionName, docId),
-    (doc) => {
-      const newDoc: B = transformer({
-        id: docId,
-        ...doc?.data?.(),
-      } as A);
-      callback(newDoc);
-    }
-  );
+  const map = getUnsubscribeMap();
+  map?.[listenerKey]?.();
+  map[listenerKey] = onSnapshot(doc(db, collectionName, docId), (doc) => {
+    const newDoc: B = transformer({
+      id: docId,
+      ...doc?.data?.(),
+    } as A);
+    callback(newDoc);
+  });
 }
+
+export { app, auth, db, fetchDocs, fetchDoc, listenForDocChanges };
 
 /////////////////////////////////////////////////////////////////////////////////////
 
@@ -94,19 +96,6 @@ export async function createUser(userId: string, user: FirebaseUser) {
   const res = await setDoc(doc(db, 'users', userId), user);
   console.log('createUser', res);
 }
-
-// export async function getUserOrgs(user: User): Promise<FirebaseOrg[]> {
-//   const orgs: DocumentSnapshot[] = await Promise.all(
-//     user.organizationIds?.map((id) => {
-//       const ref = doc(db, 'organization', id);
-//       return getDoc(ref);
-//     })
-//   );
-//   return orgs.map((org) => {
-//     const x = org.data();
-//     return { id: org.id, ...org.data() };
-//   }) as FirebaseOrg[];
-// }
 
 export async function addPersonToOrg({
   firstName,
@@ -119,12 +108,26 @@ export async function addPersonToOrg({
   birthday?: number;
   orgId: string;
 }) {
-  const orgDocRef = doc(db, 'organization', orgId);
+  const orgDocRef = doc(db, Collection.ORGS, orgId);
   const newPerson = { firstName, lastName, birthday };
   if (!birthday) delete newPerson.birthday;
   if (!lastName) delete newPerson.lastName;
 
   const res = await updateDoc(orgDocRef, {
     people: arrayUnion(newPerson),
+  });
+}
+
+export async function addRoomtoOrg({
+  orgId,
+  room,
+}: {
+  orgId: string;
+  room: Room;
+}) {
+  const orgDocRef = doc(db, Collection.ORGS, orgId);
+  console.log(transformRoom.toFirebase(room));
+  const res = await updateDoc(orgDocRef, {
+    rooms: arrayUnion(transformRoom.toFirebase(room)),
   });
 }

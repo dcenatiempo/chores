@@ -20,15 +20,18 @@ export default function Firebase() {
   useEffect(() => {
     function emptyStore() {
       dispatch(userStore.actions.clearUser());
-      dispatch(organizationsStore.actions.clearOrganizations());
+      dispatch(organizationsStore.actions.clearOrgs());
     }
 
     function hydrateStore(userId: string) {
       // Signed in
-      fetchUser(userId).then((user) => {
-        fetchOrgs(user.organizationIds);
-        dispatch(organizationsStore.asyncActions.listenForOrgChanges());
-      });
+      fetchUser(userId)
+        .then((user) => {
+          return fetchOrgs(user.organizationIds);
+        })
+        .then(() => {
+          dispatch(organizationsStore.asyncActions.listenForOrgChanges());
+        });
       fetchRoomTypes();
       fetchSurfaces();
       fetchActions();
