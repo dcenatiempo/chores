@@ -3,10 +3,10 @@ import { FirebaseReference, FirebaseTimestamp } from '../../firebase';
 
 export const transformTimestamp = {
   fromFirebase(firebaseTimestamp: FirebaseTimestamp) {
-    return firebaseTimestamp?.seconds || 0;
+    return firebaseTimestamp?.toMillis();
   },
-  toFirebase(timestamp: number): FirebaseTimestamp {
-    return Timestamp.fromMillis(timestamp);
+  toFirebase(ms: number): FirebaseTimestamp {
+    return Timestamp.fromMillis(ms);
   },
 };
 

@@ -136,14 +136,19 @@ const transformRoomType = {
 const transformPerson = {
   toFirebase(person: Person): FirebasePerson {
     return {
-      ...person,
-      birthday: transformTimestamp.toFirebase(person.birthday),
+      firstName: person.firstName,
+      lastName: person.lastName,
+      ...(person.birthday
+        ? { birthday: transformTimestamp.toFirebase(person.birthday) }
+        : undefined),
     };
   },
   fromFirebase(person: FirebasePerson): Person {
     return {
       ...person,
-      birthday: transformTimestamp.fromFirebase(person.birthday),
+      birthday: person.birthday
+        ? transformTimestamp.fromFirebase(person.birthday)
+        : undefined,
     };
   },
 };
@@ -160,7 +165,6 @@ const transformLevel = {
 export const transformRoom = {
   toFirebase(room: Room): FirebaseRoom {
     const { level, name } = room;
-    console.log(room.surfaces);
     return {
       level,
       name,
@@ -190,7 +194,6 @@ const transformRoomSurface = {
     // const surfaceRef = surface.id.startsWith('custom_')
     //    ? doc(db, Collection.ORGS, orgId, customSurfaces, surface.id) // ?
     //    : doc(db, Collection.SURFACES, surface.id);
-    console.log(surface);
     return {
       surfaceRef: doc(db, Collection.SURFACES, surface.id),
       name: surface.name,

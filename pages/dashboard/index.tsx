@@ -12,11 +12,12 @@ import AddRoom from '../../components/rooms/AddRoom';
 
 const Dashboard: NextPage = () => {
   const { org } = useCurrentOrg();
-  function onAddPerson({ firstName, lastName }: OnClickAddProps) {
+  function onAddPerson({ firstName, lastName, birthday }: OnClickAddProps) {
     if (!org.id) return;
     addPersonToOrg({
       firstName,
       lastName,
+      birthday,
       orgId: org.id,
     });
   }

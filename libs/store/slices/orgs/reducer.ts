@@ -50,7 +50,6 @@ const listenForOrgChanges = createAsyncThunk(
   async (_: undefined, thunkAPI) => {
     // @ts-expect-error
     const orgId: string = thunkAPI.getState().orgs.currentOrgId;
-    console.log('createAsyncThunk');
     listenForDocChanges({
       collectionName: Collection.ORGS,
       docId: orgId,

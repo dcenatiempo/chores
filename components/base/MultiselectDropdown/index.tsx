@@ -20,10 +20,6 @@ export default function MultiselectDropdown<T>({
   label,
 }: MultiselectDropdownProps<T>) {
   function onChange(e: ChangeEvent<HTMLSelectElement>) {
-    // const s = options.find((option) => e.target.options === valueKey(option));
-    // console.log(e.target.options);
-    // onSelect(s);
-
     var allOptions = e.target.options;
     var values = [];
     for (var i = 0, l = allOptions.length; i < l; i++) {

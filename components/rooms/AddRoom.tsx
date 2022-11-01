@@ -26,8 +26,6 @@ const AddRoom: FC<AddRoomProps> = ({}) => {
   }
 
   function removeSurface(i: number) {
-    console.log(surfaces);
-    console.log(i);
     surfaces.splice(i, 1);
     setSurfaces([...surfaces]);
   }
@@ -40,7 +38,6 @@ const AddRoom: FC<AddRoomProps> = ({}) => {
   }
   function onClickAddRoom() {
     if (disabled) return;
-    console.log('ADD ROOM!');
     const newRoom: Room = {
       level,
       name,

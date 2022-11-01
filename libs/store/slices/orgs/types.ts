@@ -9,7 +9,7 @@ import {
 
 export interface Person {
   lastName: string;
-  birthday: number;
+  birthday: number | undefined;
   firstName: string;
 }
 
@@ -92,7 +92,7 @@ export interface FirebaseSurface {
 export interface FirebasePerson {
   firstName: string;
   lastName: string;
-  birthday: FirebaseTimestamp;
+  birthday?: FirebaseTimestamp;
 }
 
 export interface FirebaseChore {

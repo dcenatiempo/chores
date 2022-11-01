@@ -13,9 +13,13 @@ import {
   arrayUnion,
   onSnapshot,
   QueryConstraint,
+  FieldValue,
+  Timestamp,
 } from 'firebase/firestore';
+import { stringToTimestamp } from '../dateTime';
 import { transformRoom } from '../store/slices/orgs/transformers';
 import { Room } from '../store/slices/orgs/types';
+import { transformTimestamp } from '../store/slices/sharedTransformers';
 import { FirebaseUser } from '../store/slices/user/types';
 import { Collection } from './types';
 export * from './types';
@@ -105,11 +109,17 @@ export async function addPersonToOrg({
 }: {
   firstName: string;
   lastName?: string;
-  birthday?: number;
+  birthday?: string;
   orgId: string;
 }) {
   const orgDocRef = doc(db, Collection.ORGS, orgId);
-  const newPerson = { firstName, lastName, birthday };
+  const newPerson = {
+    firstName,
+    lastName,
+    birthday: birthday
+      ? transformTimestamp.toFirebase(stringToTimestamp(birthday))
+      : undefined,
+  };
   if (!birthday) delete newPerson.birthday;
   if (!lastName) delete newPerson.lastName;
 
@@ -126,7 +136,6 @@ export async function addRoomtoOrg({
   room: Room;
 }) {
   const orgDocRef = doc(db, Collection.ORGS, orgId);
-  console.log(transformRoom.toFirebase(room));
   const res = await updateDoc(orgDocRef, {
     rooms: arrayUnion(transformRoom.toFirebase(room)),
   });

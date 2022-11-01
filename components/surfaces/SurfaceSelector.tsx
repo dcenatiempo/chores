@@ -15,7 +15,6 @@ export interface SurfaceSelectorProps {
 const SurfaceSelector: FC<SurfaceSelectorProps> = ({ onSelect }) => {
   const [surface, setSurface] = useState<SurfaceTemplate>();
   const [surfaceDescriptor, setSurfaceDescriptor] = useState<string>();
-  console.log(surfaceDescriptor);
 
   const { org } = useCurrentOrg();
   const { surfaces } = useSurfaces();
