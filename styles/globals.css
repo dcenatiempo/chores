@@ -1,3 +1,20 @@
+#__next[data-theme="theme-light"] {
+  --primary-color: #0072a3;
+  --text-color: #333333;
+  --bg-color: #fafafa;
+  --component-bg-color: #ffffff;
+  --danger-color: rgb(250, 62, 62);
+  --warn-color: rgb(255, 215, 70);
+}
+#__next[data-theme="theme-dark"] {
+  --primary-color: #49afd9;
+  --text-color: #e3f5fc;
+  --bg-color: #1b2a32;
+  --component-bg-color: #22343c;
+  --danger-color: rgb(250, 62, 62);
+  --warn-color: rgb(255, 215, 70);
+}
+
 html,
 body {
   padding: 0;
@@ -15,12 +32,12 @@ a {
   box-sizing: border-box;
 }
 
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-  body {
-    color: white;
-    background: black;
-  }
+#__next {
+  color: var(--text-color);
+  background-color: var(--bg-color);
+}
+
+* {
+  transition: color 100ms linear;
+  transition: background-color 100ms linear;
 }

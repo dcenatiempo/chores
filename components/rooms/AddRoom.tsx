@@ -6,6 +6,7 @@ import { RoomType } from '../../libs/store/slices/roomTypes/types';
 import { Surface } from '../../libs/store/slices/surfaces/types';
 import { toCamelCase } from '../../libs/utils';
 import { Button, TextInput } from '../base';
+import Card from '../base/Card';
 import LevelSelector from '../levels/LevelSelector';
 import RoomTypeSelector from '../roomTypes/RoomTypeSelector';
 import SurfaceSelector from '../surfaces/SurfaceSelector';
@@ -54,7 +55,7 @@ const AddRoom: FC<AddRoomProps> = ({}) => {
   console.log(name, roomType, level, surfaces);
 
   return (
-    <div style={{ borderWidth: 5, borderColor: 'white', borderStyle: 'solid' }}>
+    <Card>
       ADD ROOM
       <br />
       <TextInput value={name} label="name" onChange={setName} />
@@ -73,7 +74,7 @@ const AddRoom: FC<AddRoomProps> = ({}) => {
       ))}
       <SurfaceSelector onSelect={addSurface} />
       <Button label="Add Room" disabled={disabled} onClick={onClickAddRoom} />
-    </div>
+    </Card>
   );
 };
 

@@ -1,0 +1,10 @@
+.select {
+    background: var(--component-bg-color);
+    color: var(--text-color);
+    padding: 0 5px;
+    font-size: 1rem;
+}
+
+.select option{
+    padding: 0 10px;
+}

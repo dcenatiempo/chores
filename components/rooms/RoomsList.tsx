@@ -1,5 +1,6 @@
 import { FC } from 'react';
 import { Room } from '../../libs/store/slices/orgs/types';
+import Card from '../base/Card';
 
 export interface RoomsListProps {
   rooms: Room[] | undefined;
@@ -7,11 +8,11 @@ export interface RoomsListProps {
 
 const RoomsList: FC<RoomsListProps> = ({ rooms = [] }) => {
   return (
-    <div>
+    <Card>
       {rooms.map((room) => (
         <RoomRow key={room.id} room={room} />
       ))}
-    </div>
+    </Card>
   );
 };
 

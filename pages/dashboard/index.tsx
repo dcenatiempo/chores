@@ -31,7 +31,6 @@ const Dashboard: NextPage = () => {
 
       <Header />
       <main className={styles.main}>
-        <h1 className={styles.title}>{org.name} Chores</h1>
         <AddRoom />
         <RoomsList rooms={org.rooms} />
         <AddPeople people={org.people} onClickAdd={onAddPerson} />

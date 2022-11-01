@@ -1,8 +1,8 @@
-export * from './switch';
-export { default as Switch } from './switch';
-export * from './textInput';
-export { default as TextInput } from './textInput';
-export * from './passwordInput';
-export { default as PasswordInput } from './passwordInput';
-export * from './button';
-export { default as Button } from './button';
+export * from './Switch';
+export { default as Switch } from './Switch';
+export * from './TextInput';
+export { default as TextInput } from './TextInput';
+export * from './PasswordInput';
+export { default as PasswordInput } from './PasswordInput';
+export * from './Button';
+export { default as Button } from './Button';

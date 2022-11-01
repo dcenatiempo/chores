@@ -5,6 +5,7 @@ import { Button } from '../base';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { organizationsStore } from '../../libs/store';
+import ThemeSelector from '../ThemeSelector';
 
 interface Props {}
 
@@ -27,6 +28,7 @@ const Header: FC<Props> = () => {
         }}
       >
         <h1 style={styles.title}>{orgName} Chores</h1>
+        <ThemeSelector />
         <LogInOutButton />
       </div>
     </div>

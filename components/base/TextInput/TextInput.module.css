@@ -1,9 +1,12 @@
-/* The switch - the box around the slider */
 .textInput {
   display: flex;
   flex-direction: column;
-  margin: 10px;
-  color: pink;
+  margin: 0;
+  color: var(--text-color);
+  background-color: var(--component-bg-color);
+  font-size: 1rem;
+  border-style: solid;
+  border-width: 1px;
 }
 .inline {
   flex-direction: row;
@@ -13,6 +16,6 @@
   margin-bottom: 20px;
 }
 .errorMessage {
-  color: red;
+  color: var(--danger-color);
   align-self: flex-end;
 }

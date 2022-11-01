@@ -1,0 +1,4 @@
+.themeSelector {
+  display: flex;
+  flex-direction: row;
+}

@@ -1,5 +1,6 @@
 import { ChangeEvent } from 'react';
 import InputField, { InputFieldProps } from '../InputField';
+import styles from './Dropdown.module.css';
 
 interface DropdownProps<T> extends InputFieldProps {
   options: T[];
@@ -25,7 +26,13 @@ export default function Dropdown<T>({
   }
   return (
     <InputField label={label}>
-      <select name={id} id={id} onChange={onChange} value={valueKey(selected)}>
+      <select
+        className={styles.select}
+        name={id}
+        id={id}
+        onChange={onChange}
+        value={valueKey(selected)}
+      >
         <option key={undefined} value={undefined}>
           please select...
         </option>

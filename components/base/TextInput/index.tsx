@@ -12,7 +12,6 @@ export interface TextInputProps {
   isPrivate?: boolean;
   type?: 'password';
   errorMessage?: string;
-  children: React.ReactNode;
 }
 
 const TextInput: FC<TextInputProps> = ({
@@ -33,6 +32,7 @@ const TextInput: FC<TextInputProps> = ({
       errorMessage={errorMessage}
     >
       <input
+        className={styles.textInput}
         type={type || ''}
         id={derivedId}
         onChange={(e) => onChange(e.target.value)}

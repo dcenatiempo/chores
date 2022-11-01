@@ -2,6 +2,7 @@ import { FC, useState } from 'react';
 import { timestampToAge } from '../../libs/dateTime';
 import { Person } from '../../libs/store/slices/orgs/types';
 import { Button, TextInput } from '../base';
+import Card from '../base/Card';
 import { DateSelector } from '../base/DateSelector';
 
 export interface OnClickAddProps {
@@ -17,13 +18,13 @@ export interface AddPeopleProps {
 
 const AddPeople: FC<AddPeopleProps> = ({ people = [], onClickAdd }) => {
   return (
-    <div>
+    <Card>
       {people.map((person) => (
         // todo: get better key
         <PersonRow key={person.firstName} person={person} />
       ))}
       <AddPersonInput onClickAdd={onClickAdd} />
-    </div>
+    </Card>
   );
 };
 
