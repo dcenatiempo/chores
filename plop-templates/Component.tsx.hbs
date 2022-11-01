@@ -1,0 +1,18 @@
+import { FC } from 'react';
+import styles from './{{ PascalCase name }}.module.css';
+
+export interface {{ PascalCase name }}Props {
+  children?: React.ReactNode;
+}
+
+const {{ PascalCase name }}: FC<{{ PascalCase name }}Props> = ({
+  children,
+}) => {
+  return (
+    <div className={styles.{{camelCase name}} }>
+        {children}
+    </div>
+  );
+};
+
+export default {{ PascalCase name }};
