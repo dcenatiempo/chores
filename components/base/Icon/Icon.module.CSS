@@ -1,0 +1,28 @@
+.icon {
+  display: flex;
+  flex-direction: row;
+}
+
+.basic-color {
+  color: var(--text-color)
+}
+
+.warn-color {
+  color: var(--warn-color)
+}
+
+.danger-color {
+  color: var(--danger-color)
+}
+
+.success-color {
+  color: var(--success-color)
+}
+
+.action-color {
+  color: var(--action-color)
+}
+
+.primary-color {
+  color: var(--primary-color)
+}

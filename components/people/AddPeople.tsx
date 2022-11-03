@@ -4,6 +4,7 @@ import { Person } from '../../libs/store/slices/orgs/types';
 import { Button, TextInput } from '../base';
 import Card from '../base/Card';
 import { DateSelector } from '../base/DateSelector';
+import Icon, { IconColor, IconName } from '../base/Icon';
 
 export interface OnClickAddProps {
   firstName: string;
@@ -62,7 +63,14 @@ const AddPersonInput: FC<AddPersonInputProps> = ({ onClickAdd }) => {
       <TextInput label="First" value={firstName} onChange={setFirstName} />
       <TextInput label="Last" value={lastName} onChange={setLastName} />
       <DateSelector id="birthday" onChange={setDate} date={date} />
-      <Button label="Add New Person" onClick={onClickButton} />
+      <Button label="Add New Person" onClick={onClickButton}>
+        <Icon
+          name={IconName.EDIT}
+          size={24}
+          color={IconColor.PRIMARY}
+          outlined
+        />
+      </Button>
     </div>
   );
 };

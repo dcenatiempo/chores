@@ -5,6 +5,8 @@
   --component-bg-color: #ffffff;
   --danger-color: rgb(250, 62, 62);
   --warn-color: rgb(255, 215, 70);
+  --action-color: rgb(0, 115, 255);
+  --success-color: rgb(7, 193, 72);
 }
 #__next[data-theme="theme-dark"] {
   --primary-color: #49afd9;
@@ -13,6 +15,8 @@
   --component-bg-color: #22343c;
   --danger-color: rgb(250, 62, 62);
   --warn-color: rgb(255, 215, 70);
+  --action-color: rgb(0, 115, 255);
+  --success-color: rgb(7, 193, 72);
 }
 
 html,
