@@ -6,8 +6,12 @@ import {
   RiEdit2Line,
   RiWheelchairFill,
   RiWheelchairLine,
+  RiUserAddFill,
+  RiUserAddLine,
+  RiDeleteBinFill,
+  RiDeleteBinLine,
 } from 'react-icons/ri';
-import styles from './Icon.module.css';
+// import styles from './Icon.module.css';
 
 type IconType = typeof RiEdit2Fill;
 // size?: string | number;
@@ -17,7 +21,8 @@ type IconType = typeof RiEdit2Fill;
 export enum IconName {
   PLACEHOLDER = 'placeholder',
   EDIT = 'edit',
-  // DELETE = 'delete',
+  ADD_PERSON = 'add_person',
+  DELETE = 'delete',
   // CLOSE = 'close'
 }
 
@@ -26,6 +31,10 @@ const IconMap = {
   EDIT_LINE: RiEdit2Line,
   PLACEHOLDER_FILL: RiWheelchairFill,
   PLACEHOLDER_LINE: RiWheelchairLine,
+  ADD_PERSON_FILL: RiUserAddFill,
+  ADD_PERSON_LINE: RiUserAddLine,
+  DELETE_FILL: RiDeleteBinFill,
+  DELETE_LINE: RiDeleteBinLine,
 };
 
 function getIcon(type: IconName, outlined: boolean = false): IconType | null {
@@ -53,21 +62,19 @@ export interface IconProps {
   color?: IconColor;
 }
 
-const Icon: FC<IconProps> = ({
-  name,
-  outlined = false,
-  size = 16,
-  color = IconColor.BASIC,
-}) => {
+const Icon: FC<IconProps> = ({ name, outlined = false, size = 16, color }) => {
   const TheIcon = useMemo(() => getIcon(name, outlined), [name, outlined]);
   const title = 'test title';
 
   if (!TheIcon) return null;
-  return (
-    <span className={styles?.[`${color}-color`]}>
-      <TheIcon size={size} title={title} />
-    </span>
-  );
+  if (color)
+    return (
+      <span className={`${color}-color`}>
+        <TheIcon size={size} title={title} />
+      </span>
+    );
+
+  return <TheIcon size={size} title={title} />;
 };
 
 export default Icon;

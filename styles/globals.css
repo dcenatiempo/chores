@@ -1,7 +1,13 @@
+:root {
+  --dark-color: #333333;
+  --light-color: #e3f5fc;
+}
+
 #__next[data-theme="theme-light"] {
   --primary-color: #0072a3;
-  --text-color: #333333;
-  --bg-color: #fafafa;
+  --text-color: var(--dark-color);
+  --basic-color: var(--dark-color);
+  --bg-color: var(--light-color);
   --component-bg-color: #ffffff;
   --danger-color: rgb(250, 62, 62);
   --warn-color: rgb(255, 215, 70);
@@ -10,13 +16,42 @@
 }
 #__next[data-theme="theme-dark"] {
   --primary-color: #49afd9;
-  --text-color: #e3f5fc;
-  --bg-color: #1b2a32;
+  --text-color: var(--light-color);
+  --basic-color: var(--light-color);
+  --bg-color: var(--dark-color);
   --component-bg-color: #22343c;
   --danger-color: rgb(250, 62, 62);
   --warn-color: rgb(255, 215, 70);
   --action-color: rgb(0, 115, 255);
   --success-color: rgb(7, 193, 72);
+}
+
+.basic-color {
+  color: var(--text-color)
+}
+
+.warn-color {
+  color: var(--warn-color)
+}
+
+.danger-color {
+  color: var(--danger-color)
+}
+
+.success-color {
+  color: var(--success-color)
+}
+
+.action-color {
+  color: var(--action-color)
+}
+
+.primary-color {
+  color: var(--primary-color)
+}
+
+.disabled {
+  filter: opacity(0.5);
 }
 
 html,

@@ -133,11 +133,11 @@ const transformRoomType = {
   },
 };
 
-const transformPerson = {
+export const transformPerson = {
   toFirebase(person: Person): FirebasePerson {
     return {
       firstName: person.firstName,
-      lastName: person.lastName,
+      lastName: person.lastName || '',
       ...(person.birthday
         ? { birthday: transformTimestamp.toFirebase(person.birthday) }
         : undefined),

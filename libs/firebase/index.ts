@@ -13,12 +13,13 @@ import {
   arrayUnion,
   onSnapshot,
   QueryConstraint,
+  deleteField,
   FieldValue,
-  Timestamp,
+  arrayRemove,
 } from 'firebase/firestore';
 import { stringToTimestamp } from '../dateTime';
 import { transformRoom } from '../store/slices/orgs/transformers';
-import { Room } from '../store/slices/orgs/types';
+import { FirebasePerson, Room } from '../store/slices/orgs/types';
 import { transformTimestamp } from '../store/slices/sharedTransformers';
 import { FirebaseUser } from '../store/slices/user/types';
 import { Collection } from './types';
@@ -125,6 +126,21 @@ export async function addPersonToOrg({
 
   const res = await updateDoc(orgDocRef, {
     people: arrayUnion(newPerson),
+  });
+}
+
+export async function updatePeopleFromOrg({
+  people,
+  orgId,
+}: {
+  people: FirebasePerson[];
+  orgId: string;
+}) {
+  console.log(people, orgId);
+  const docRef = doc(db, Collection.ORGS, orgId);
+
+  await updateDoc(docRef, {
+    people,
   });
 }
 

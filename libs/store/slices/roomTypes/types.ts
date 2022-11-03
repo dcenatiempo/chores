@@ -1,3 +1,5 @@
+import { BaseSlice } from '../types';
+
 export interface RoomType {
   id: string;
   name: string;

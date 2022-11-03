@@ -1,7 +1,60 @@
 .button {
-  border-style: none;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  border-style: solid;
+  border-width: 2px;
   min-height: 40px;
   min-width: 40px;
   border-radius: 3px;
   margin: 5px 0;
+}
+
+.fill {
+  color: var(--light-color)
+}
+
+.fill.basic-color {
+  background-color: var(--text-color);
+  border-color: var(--text-color);
+  color: var(--bg-color)
+}
+
+.fill.warn-color {
+  background-color: var(--warn-color);
+  border-color: var(--warn-color);
+  color: var(--dark-color)
+}
+
+.fill.danger-color {
+  background-color: var(--danger-color);
+  border-color: var(--danger-color);
+}
+
+.fill.primary-color {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.fill.action-color {
+  background-color: var(--action-color);
+  border-color: var(--action-color);
+}
+
+.fill.success-color {
+  background-color: var(--success-color);
+  border-color: var(--success-color);
+}
+
+.outline {
+  background-color: transparent;
+  border-color: currentColor;
+  /* color: currentColor; */
+}
+
+.sentance {
+  background-color: transparent;
+  border-color: transparent;
+  /* color: currentColor; */
 }

@@ -6,6 +6,7 @@ import {
   Surface,
   SurfaceTemplate,
 } from '../surfaces/types';
+import { BaseSlice } from '../types';
 
 export interface Person {
   lastName: string;

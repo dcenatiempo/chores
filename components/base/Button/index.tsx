@@ -1,18 +1,37 @@
 import { FC } from 'react';
-import IconType from '../Icon';
+import IconType, { IconColor } from '../Icon';
 import styles from './Button.module.css';
 
 interface Props {
-  label: string;
+  disabled?: boolean;
+  label?: string;
   onClick: () => void;
-  children: React.ReactNode;
+  children?: React.ReactNode;
+  type?: 'fill' | 'outline' | 'sentance';
+  color?: IconColor;
 }
 
-const Button: FC<Props> = ({ children, label, onClick = () => {} }) => {
+const Button: FC<Props> = ({
+  disabled,
+  color = IconColor.BASIC,
+  type = 'fill',
+  children,
+  label,
+  onClick = () => {},
+}) => {
+  const fillStyle =
+    type === 'fill' ? styles?.[`${color}-color`] : `${color}-color`;
   return (
-    <button className={styles.button} onClick={onClick}>
+    <button
+      className={`${fillStyle} ${styles.button} ${styles?.[type]} ${
+        disabled ? 'disabled' : ''
+      }`}
+      onClick={onClick}
+      disabled={disabled}
+    >
       {label}
-      {children}
+      {/* todo: no children, just icon? */}
+      <div style={{ paddingLeft: label ? 10 : 0 }}>{children}</div>
     </button>
   );
 };

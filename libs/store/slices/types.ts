@@ -1,4 +1,4 @@
-interface BaseSlice {
+export interface BaseSlice {
   loading: boolean;
   error: string | null;
 }

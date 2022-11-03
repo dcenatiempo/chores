@@ -1,3 +1,5 @@
+import { BaseSlice } from '../types';
+
 export interface Action {
   // id is camelCaseName
   id: string;

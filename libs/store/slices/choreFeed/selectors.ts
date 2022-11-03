@@ -2,7 +2,7 @@ import { defaultMemoize, createSelector } from 'reselect';
 import { RootState } from '../../store';
 
 const orgsChoreFeed = defaultMemoize(
-  (state: RootState) => state.choreFeed.orgs
+  (state: RootState) => state.choreFeed.orgsMap
 );
 
 const currentOrgId = defaultMemoize(

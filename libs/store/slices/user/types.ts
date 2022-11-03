@@ -1,4 +1,5 @@
 import { FirebaseReference, FirebaseTimestamp } from '../../../firebase';
+import { BaseSlice } from '../types';
 
 export interface User {
   id: string;

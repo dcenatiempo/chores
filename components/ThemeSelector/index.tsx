@@ -17,6 +17,7 @@ const ThemeSelector: FC<ThemeSelectorProps> = ({ children }) => {
   useEffect(() => {
     const app = document.querySelector('#__next');
     if (!app) return;
+    // @ts-expect-error
     app.dataset.theme = isDark ? Theme.DARK : Theme.LIGHT;
   }, [isDark]);
 

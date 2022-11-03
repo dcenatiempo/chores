@@ -1,4 +1,5 @@
 import { OrgMap } from '../orgs/types';
+import { BaseSlice } from '../types';
 
 export enum TimeModifier {
   OPEN = 'OPEN', // if start it means now, if end it means when completed - can't be late

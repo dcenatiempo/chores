@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { ChoreHistoryState } from './types';
 
 const initialState: ChoreHistoryState = {
-  data: [],
+  orgsMap: {},
   loading: false,
   error: null,
 };
@@ -12,7 +12,7 @@ export const choreHistorySlice = createSlice({
   initialState,
   reducers: {
     setChoreHistory: (state, action) => {
-      state.data = action.payload;
+      state.orgsMap = action.payload;
     },
   },
 });

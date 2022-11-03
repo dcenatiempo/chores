@@ -4,11 +4,15 @@ import Image from 'next/image';
 
 import Header from '../../components/nav/Header';
 import styles from '../../styles/Home.module.css';
-import AddPeople, { OnClickAddProps } from '../../components/people/AddPeople';
-import { addPersonToOrg } from '../../libs/firebase';
+import AddPeople, {
+  OnClickAddProps,
+  OnClickDeleteProps,
+} from '../../components/people/AddPeople';
+import { addPersonToOrg, updatePeopleFromOrg } from '../../libs/firebase';
 import useCurrentOrg from '../../libs/store/slices/orgs/useCurrentOrg';
 import RoomsList from '../../components/rooms/RoomsList';
 import AddRoom from '../../components/rooms/AddRoom';
+import { transformPerson } from '../../libs/store/slices/orgs/transformers';
 
 const Dashboard: NextPage = () => {
   const { org } = useCurrentOrg();
@@ -21,6 +25,20 @@ const Dashboard: NextPage = () => {
       orgId: org.id,
     });
   }
+
+  function onDeletePerson({ firstName, lastName }: OnClickDeleteProps) {
+    if (!org.id) return;
+    updatePeopleFromOrg({
+      people: org.people
+        ?.filter(
+          (person) =>
+            person.firstName !== firstName && person.lastName !== lastName
+        )
+        .map((person) => transformPerson.toFirebase(person)),
+      orgId: org.id,
+    });
+  }
+
   return (
     <div className={styles.container}>
       <Head>
@@ -33,7 +51,11 @@ const Dashboard: NextPage = () => {
       <main className={styles.main}>
         <AddRoom />
         <RoomsList rooms={org.rooms} />
-        <AddPeople people={org.people} onClickAdd={onAddPerson} />
+        <AddPeople
+          people={org.people}
+          onClickAdd={onAddPerson}
+          onClickDelete={onDeletePerson}
+        />
       </main>
       <footer className={styles.footer}>
         <a

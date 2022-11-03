@@ -1,3 +1,5 @@
+import { BaseSlice } from '../types';
+
 export interface SurfacesState extends BaseSlice {
   data: SurfaceTemplate[];
 }

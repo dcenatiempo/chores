@@ -2,7 +2,7 @@ import { createSlice } from '@reduxjs/toolkit';
 import { ChoreFeedState } from './types';
 
 const initialState: ChoreFeedState = {
-  orgs: {},
+  orgsMap: {},
   loading: false,
   error: null,
 };
@@ -12,7 +12,7 @@ export const choreFeedSlice = createSlice({
   initialState,
   reducers: {
     setChoreFeed: (state, action) => {
-      state.orgs = action.payload;
+      state.orgsMap = action.payload;
     },
   },
 });

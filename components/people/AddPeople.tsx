@@ -12,17 +12,31 @@ export interface OnClickAddProps {
   birthday: string;
 }
 
-export interface AddPeopleProps {
-  people: Person[] | undefined;
-  onClickAdd: ({ firstName, lastName }: OnClickAddProps) => void;
+export interface OnClickDeleteProps {
+  firstName: string;
+  lastName: string;
 }
 
-const AddPeople: FC<AddPeopleProps> = ({ people = [], onClickAdd }) => {
+export interface AddPeopleProps {
+  people: Person[] | undefined;
+  onClickAdd: (props: OnClickAddProps) => void;
+  onClickDelete: (props: OnClickDeleteProps) => void;
+}
+
+const AddPeople: FC<AddPeopleProps> = ({
+  people = [],
+  onClickAdd,
+  onClickDelete,
+}) => {
   return (
     <Card>
       {people.map((person) => (
         // todo: get better key
-        <PersonRow key={person.firstName} person={person} />
+        <PersonRow
+          onClickDelete={onClickDelete}
+          key={person.firstName}
+          person={person}
+        />
       ))}
       <AddPersonInput onClickAdd={onClickAdd} />
     </Card>
@@ -33,12 +47,55 @@ export default AddPeople;
 
 interface PersonRowProps {
   person: Person;
+  onClickDelete: (props: OnClickDeleteProps) => void;
 }
-const PersonRow: FC<PersonRowProps> = ({ person }) => {
+const PersonRow: FC<PersonRowProps> = ({ person, onClickDelete }) => {
+  function onClickDeletePerson() {
+    onClickDelete({
+      lastName: person.lastName || '',
+      firstName: person.firstName || '',
+    });
+  }
+
+  function onClickEditPerson() {
+    console.log('edit person' + person.firstName);
+  }
   return (
-    <div>
+    <div
+      style={{
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      }}
+    >
       {person.firstName} {person.lastName}{' '}
       {person.birthday ? timestampToAge(person.birthday) : ''}
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-between',
+          alignItems: 'center',
+        }}
+      >
+        <Button
+          disabled
+          onClick={onClickEditPerson}
+          type="fill"
+          color={IconColor.BASIC}
+        >
+          <Icon name={IconName.EDIT} size={20} outlined />
+        </Button>
+        <div style={{ width: 10 }} />
+        <Button
+          onClick={onClickDeletePerson}
+          type="fill"
+          color={IconColor.BASIC}
+        >
+          <Icon name={IconName.DELETE} size={20} outlined />
+        </Button>
+      </div>
     </div>
   );
 };
@@ -51,10 +108,11 @@ const AddPersonInput: FC<AddPersonInputProps> = ({ onClickAdd }) => {
   const [lastName, setLastName] = useState('');
   const [date, setDate] = useState('');
 
-  function onClickButton() {
+  function onClickAddPerson() {
     if (firstName.length === 0) return;
     setFirstName('');
     setLastName('');
+    setDate('');
     onClickAdd({ firstName, lastName, birthday: date });
   }
 
@@ -63,13 +121,8 @@ const AddPersonInput: FC<AddPersonInputProps> = ({ onClickAdd }) => {
       <TextInput label="First" value={firstName} onChange={setFirstName} />
       <TextInput label="Last" value={lastName} onChange={setLastName} />
       <DateSelector id="birthday" onChange={setDate} date={date} />
-      <Button label="Add New Person" onClick={onClickButton}>
-        <Icon
-          name={IconName.EDIT}
-          size={24}
-          color={IconColor.PRIMARY}
-          outlined
-        />
+      <Button onClick={onClickAddPerson} type="fill" color={IconColor.ACTION}>
+        <Icon name={IconName.ADD_PERSON} size={20} outlined />
       </Button>
     </div>
   );
