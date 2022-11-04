@@ -5,14 +5,8 @@ export interface CardProps {
   children?: React.ReactNode;
 }
 
-const Card: FC<CardProps> = ({
-  children,
-}) => {
-  return (
-    <div className={styles.card }>
-        {children}
-    </div>
-  );
+const Card: FC<CardProps> = ({ children }) => {
+  return <div className={styles.card}>{children}</div>;
 };
 
 export default Card;

@@ -13,6 +13,7 @@
   --warn-color: rgb(255, 215, 70);
   --action-color: rgb(0, 115, 255);
   --success-color: rgb(7, 193, 72);
+  --border-color: rgb(189, 189, 189);
 }
 #__next[data-theme="theme-dark"] {
   --primary-color: #49afd9;
@@ -24,6 +25,7 @@
   --warn-color: rgb(255, 215, 70);
   --action-color: rgb(0, 115, 255);
   --success-color: rgb(7, 193, 72);
+  --border-color: rgb(26, 26, 26);
 }
 
 .basic-color {

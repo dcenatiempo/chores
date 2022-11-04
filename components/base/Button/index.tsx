@@ -1,8 +1,8 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { IconColor } from '../Icon';
 import styles from './Button.module.css';
 
-export type ButtonType = 'fill' | 'outline' | 'sentance';
+export type ButtonType = 'fill' | 'outline' | 'sentance' | 'invisible';
 
 export interface ButtonProps {
   disabled?: boolean;
@@ -21,16 +21,21 @@ const Button: FC<ButtonProps> = ({
   label,
   onClick = () => {},
 }) => {
-  const fillStyle =
-    type === 'fill' ? styles?.[`${color}-color`] : `${color}-color`;
+  const style = useMemo(() => {
+    if (type === 'invisible') return styles.invisibleButton;
+    const globalColorStyle = `${color}-color`;
+    const localColorStyle = styles?.[`${color}-color`];
+
+    const colorStyle = type === 'fill' ? localColorStyle : globalColorStyle;
+    const disabledStyle = disabled ? 'disabled' : '';
+    const buttonStyle = styles.button;
+    const typeStyle = styles?.[type];
+
+    return `${buttonStyle} ${typeStyle} ${disabledStyle} ${colorStyle}`;
+  }, [type, disabled, color]);
+
   return (
-    <button
-      className={`${fillStyle} ${styles.button} ${styles?.[type]} ${
-        disabled ? 'disabled' : ''
-      }`}
-      onClick={onClick}
-      disabled={disabled}
-    >
+    <button className={style} onClick={onClick} disabled={disabled}>
       {label}
       {/* todo: no children, just icon? */}
       <div style={{ paddingLeft: label ? 10 : 0 }}>{children}</div>

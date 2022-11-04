@@ -11,6 +11,11 @@
   margin: 5px 0;
 }
 
+/* takes the shape of its contents */
+.invisibleButton {
+  min-height: 40px;
+}
+
 .fill {
   color: var(--light-color)
 }

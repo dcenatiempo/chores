@@ -1,0 +1,10 @@
+.list {
+  display: flex;
+  flex-direction: column;
+}
+
+.separator {
+  border-bottom: 1px;
+  border-color: var(--border-color);
+  border-bottom-style: solid;
+}

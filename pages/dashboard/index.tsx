@@ -9,8 +9,8 @@ import { addPersonToOrg, updatePeopleFromOrg } from '../../libs/firebase';
 import useCurrentOrg from '../../libs/store/slices/orgs/useCurrentOrg';
 import RoomsList from '../../components/rooms/RoomsList';
 import AddRoom from '../../components/rooms/AddRoom';
-import { transformPerson } from '../../libs/store/slices/orgs/transformers';
 import { Person } from '../../libs/store/slices/orgs/types';
+import { Card } from '../../components/base';
 
 const Dashboard: NextPage = () => {
   const { org } = useCurrentOrg();
@@ -45,7 +45,9 @@ const Dashboard: NextPage = () => {
       <Header />
       <main className={styles.main}>
         <AddRoom />
-        <RoomsList rooms={org.rooms} />
+        <Card>
+          <RoomsList rooms={org.rooms} />
+        </Card>
         <AddPeople
           people={org.people}
           onClickAdd={onAddPerson}
