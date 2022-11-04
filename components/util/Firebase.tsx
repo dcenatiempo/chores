@@ -27,7 +27,7 @@ export default function Firebase() {
       // Signed in
       fetchUser(userId)
         .then((user) => {
-          return fetchOrgs(user.organizationIds);
+          return fetchOrgs(user.organizationIds || []);
         })
         .then(() => {
           dispatch(organizationsStore.asyncActions.listenForOrgChanges());

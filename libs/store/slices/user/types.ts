@@ -3,11 +3,11 @@ import { BaseSlice } from '../types';
 
 export interface User {
   id: string;
-  birthday: EpochTimeStamp;
-  firstName: string;
-  lastName: string;
-  email: string;
-  organizationIds: string[];
+  birthday: EpochTimeStamp | undefined;
+  firstName: string | undefined;
+  lastName: string | undefined;
+  email: string | undefined;
+  organizationIds: string[] | undefined;
 }
 
 export interface UserState extends BaseSlice {

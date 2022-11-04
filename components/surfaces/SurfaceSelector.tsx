@@ -7,6 +7,7 @@ import {
 } from '../../libs/store/slices/surfaces/types';
 import { Button } from '../base';
 import Dropdown from '../base/Dropdown';
+import { AddButton } from '../buttons';
 
 export interface SurfaceSelectorProps {
   onSelect: (surface: Surface | undefined) => void;
@@ -55,7 +56,7 @@ const SurfaceSelector: FC<SurfaceSelectorProps> = ({ onSelect }) => {
           label={`${surface.name} type`}
         />
       ) : null}
-      <Button label="+" onClick={onAdd} />
+      <AddButton onClick={onAdd} />
     </div>
   );
 };

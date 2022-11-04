@@ -1,17 +1,19 @@
 import { FC } from 'react';
-import IconType, { IconColor } from '../Icon';
+import { IconColor } from '../Icon';
 import styles from './Button.module.css';
 
-interface Props {
+export type ButtonType = 'fill' | 'outline' | 'sentance';
+
+export interface ButtonProps {
   disabled?: boolean;
   label?: string;
   onClick: () => void;
   children?: React.ReactNode;
-  type?: 'fill' | 'outline' | 'sentance';
+  type?: ButtonType;
   color?: IconColor;
 }
 
-const Button: FC<Props> = ({
+const Button: FC<ButtonProps> = ({
   disabled,
   color = IconColor.BASIC,
   type = 'fill',

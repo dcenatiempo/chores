@@ -52,7 +52,6 @@ const AddRoom: FC<AddRoomProps> = ({}) => {
     });
     resetForm();
   }
-  console.log(name, roomType, level, surfaces);
 
   return (
     <Card>

@@ -1,41 +1,13 @@
 // https://react-icons.github.io/react-icons/icons?name=ri
 
 import { FC, useMemo } from 'react';
-import {
-  RiEdit2Fill,
-  RiEdit2Line,
-  RiWheelchairFill,
-  RiWheelchairLine,
-  RiUserAddFill,
-  RiUserAddLine,
-  RiDeleteBinFill,
-  RiDeleteBinLine,
-} from 'react-icons/ri';
+import * as ri from 'react-icons/ri';
 // import styles from './Icon.module.css';
 
-type IconType = typeof RiEdit2Fill;
+type IconType = typeof ri.RiEdit2Fill;
 // size?: string | number;
 // color?: string;
 // title?: string;
-
-export enum IconName {
-  PLACEHOLDER = 'placeholder',
-  EDIT = 'edit',
-  ADD_PERSON = 'add_person',
-  DELETE = 'delete',
-  // CLOSE = 'close'
-}
-
-const IconMap = {
-  EDIT_FILL: RiEdit2Fill,
-  EDIT_LINE: RiEdit2Line,
-  PLACEHOLDER_FILL: RiWheelchairFill,
-  PLACEHOLDER_LINE: RiWheelchairLine,
-  ADD_PERSON_FILL: RiUserAddFill,
-  ADD_PERSON_LINE: RiUserAddLine,
-  DELETE_FILL: RiDeleteBinFill,
-  DELETE_LINE: RiDeleteBinLine,
-};
 
 function getIcon(type: IconName, outlined: boolean = false): IconType | null {
   const fillType = outlined ? 'LINE' : 'FILL';
@@ -78,3 +50,42 @@ const Icon: FC<IconProps> = ({ name, outlined = false, size = 16, color }) => {
 };
 
 export default Icon;
+
+export enum IconName {
+  PLACEHOLDER = 'PLACEHOLDER',
+  PENCIL = 'PENCIL', // pencil
+  TRASH = 'TRASH', // trash
+  PLUS = 'PLUS', // +
+  MINUS = 'MINUS', // -
+  CHECK = 'CHECK', // ✓
+  X = 'X', // x
+  ADD_PERSON = 'ADD_PERSON',
+  SETTINGS = 'SETTINGS',
+  STAR = 'STAR',
+  STAR_HALF = 'STAR_HALF',
+}
+
+const IconMap = {
+  PENCIL_FILL: ri.RiEdit2Fill,
+  PENCIL_LINE: ri.RiEdit2Line,
+  PLACEHOLDER_FILL: ri.RiWheelchairFill,
+  PLACEHOLDER_LINE: ri.RiWheelchairLine,
+  ADD_PERSON_FILL: ri.RiUserAddFill,
+  ADD_PERSON_LINE: ri.RiUserAddLine,
+  TRASH_FILL: ri.RiDeleteBinFill,
+  TRASH_LINE: ri.RiDeleteBinLine,
+  PLUS_FILL: ri.RiAddFill,
+  PLUS_LINE: ri.RiAddLine,
+  MINUS_FILL: ri.RiSubtractFill,
+  MINUS_LINE: ri.RiSubtractLine,
+  CHECK_FILL: ri.RiCheckFill,
+  CHECK_LINE: ri.RiCheckLine,
+  X_FILL: ri.RiCloseFill,
+  X_LINE: ri.RiCloseLine,
+  SETTINGS_FILL: ri.RiSettings4Fill,
+  SETTINGS_LINE: ri.RiSettings4Line,
+  STAR_FILL: ri.RiStarFill,
+  STAR_LINE: ri.RiStarLine,
+  STAR_HALF_FILL: ri.RiStarHalfFill,
+  STAR_HALF_LINE: ri.RiStarHalfLine,
+};

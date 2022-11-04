@@ -4,37 +4,32 @@ import Image from 'next/image';
 
 import Header from '../../components/nav/Header';
 import styles from '../../styles/Home.module.css';
-import AddPeople, {
-  OnClickAddProps,
-  OnClickDeleteProps,
-} from '../../components/people/AddPeople';
+import AddPeople from '../../components/people/AddPeople';
 import { addPersonToOrg, updatePeopleFromOrg } from '../../libs/firebase';
 import useCurrentOrg from '../../libs/store/slices/orgs/useCurrentOrg';
 import RoomsList from '../../components/rooms/RoomsList';
 import AddRoom from '../../components/rooms/AddRoom';
 import { transformPerson } from '../../libs/store/slices/orgs/transformers';
+import { Person } from '../../libs/store/slices/orgs/types';
 
 const Dashboard: NextPage = () => {
   const { org } = useCurrentOrg();
-  function onAddPerson({ firstName, lastName, birthday }: OnClickAddProps) {
+  function onAddPerson(person: Person) {
     if (!org.id) return;
     addPersonToOrg({
-      firstName,
-      lastName,
-      birthday,
+      person,
       orgId: org.id,
     });
   }
 
-  function onDeletePerson({ firstName, lastName }: OnClickDeleteProps) {
+  function onDeletePerson({ firstName, lastName }: Person) {
     if (!org.id) return;
     updatePeopleFromOrg({
-      people: org.people
-        ?.filter(
+      people:
+        org.people?.filter(
           (person) =>
             person.firstName !== firstName && person.lastName !== lastName
-        )
-        .map((person) => transformPerson.toFirebase(person)),
+        ) || [],
       orgId: org.id,
     });
   }

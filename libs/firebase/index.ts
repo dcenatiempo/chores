@@ -13,15 +13,14 @@ import {
   arrayUnion,
   onSnapshot,
   QueryConstraint,
-  deleteField,
-  FieldValue,
-  arrayRemove,
 } from 'firebase/firestore';
-import { stringToTimestamp } from '../dateTime';
-import { transformRoom } from '../store/slices/orgs/transformers';
-import { FirebasePerson, Room } from '../store/slices/orgs/types';
-import { transformTimestamp } from '../store/slices/sharedTransformers';
-import { FirebaseUser } from '../store/slices/user/types';
+import {
+  transformPerson,
+  transformRoom,
+} from '../store/slices/orgs/transformers';
+import { FirebasePerson, Person, Room } from '../store/slices/orgs/types';
+import { transformUser } from '../store/slices/user/transformers';
+import { FirebaseUser, User } from '../store/slices/user/types';
 import { Collection } from './types';
 export * from './types';
 
@@ -97,32 +96,21 @@ export { app, auth, db, fetchDocs, fetchDoc, listenForDocChanges };
 
 /////////////////////////////////////////////////////////////////////////////////////
 
-export async function createUser(userId: string, user: FirebaseUser) {
-  const res = await setDoc(doc(db, 'users', userId), user);
+export async function createUser(userId: string, user: User) {
+  const firebaseUser: FirebaseUser = transformUser.toFirebase(user);
+  const res = await setDoc(doc(db, 'users', userId), firebaseUser);
   console.log('createUser', res);
 }
 
 export async function addPersonToOrg({
-  firstName,
-  lastName,
-  birthday,
+  person,
   orgId,
 }: {
-  firstName: string;
-  lastName?: string;
-  birthday?: string;
+  person: Person;
   orgId: string;
 }) {
   const orgDocRef = doc(db, Collection.ORGS, orgId);
-  const newPerson = {
-    firstName,
-    lastName,
-    birthday: birthday
-      ? transformTimestamp.toFirebase(stringToTimestamp(birthday))
-      : undefined,
-  };
-  if (!birthday) delete newPerson.birthday;
-  if (!lastName) delete newPerson.lastName;
+  const newPerson = transformPerson.toFirebase(person);
 
   const res = await updateDoc(orgDocRef, {
     people: arrayUnion(newPerson),
@@ -133,14 +121,17 @@ export async function updatePeopleFromOrg({
   people,
   orgId,
 }: {
-  people: FirebasePerson[];
+  people: Person[];
   orgId: string;
 }) {
-  console.log(people, orgId);
+  const firebasePeople: FirebasePerson[] = people?.map((person) =>
+    transformPerson.toFirebase(person)
+  );
+
   const docRef = doc(db, Collection.ORGS, orgId);
 
-  await updateDoc(docRef, {
-    people,
+  const res = await updateDoc(docRef, {
+    people: firebasePeople,
   });
 }
 

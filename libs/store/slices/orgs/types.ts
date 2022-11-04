@@ -1,3 +1,4 @@
+import { UnixTimestamp } from '../../../dateTime';
 import { FirebaseReference, FirebaseTimestamp } from '../../../firebase';
 import { Action, FirebaseAction } from '../actions/types';
 import { FirebaseRoomType, RoomType } from '../roomTypes/types';
@@ -9,8 +10,8 @@ import {
 import { BaseSlice } from '../types';
 
 export interface Person {
-  lastName: string;
-  birthday: number | undefined;
+  lastName?: string;
+  birthday?: UnixTimestamp;
   firstName: string;
 }
 

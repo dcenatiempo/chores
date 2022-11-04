@@ -5,3 +5,12 @@ export function toCamelCase(str: string): string {
     })
     .replace(/\s+/g, '');
 }
+
+export function cleanFromObject(obj: object, blacklist: any[]) {
+  return Object.keys(obj).reduce((newObj, key) => {
+    // @ts-expect-error
+    const value = obj[key];
+    if (blacklist.includes(value)) return newObj;
+    return { ...newObj, [key]: value };
+  }, {});
+}

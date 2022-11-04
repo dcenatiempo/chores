@@ -1,16 +1,21 @@
 import { ChangeEvent } from 'react';
+import {
+  ISOToTimestamp,
+  timestampToISODate,
+  UnixTimestamp,
+} from '../../../libs/dateTime';
 import InputField from '../InputField';
 import styles from './DateSelector.module.css';
 
 interface DateSelectorProps {
   id: string;
-  date: string;
-  onChange: (date: string) => void;
+  date?: UnixTimestamp;
+  onChange: (date: UnixTimestamp) => void;
 }
 
 export function DateSelector({ id, onChange, date }: DateSelectorProps) {
   function onChangeInner(e: ChangeEvent<HTMLInputElement>) {
-    onChange(e.target.value);
+    onChange(ISOToTimestamp(e.target.value));
   }
   return (
     <InputField label={'Birthday'}>
@@ -20,7 +25,7 @@ export function DateSelector({ id, onChange, date }: DateSelectorProps) {
         id={id}
         name={id}
         onChange={onChangeInner}
-        value={date}
+        value={date ? timestampToISODate(date) : date}
       />
     </InputField>
   );
