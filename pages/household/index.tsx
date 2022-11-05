@@ -9,7 +9,7 @@ import { Person } from '../../libs/store/models/orgs/types';
 import { Card } from '../../components/base';
 import PageWrapper from '../../components/nav/PageWrapper';
 
-const Dashboard: NextPage = () => {
+const Household: NextPage = () => {
   const { org } = useCurrentOrg();
   function onAddPerson(person: Person) {
     if (!org.id) return;
@@ -32,7 +32,7 @@ const Dashboard: NextPage = () => {
   }
 
   return (
-    <PageWrapper metaTitle="Chore Dashboard">
+    <PageWrapper metaTitle="Chore Household">
       <AddRoom />
       <Card>
         <RoomsList rooms={org.rooms} />
@@ -46,4 +46,4 @@ const Dashboard: NextPage = () => {
   );
 };
 
-export default Dashboard;
+export default Household;

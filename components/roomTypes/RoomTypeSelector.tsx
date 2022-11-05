@@ -1,7 +1,7 @@
 import { FC } from 'react';
-import useCurrentOrg from '../../libs/store/slices/orgs/useCurrentOrg';
-import { useRoomTypes } from '../../libs/store/slices/roomTypes';
-import { RoomType } from '../../libs/store/slices/roomTypes/types';
+import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
+import { useRoomTypes } from '../../libs/store/models/roomTypes';
+import { RoomType } from '../../libs/store/models/roomTypes/types';
 import Dropdown from '../base/Dropdown';
 
 export interface RoomTypeSelectorProps {

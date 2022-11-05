@@ -45,7 +45,12 @@ export interface Org {
   customSurfaces: SurfaceTemplate[];
   customActions: Action[];
   customRoomTypes: RoomType[];
+  // settings?: Settings;
 }
+
+// export interface Settings {
+//   timeZone: string;
+// }
 
 export type Level = string;
 

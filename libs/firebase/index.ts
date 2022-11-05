@@ -17,10 +17,10 @@ import {
 import {
   transformPerson,
   transformRoom,
-} from '../store/slices/orgs/transformers';
-import { FirebasePerson, Person, Room } from '../store/slices/orgs/types';
-import { transformUser } from '../store/slices/user/transformers';
-import { FirebaseUser, User } from '../store/slices/user/types';
+} from '../store/models/orgs/transformers';
+import { FirebasePerson, Person, Room } from '../store/models/orgs/types';
+import { transformUser } from '../store/models/user/transformers';
+import { FirebaseUser, User } from '../store/models/user/types';
 import { Collection } from './types';
 export * from './types';
 

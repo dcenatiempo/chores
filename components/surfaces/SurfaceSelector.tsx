@@ -1,10 +1,10 @@
 import { FC, useState } from 'react';
-import useCurrentOrg from '../../libs/store/slices/orgs/useCurrentOrg';
-import { useSurfaces } from '../../libs/store/slices/surfaces';
+import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
+import { useSurfaces } from '../../libs/store/models/surfaces';
 import {
   Surface,
   SurfaceTemplate,
-} from '../../libs/store/slices/surfaces/types';
+} from '../../libs/store/models/surfaces/types';
 import { Button } from '../base';
 import Dropdown from '../base/Dropdown';
 import { AddButton } from '../buttons';

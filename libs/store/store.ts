@@ -1,11 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
-import roomTypes from './slices/roomTypes';
-import surfaces from './slices/surfaces';
-import actions from './slices/actions';
-import user from './slices/user';
-import choreHistory from './slices/choreHistory';
-import choreFeed from './slices/choreFeed';
-import orgs from './slices/orgs';
+import roomTypes from './models/roomTypes';
+import surfaces from './models/surfaces';
+import actions from './models/actions';
+import user from './models/user';
+import choreHistory from './models/choreHistory';
+import choreFeed from './models/choreFeed';
+import orgs from './models/orgs';
+import appState from './appState';
 
 // Global store
 const store = configureStore({
@@ -17,6 +18,7 @@ const store = configureStore({
     roomTypes: roomTypes.reducer,
     surfaces: surfaces.reducer,
     actions: actions.reducer,
+    appState: appState.reducer,
   },
 });
 

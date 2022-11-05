@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Person } from '../../libs/store/slices/orgs/types';
+import { Person } from '../../libs/store/models/orgs/types';
 import { Card } from '../base';
 import AddPerson from './AddPerson';
 import PeopleList from './PeopleList';

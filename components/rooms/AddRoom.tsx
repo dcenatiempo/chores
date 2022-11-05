@@ -1,9 +1,9 @@
 import { FC, useState } from 'react';
 import { addRoomtoOrg } from '../../libs/firebase';
-import { Room } from '../../libs/store/slices/orgs/types';
-import useCurrentOrg from '../../libs/store/slices/orgs/useCurrentOrg';
-import { RoomType } from '../../libs/store/slices/roomTypes/types';
-import { Surface } from '../../libs/store/slices/surfaces/types';
+import { Room } from '../../libs/store/models/orgs/types';
+import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
+import { RoomType } from '../../libs/store/models/roomTypes/types';
+import { Surface } from '../../libs/store/models/surfaces/types';
 import { toCamelCase } from '../../libs/utils';
 import { Button, TextInput } from '../base';
 import Card from '../base/Card';

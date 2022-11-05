@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import useCurrentOrg from '../../libs/store/slices/orgs/useCurrentOrg';
+import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
 import Dropdown from '../base/Dropdown';
 
 export interface LevelSelectorProps {

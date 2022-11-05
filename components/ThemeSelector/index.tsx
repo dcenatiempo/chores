@@ -1,4 +1,5 @@
-import { FC, useEffect, useState } from 'react';
+import { FC, useEffect } from 'react';
+import useAppState from '../../libs/store/appState/useAppState';
 import { Switch } from '../base';
 import styles from './ThemeSelector.module.css';
 
@@ -12,7 +13,7 @@ enum Theme {
 }
 
 const ThemeSelector: FC<ThemeSelectorProps> = ({ children }) => {
-  const [isDark, setIsDark] = useState(true);
+  const { isDark, setIsDark } = useAppState();
 
   useEffect(() => {
     const app = document.querySelector('#__next');

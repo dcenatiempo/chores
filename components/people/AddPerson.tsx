@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import { Person } from '../../libs/store/slices/orgs/types';
+import { Person } from '../../libs/store/models/orgs/types';
 import { TextInput } from '../base';
 import { DateSelector } from '../base/DateSelector';
 import { AddButton } from '../buttons';

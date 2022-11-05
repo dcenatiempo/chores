@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { timestampToAge } from '../../libs/dateTime';
-import { Person } from '../../libs/store/slices/orgs/types';
+import { Person } from '../../libs/store/models/orgs/types';
 import { EditButton, DeleteButton, AddButton } from '../buttons';
 
 interface PersonRowProps {

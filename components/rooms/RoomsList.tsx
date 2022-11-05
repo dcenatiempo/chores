@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import { Room } from '../../libs/store/slices/orgs/types';
+import { Room } from '../../libs/store/models/orgs/types';
 import List from '../base/List';
 import RoomListItem from './RoomListItem';
 

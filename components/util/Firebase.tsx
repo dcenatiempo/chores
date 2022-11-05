@@ -2,11 +2,11 @@ import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { auth } from '../../libs/firebase';
 import { organizationsStore, userStore } from '../../libs/store';
-import useActions from '../../libs/store/slices/actions/useActions';
-import useOrgs from '../../libs/store/slices/orgs/useOrgs';
-import { useRoomTypes } from '../../libs/store/slices/roomTypes';
-import { useSurfaces } from '../../libs/store/slices/surfaces';
-import useUser from '../../libs/store/slices/user/useUser';
+import useActions from '../../libs/store/models/actions/useActions';
+import useOrgs from '../../libs/store/models/orgs/useOrgs';
+import { useRoomTypes } from '../../libs/store/models/roomTypes';
+import { useSurfaces } from '../../libs/store/models/surfaces';
+import useUser from '../../libs/store/models/user/useUser';
 import store from '../../libs/store/store';
 
 export default function Firebase() {
