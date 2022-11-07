@@ -54,7 +54,7 @@ export default function RouteGuard({ children }: Props) {
     } else if (isAuthenticated && path === '/login') {
       setIsAuthorized(true);
       router.push({
-        pathname: '/dashboard',
+        pathname: '/household',
       });
     } else {
       setIsAuthorized(true);

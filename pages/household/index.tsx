@@ -6,8 +6,10 @@ import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
 import RoomsList from '../../components/rooms/RoomsList';
 import AddRoom from '../../components/rooms/AddRoom';
 import { Person } from '../../libs/store/models/orgs/types';
-import { Card } from '../../components/base';
+import { Button, Card } from '../../components/base';
 import PageWrapper from '../../components/nav/PageWrapper';
+import Modal from '../../components/base/Modal';
+import { useState } from 'react';
 
 const Household: NextPage = () => {
   const { org } = useCurrentOrg();
@@ -31,8 +33,11 @@ const Household: NextPage = () => {
     });
   }
 
+  const [showModal, setShowModal] = useState(false);
+
   return (
     <PageWrapper metaTitle="Chore Household">
+      <Button onClick={() => setShowModal(true)} />
       <AddRoom />
       <Card>
         <RoomsList rooms={org.rooms} />
@@ -42,6 +47,13 @@ const Household: NextPage = () => {
         onClickAdd={onAddPerson}
         onClickDelete={onDeletePerson}
       />
+      <Modal
+        visible={showModal}
+        onClose={() => setShowModal(false)}
+        title={'Hello modal'}
+      >
+        Hello from the modal!
+      </Modal>
     </PageWrapper>
   );
 };

@@ -46,6 +46,7 @@ export default function Firebase() {
     });
 
     return unsubscribe;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [dispatch]);
 
   return null;
