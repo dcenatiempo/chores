@@ -5,8 +5,8 @@ export interface ResourceListProps<T> {
   resources: T[] | undefined;
   renderResource: (resource: T) => React.ReactNode;
   keyExtractor: (item: T, index: number) => string;
-  onClickDelete: (resource: T) => void;
-  onClickEdit: (resource: T) => void;
+  onClickDelete?: (resource: T) => void;
+  onClickEdit?: (resource: T) => void;
 }
 
 function ResourceList<T>({

@@ -15,12 +15,15 @@ import {
   QueryConstraint,
 } from 'firebase/firestore';
 import {
+  transformLevel,
   transformPerson,
   transformRoom,
 } from '../store/models/orgs/transformers';
 import {
+  FirebaseLevel,
   FirebasePerson,
   FirebaseRoom,
+  Level,
   Person,
   Room,
 } from '../store/models/orgs/types';
@@ -123,6 +126,22 @@ export async function addPersonToOrg({
   });
 }
 
+export async function addLevelToOrg({
+  level,
+  orgId,
+}: {
+  level: Level;
+  orgId: string;
+}) {
+  const orgDocRef = doc(db, Collection.ORGS, orgId);
+  const firebaseLevel = transformLevel.toFirebase(level);
+
+  const res = await updateDoc(orgDocRef, {
+    levels: arrayUnion(firebaseLevel),
+  });
+  console.log(res);
+}
+
 export async function updatePeopleFromOrg({
   people,
   orgId,
@@ -158,6 +177,25 @@ export async function updateRoomsFromOrg({
 
   const res = await updateDoc(docRef, {
     rooms: firebaseRooms,
+  });
+  console.log(res);
+}
+
+export async function updateLevelsFromOrg({
+  levels,
+  orgId,
+}: {
+  levels: Level[];
+  orgId: string;
+}) {
+  const firebaseLevels: FirebaseLevel[] = levels?.map((level) =>
+    transformLevel.toFirebase(level)
+  );
+
+  const docRef = doc(db, Collection.ORGS, orgId);
+
+  const res = await updateDoc(docRef, {
+    levels: firebaseLevels,
   });
   console.log(res);
 }

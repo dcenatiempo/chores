@@ -4,6 +4,7 @@ import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
 import PageWrapper from '../../components/nav/PageWrapper';
 import AddOrEditPeopleList from '../../components/people/AddOrEditPeopleList';
 import AddOrEditRoomsList from '../../components/rooms/AddOrEditRoomsList';
+import AddOrEditLevelsList from '../../components/levels/AddOrEditLevelsList';
 
 const Household: NextPage = () => {
   const {
@@ -14,6 +15,8 @@ const Household: NextPage = () => {
     addRoom,
     editRoom,
     editPerson,
+    addLevel,
+    deleteLevel,
   } = useCurrentOrg();
 
   return (
@@ -29,6 +32,12 @@ const Household: NextPage = () => {
         onClickAdd={addRoom}
         onClickDelete={deleteRoom}
         onClickEdit={editRoom}
+      />
+      <AddOrEditLevelsList
+        levels={org.levels}
+        onClickAdd={addLevel}
+        onClickDelete={deleteLevel}
+        // onClickEdit={editLevel}
       />
     </PageWrapper>
   );

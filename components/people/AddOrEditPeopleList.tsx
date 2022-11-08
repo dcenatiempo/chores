@@ -23,7 +23,7 @@ const AddOrEditPeopleList: FC<AddPeopleProps> = ({
       addResource={onClickAdd}
       deleteResource={onClickDelete}
       editResource={onClickEdit}
-      resourceName={'Peopleq'}
+      resourceName={['Person', 'People']}
       renderResource={(item) => <PersonListItem person={item} />}
       keyExtractor={(resource) => `${resource.id}`}
       AddOrEditResource={AddOrEditPerson}

@@ -4,8 +4,8 @@ import ListItem from '../ListItem';
 interface ResourceListItemProps<T> {
   resource: T;
   renderResource: (resource: T) => React.ReactNode;
-  onClickDelete: (resource: T) => void;
-  onClickEdit: (resource: T) => void;
+  onClickDelete?: (resource: T) => void;
+  onClickEdit?: (resource: T) => void;
 }
 
 function ResourceListItem<T>({
@@ -32,10 +32,8 @@ function ResourceListItem<T>({
           columnGap: 10,
         }}
       >
-        {onClickEditResource ? (
-          <EditButton onClick={onClickEditResource} />
-        ) : null}
-        {onClickDeleteResource ? (
+        {onClickEdit ? <EditButton onClick={onClickEditResource} /> : null}
+        {onClickDelete ? (
           <DeleteButton onClick={onClickDeleteResource} />
         ) : null}
       </div>

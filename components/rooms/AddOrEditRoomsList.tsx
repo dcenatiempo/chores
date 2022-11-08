@@ -6,9 +6,9 @@ import RoomListItem from './RoomListItem';
 
 interface AddOrEditRoomsListProps {
   rooms: Room[] | undefined;
-  onClickAdd: (room: Room) => void;
-  onClickDelete: (room: Room) => void;
-  onClickEdit: (room: Room) => void;
+  onClickAdd?: (room: Room) => void;
+  onClickDelete?: (room: Room) => void;
+  onClickEdit?: (room: Room) => void;
 }
 
 const AddOrEditRoomsList: FC<AddOrEditRoomsListProps> = ({
@@ -23,7 +23,7 @@ const AddOrEditRoomsList: FC<AddOrEditRoomsListProps> = ({
       addResource={onClickAdd}
       deleteResource={onClickDelete}
       editResource={onClickEdit}
-      resourceName={'Rooms'}
+      resourceName={'Room'}
       renderResource={(item) => <RoomListItem room={item} />}
       keyExtractor={(resource) => `${resource.id}`}
       AddOrEditResource={AddOrEditRoom}

@@ -1,14 +1,16 @@
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  addLevelToOrg,
   addPersonToOrg,
   addRoomtoOrg,
+  updateLevelsFromOrg,
   updatePeopleFromOrg,
   updateRoomsFromOrg,
 } from '../../../firebase';
 import { incrementHex } from '../../../utils';
 import { actions } from './reducer';
 import * as selectors from './selectors';
-import { Person, Room } from './types';
+import { Level, Person, Room } from './types';
 
 export default function useCurrentOrg() {
   const dispatch = useDispatch();
@@ -42,6 +44,14 @@ export default function useCurrentOrg() {
     });
   }
 
+  function addLevel(level: Level) {
+    if (!orgId) return;
+    addLevelToOrg({
+      orgId: orgId,
+      level,
+    });
+  }
+
   function editRoom(room: Room) {
     if (!orgId) return;
     updateRoomsFromOrg({
@@ -58,6 +68,14 @@ export default function useCurrentOrg() {
     });
   }
 
+  // function editLevel(person: Level) {
+  //   if (!orgId) return;
+  //   updateLevelsFromOrg({
+  //     levels: org.levels?.map((l) => (p.id === person.id ? person : p)) || [],
+  //     orgId: orgId,
+  //   });
+  // }
+
   function deletePerson({ id }: Person) {
     if (!orgId) return;
     updatePeopleFromOrg({
@@ -70,6 +88,14 @@ export default function useCurrentOrg() {
     if (!orgId) return;
     updateRoomsFromOrg({
       rooms: org.rooms?.filter((room) => room.id !== id) || [],
+      orgId: orgId,
+    });
+  }
+
+  function deleteLevel(level: Level) {
+    if (!orgId) return;
+    updateLevelsFromOrg({
+      levels: org.levels?.filter((l) => level !== l) || [],
       orgId: orgId,
     });
   }
@@ -88,5 +114,8 @@ export default function useCurrentOrg() {
     deleteRoom,
     editRoom,
     editPerson,
+    addLevel,
+    // editLevel,
+    deleteLevel,
   };
 }

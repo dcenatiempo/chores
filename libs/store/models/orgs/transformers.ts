@@ -159,7 +159,7 @@ export const transformPerson = {
   },
 };
 
-const transformLevel = {
+export const transformLevel = {
   toFirebase(level: Level): FirebaseLevel {
     return level;
   },
