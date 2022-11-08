@@ -11,9 +11,11 @@ import LevelSelector from '../levels/LevelSelector';
 import RoomTypeSelector from '../roomTypes/RoomTypeSelector';
 import SurfaceSelector from '../surfaces/SurfaceSelector';
 
-export interface AddRoomProps {}
+export interface AddRoomProps {
+  onAddRoom: (room: Room) => void;
+}
 
-const AddRoom: FC<AddRoomProps> = ({}) => {
+const AddRoom: FC<AddRoomProps> = ({ onAddRoom }) => {
   const [name, setName] = useState('');
   const { org } = useCurrentOrg();
 
@@ -51,6 +53,7 @@ const AddRoom: FC<AddRoomProps> = ({}) => {
       room: newRoom,
     });
     resetForm();
+    onAddRoom(newRoom);
   }
 
   return (

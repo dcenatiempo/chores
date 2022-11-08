@@ -5,7 +5,7 @@ import { addPersonToOrg, updatePeopleFromOrg } from '../../libs/firebase';
 import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
 import RoomsList from '../../components/rooms/RoomsList';
 import AddRoom from '../../components/rooms/AddRoom';
-import { Person } from '../../libs/store/models/orgs/types';
+import { Person, Room } from '../../libs/store/models/orgs/types';
 import { Button, Card } from '../../components/base';
 import PageWrapper from '../../components/nav/PageWrapper';
 import Modal from '../../components/base/Modal';
@@ -21,6 +21,10 @@ const Household: NextPage = () => {
     });
   }
 
+  function onClickDeleteRoom(room: Room) {
+    if (!org.id) return;
+  }
+
   function onDeletePerson({ firstName, lastName }: Person) {
     if (!org.id) return;
     updatePeopleFromOrg({
@@ -33,14 +37,13 @@ const Household: NextPage = () => {
     });
   }
 
-  const [showModal, setShowModal] = useState(false);
+  const [showAddRoomModal, setShowAddRoomModal] = useState(false);
 
   return (
     <PageWrapper metaTitle="Chore Household">
-      <Button onClick={() => setShowModal(true)} />
-      <AddRoom />
       <Card>
-        <RoomsList rooms={org.rooms} />
+        <RoomsList rooms={org.rooms} onClickDelete={onClickDeleteRoom} />
+        <Button onClick={() => setShowAddRoomModal(true)} label="Add Room" />
       </Card>
       <AddPeople
         people={org.people}
@@ -48,11 +51,11 @@ const Household: NextPage = () => {
         onClickDelete={onDeletePerson}
       />
       <Modal
-        visible={showModal}
-        onClose={() => setShowModal(false)}
+        visible={showAddRoomModal}
+        onClose={() => setShowAddRoomModal(false)}
         title={'Hello modal'}
       >
-        Hello from the modal!
+        <AddRoom onAddRoom={() => setShowAddRoomModal(false)} />
       </Modal>
     </PageWrapper>
   );

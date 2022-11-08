@@ -5,14 +5,17 @@ import RoomListItem from './RoomListItem';
 
 export interface RoomsListProps {
   rooms: Room[] | undefined;
+  onClickDelete?: (room: Room) => void;
 }
 
-const RoomsList: FC<RoomsListProps> = ({ rooms = [] }) => {
+const RoomsList: FC<RoomsListProps> = ({ rooms = [], onClickDelete }) => {
   return (
     <List
       items={rooms}
       keyExtractor={(item) => `${item.id}`}
-      renderItem={(item) => <RoomListItem room={item} />}
+      renderItem={(item) => (
+        <RoomListItem room={item} onClickDelete={onClickDelete} />
+      )}
     />
   );
 };

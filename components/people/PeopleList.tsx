@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { Person } from '../../libs/store/models/orgs/types';
 import List from '../base/List';
-import PersonRow from './PersonRow';
+import PersonListItem from './PersonListItem';
 
 export interface PeopleListProps {
   people: Person[] | undefined;
@@ -14,7 +14,7 @@ const PeopleList: FC<PeopleListProps> = ({ people = [], onClickDelete }) => {
       items={people}
       keyExtractor={(person) => `${person.firstName + person.lastName}`}
       renderItem={(person) => (
-        <PersonRow
+        <PersonListItem
           onClickDelete={onClickDelete}
           key={person.firstName}
           person={person}

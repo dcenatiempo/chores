@@ -4,7 +4,6 @@ import AddPeople from '../../components/people/AddPeople';
 import { addPersonToOrg, updatePeopleFromOrg } from '../../libs/firebase';
 import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
 import RoomsList from '../../components/rooms/RoomsList';
-import AddRoom from '../../components/rooms/AddRoom';
 import { Person } from '../../libs/store/models/orgs/types';
 import { Card } from '../../components/base';
 import PageWrapper from '../../components/nav/PageWrapper';
@@ -33,7 +32,6 @@ const Dashboard: NextPage = () => {
 
   return (
     <PageWrapper metaTitle="Chore Dashboard">
-      <AddRoom />
       <Card>
         <RoomsList rooms={org.rooms} />
       </Card>

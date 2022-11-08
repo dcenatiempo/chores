@@ -1,13 +1,14 @@
 import { FC } from 'react';
 import { timestampToAge } from '../../libs/dateTime';
 import { Person } from '../../libs/store/models/orgs/types';
+import { ListItem } from '../base';
 import { EditButton, DeleteButton, AddButton } from '../buttons';
 
-interface PersonRowProps {
+interface PersonListItemProps {
   person: Person;
   onClickDelete: (person: Person) => void;
 }
-const PersonRow: FC<PersonRowProps> = ({ person, onClickDelete }) => {
+const PersonListItem: FC<PersonListItemProps> = ({ person, onClickDelete }) => {
   function onClickDeletePerson() {
     onClickDelete({
       lastName: person.lastName || '',
@@ -19,32 +20,22 @@ const PersonRow: FC<PersonRowProps> = ({ person, onClickDelete }) => {
     console.log('edit person' + person.firstName);
   }
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingLeft: 10,
-        paddingRight: 10,
-      }}
-    >
+    <ListItem>
       {person.firstName} {person.lastName}{' '}
       {person.birthday ? timestampToAge(person.birthday) : ''}
       <div
         style={{
           display: 'flex',
           flexDirection: 'row',
-          justifyContent: 'space-between',
           alignItems: 'center',
-          gap: 10,
+          columnGap: 10,
         }}
       >
         <EditButton disabled onClick={onClickEditPerson} />
         <DeleteButton onClick={onClickDeletePerson} />
       </div>
-    </div>
+    </ListItem>
   );
 };
 
-export default PersonRow;
+export default PersonListItem;
