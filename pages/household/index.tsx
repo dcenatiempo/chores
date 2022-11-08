@@ -1,42 +1,35 @@
 import type { NextPage } from 'next';
 
-import AddPeople from '../../components/people/AddPeople';
 import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
-import RoomsList from '../../components/rooms/RoomsList';
-import AddRoom from '../../components/rooms/AddRoom';
-import { Button, Card } from '../../components/base';
 import PageWrapper from '../../components/nav/PageWrapper';
-import Modal from '../../components/base/Modal';
-import { useState } from 'react';
+import AddOrEditPeopleList from '../../components/people/AddOrEditPeopleList';
+import AddOrEditRoomsList from '../../components/rooms/AddOrEditRoomsList';
 
 const Household: NextPage = () => {
-  const { org, addPerson, deletePerson, deleteRoom, addRoom } = useCurrentOrg();
-
-  const [showAddRoomModal, setShowAddRoomModal] = useState(false);
+  const {
+    org,
+    addPerson,
+    deletePerson,
+    deleteRoom,
+    addRoom,
+    editRoom,
+    editPerson,
+  } = useCurrentOrg();
 
   return (
     <PageWrapper metaTitle="Chore Household">
-      <Card>
-        <RoomsList rooms={org.rooms} onClickDelete={deleteRoom} />
-        <Button onClick={() => setShowAddRoomModal(true)} label="Add Room" />
-      </Card>
-      <AddPeople
+      <AddOrEditPeopleList
         people={org.people}
         onClickAdd={addPerson}
         onClickDelete={deletePerson}
+        onClickEdit={editPerson}
       />
-      <Modal
-        visible={showAddRoomModal}
-        onClose={() => setShowAddRoomModal(false)}
-        title={'Hello modal'}
-      >
-        <AddRoom
-          onAddRoom={(room) => {
-            addRoom(room);
-            setShowAddRoomModal(false);
-          }}
-        />
-      </Modal>
+      <AddOrEditRoomsList
+        rooms={org.rooms}
+        onClickAdd={addRoom}
+        onClickDelete={deleteRoom}
+        onClickEdit={editRoom}
+      />
     </PageWrapper>
   );
 };

@@ -42,6 +42,22 @@ export default function useCurrentOrg() {
     });
   }
 
+  function editRoom(room: Room) {
+    if (!orgId) return;
+    updateRoomsFromOrg({
+      rooms: org.rooms?.map((r) => (r.id === room.id ? room : r)) || [],
+      orgId: orgId,
+    });
+  }
+
+  function editPerson(person: Person) {
+    if (!orgId) return;
+    updatePeopleFromOrg({
+      people: org.people?.map((p) => (p.id === person.id ? person : p)) || [],
+      orgId: orgId,
+    });
+  }
+
   function deletePerson({ id }: Person) {
     if (!orgId) return;
     updatePeopleFromOrg({
@@ -70,5 +86,7 @@ export default function useCurrentOrg() {
     addRoom,
     deletePerson,
     deleteRoom,
+    editRoom,
+    editPerson,
   };
 }

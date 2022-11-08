@@ -1,0 +1,4 @@
+.addOrEditList {
+  display: flex;
+  flex-direction: row;
+}

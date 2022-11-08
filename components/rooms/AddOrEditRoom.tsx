@@ -1,23 +1,40 @@
 import { FC, useState } from 'react';
 import { Room } from '../../libs/store/models/orgs/types';
+import { useRoomTypes } from '../../libs/store/models/roomTypes';
 import { RoomType } from '../../libs/store/models/roomTypes/types';
 import { Surface } from '../../libs/store/models/surfaces/types';
 import { Button, TextInput } from '../base';
+import { AddOrEditResourceProps } from '../base/AddOrEditList';
 import Card from '../base/Card';
 import LevelSelector from '../levels/LevelSelector';
 import RoomTypeSelector from '../roomTypes/RoomTypeSelector';
 import SurfaceSelector from '../surfaces/SurfaceSelector';
 
-export interface AddRoomProps {
-  onAddRoom: (room: Room) => void;
-}
+export interface AddOrEditRoomProps extends AddOrEditResourceProps<Room> {}
 
-const AddRoom: FC<AddRoomProps> = ({ onAddRoom }) => {
-  const [name, setName] = useState('');
+const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
+  initialResource,
+  onSubmitResource,
+}) => {
+  const isEdit = !!initialResource;
+  const roomId = initialResource?.id || '';
+  const [name, setName] = useState(initialResource?.name || '');
+  const { roomTypes } = useRoomTypes();
 
-  const [roomType, setRoomType] = useState<RoomType>();
-  const [level, setLevel] = useState<string>();
-  const [surfaces, setSurfaces] = useState<Surface[]>([]);
+  function hydrateRoomType(type?: string) {
+    if (!type) return undefined;
+    return roomTypes.find((rt) => rt.id === type);
+  }
+
+  const [roomType, setRoomType] = useState<RoomType | undefined>(
+    hydrateRoomType(initialResource?.type)
+  );
+  const [level, setLevel] = useState<string | undefined>(
+    initialResource?.level || undefined
+  );
+  const [surfaces, setSurfaces] = useState<Surface[]>(
+    initialResource?.surfaces || []
+  );
 
   function addSurface(surface: Surface | undefined) {
     if (!surface) return;
@@ -35,22 +52,22 @@ const AddRoom: FC<AddRoomProps> = ({ onAddRoom }) => {
     setName('');
     setSurfaces([]);
   }
-  function onClickAddRoom() {
+  function onClickSubmitRoom() {
     if (disabled) return;
     const newRoom: Room = {
       level,
       name,
       type: roomType.id,
-      id: '',
+      id: roomId,
       surfaces: surfaces,
     };
     resetForm();
-    onAddRoom(newRoom);
+    onSubmitResource(newRoom);
   }
 
   return (
     <Card>
-      ADD ROOM
+      {`${isEdit ? 'EDIT' : 'ADD'} ROOM`}
       <br />
       <TextInput value={name} label="name" onChange={setName} />
       <br />
@@ -67,9 +84,13 @@ const AddRoom: FC<AddRoomProps> = ({ onAddRoom }) => {
         </div>
       ))}
       <SurfaceSelector onSelect={addSurface} />
-      <Button label="Add Room" disabled={disabled} onClick={onClickAddRoom} />
+      <Button
+        label={`${isEdit ? 'Edit' : 'Add'} Room`}
+        disabled={disabled}
+        onClick={onClickSubmitRoom}
+      />
     </Card>
   );
 };
 
-export default AddRoom;
+export default AddOrEditRoom;

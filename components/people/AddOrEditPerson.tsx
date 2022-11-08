@@ -1,24 +1,26 @@
 import { FC, useState } from 'react';
 import { Person } from '../../libs/store/models/orgs/types';
 import { TextInput } from '../base';
+import { AddOrEditResourceProps } from '../base/AddOrEditList';
 import { DateSelector } from '../base/DateSelector';
 import { AddButton } from '../buttons';
 
-interface AddPersonProps {
-  initialPerson?: Person;
-  onClickAdd: ({ firstName, lastName, birthday }: Person) => void;
-}
-const AddPerson: FC<AddPersonProps> = ({ initialPerson, onClickAdd }) => {
-  const [firstName, setFirstName] = useState(initialPerson?.firstName || '');
-  const [lastName, setLastName] = useState(initialPerson?.lastName || '');
-  const [date, setDate] = useState(initialPerson?.birthday);
+interface AddOrEditPersonProps extends AddOrEditResourceProps<Person> {}
+
+const AddPerson: FC<AddOrEditPersonProps> = ({
+  initialResource,
+  onSubmitResource,
+}) => {
+  const [firstName, setFirstName] = useState(initialResource?.firstName || '');
+  const [lastName, setLastName] = useState(initialResource?.lastName || '');
+  const [date, setDate] = useState(initialResource?.birthday);
 
   function onClickAddPerson() {
     if (firstName.length === 0) return;
     setFirstName('');
     setLastName('');
     setDate(undefined);
-    onClickAdd({ firstName, lastName, birthday: date, id: '' });
+    onSubmitResource({ firstName, lastName, birthday: date, id: '' });
   }
 
   return (

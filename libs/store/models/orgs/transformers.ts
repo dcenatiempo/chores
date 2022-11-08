@@ -176,7 +176,7 @@ export const transformRoom = {
       level,
       name,
       surfaces: room.surfaces?.map(transformRoomSurface.toFirebase),
-      typeRef: doc(db, Collection.ROOM_TYPES, room.type),
+      typeRef: transformRoomTypeRef.toFirebase(room.type),
     };
   },
   fromFirebase(room: FirebaseRoom): Room {
@@ -185,15 +185,20 @@ export const transformRoom = {
       id: id || toCamelCase(name),
       level,
       name,
-      type: roomTypeRefTransformer(room.typeRef),
+      type: transformRoomTypeRef.fromFirebase(room.typeRef),
       surfaces: room.surfaces?.map(transformRoomSurface.fromFirebase),
     };
   },
 };
 
-function roomTypeRefTransformer(typeRef: FirebaseReference) {
-  return typeRef.id;
-}
+export const transformRoomTypeRef = {
+  toFirebase(type: string) {
+    return doc(db, Collection.ROOM_TYPES, type);
+  },
+  fromFirebase(type: FirebaseReference) {
+    return type.id;
+  },
+};
 
 const transformRoomSurface = {
   toFirebase(surface: Surface): FirebaseSurface {

@@ -6,18 +6,20 @@ import { EditButton, DeleteButton, AddButton } from '../buttons';
 
 interface PersonListItemProps {
   person: Person;
-  onClickDelete: (person: Person) => void;
+  onClickDelete?: (person: Person) => void;
+  onClickEdit?: (person: Person) => void;
 }
-const PersonListItem: FC<PersonListItemProps> = ({ person, onClickDelete }) => {
+const PersonListItem: FC<PersonListItemProps> = ({
+  person,
+  onClickDelete,
+  onClickEdit,
+}) => {
   function onClickDeletePerson() {
-    onClickDelete({
-      id: person.id,
-      firstName: person.firstName || '',
-    });
+    onClickDelete?.(person);
   }
 
   function onClickEditPerson() {
-    console.log('edit person' + person.firstName);
+    onClickEdit?.(person);
   }
   return (
     <ListItem>
@@ -31,8 +33,10 @@ const PersonListItem: FC<PersonListItemProps> = ({ person, onClickDelete }) => {
           columnGap: 10,
         }}
       >
-        <EditButton disabled onClick={onClickEditPerson} />
-        <DeleteButton onClick={onClickDeletePerson} />
+        {onClickEdit ? (
+          <EditButton disabled onClick={onClickEditPerson} />
+        ) : null}
+        {onClickDelete ? <DeleteButton onClick={onClickDeletePerson} /> : null}
       </div>
     </ListItem>
   );

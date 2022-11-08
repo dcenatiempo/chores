@@ -6,14 +6,19 @@ import { DeleteButton, EditButton } from '../buttons';
 interface RoomListItemProps {
   room: Room;
   onClickDelete?: (room: Room) => void;
+  onClickEdit?: (room: Room) => void;
 }
-const RoomListItem: FC<RoomListItemProps> = ({ room, onClickDelete }) => {
+const RoomListItem: FC<RoomListItemProps> = ({
+  room,
+  onClickDelete,
+  onClickEdit,
+}) => {
   function onClickDeleteRoom() {
     onClickDelete?.(room);
   }
 
   function onClickEditRoom() {
-    console.log('edit person' + room.name);
+    onClickEdit?.(room);
   }
   return (
     <ListItem>
@@ -26,7 +31,7 @@ const RoomListItem: FC<RoomListItemProps> = ({ room, onClickDelete }) => {
           columnGap: 10,
         }}
       >
-        <EditButton disabled onClick={onClickEditRoom} />
+        {onClickEdit ? <EditButton onClick={onClickEditRoom} /> : null}
         {onClickDelete ? <DeleteButton onClick={onClickDeleteRoom} /> : null}
       </div>
     </ListItem>
