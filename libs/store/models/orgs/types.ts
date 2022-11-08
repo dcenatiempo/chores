@@ -10,6 +10,7 @@ import {
 import { BaseSlice } from '../types';
 
 export interface Person {
+  id: string;
   lastName?: string;
   birthday?: UnixTimestamp;
   firstName: string;
@@ -25,6 +26,7 @@ export interface Room {
 
 export interface Chore {
   name: string;
+  id: string;
 }
 
 export interface Task {
@@ -45,6 +47,7 @@ export interface Org {
   customSurfaces: SurfaceTemplate[];
   customActions: Action[];
   customRoomTypes: RoomType[];
+  lastId: string; // hexedecimal string starting at 1000, last id that was assigned to a resource in the org, should be incremented and set when new resource id is needed
   // settings?: Settings;
 }
 
@@ -79,11 +82,13 @@ export interface FirebaseOrg {
   customSurfaces?: FirebaseCustomSurface[];
   customActions?: FirebaseCustomAction[];
   customRoomTypes?: FirebaseCustomRoomType[];
+  lastId: string; // hexedecimal string starting at 1000, last id that was assigned to a resource in the org, should be incremented and set when new resource id is needed
 }
 
 export type FirebaseLevel = string;
 
 export interface FirebaseRoom {
+  id: string;
   level: string;
   name: string;
   surfaces: FirebaseSurface[];
@@ -91,23 +96,27 @@ export interface FirebaseRoom {
 }
 
 export interface FirebaseSurface {
+  id: string;
   surfaceRef: FirebaseReference;
   name: string;
   descriptor: string;
 }
 
 export interface FirebasePerson {
+  id: string;
   firstName: string;
   lastName: string;
   birthday?: FirebaseTimestamp;
 }
 
 export interface FirebaseChore {
+  id: string;
   name: string;
   // ?
 }
 
 export interface FirebaseTask {
+  id: string;
   // ?
 }
 

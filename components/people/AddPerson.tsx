@@ -18,7 +18,7 @@ const AddPerson: FC<AddPersonProps> = ({ initialPerson, onClickAdd }) => {
     setFirstName('');
     setLastName('');
     setDate(undefined);
-    onClickAdd({ firstName, lastName, birthday: date });
+    onClickAdd({ firstName, lastName, birthday: date, id: '' });
   }
 
   return (

@@ -11,7 +11,7 @@ interface PersonListItemProps {
 const PersonListItem: FC<PersonListItemProps> = ({ person, onClickDelete }) => {
   function onClickDeletePerson() {
     onClickDelete({
-      lastName: person.lastName || '',
+      id: person.id,
       firstName: person.firstName || '',
     });
   }

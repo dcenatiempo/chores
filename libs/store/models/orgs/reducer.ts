@@ -1,10 +1,12 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { listenForDocChanges } from '../../../firebase';
 import { Collection } from '../../../firebase/types';
+import * as log from '../../../logging';
 import { transformOrg } from './transformers';
 import { Org, OrgMap, OrgsState } from './types';
 
-let unsubscribe: () => void;
+const initialLastId = '10000';
+
 const initialState: OrgsState = {
   orgsMap: {},
   currentOrgId: undefined,
@@ -30,6 +32,13 @@ export const orgs = createSlice({
     updateOrg: (state, action: PayloadAction<Org>) => {
       const orgId = action?.payload?.id;
       if (orgId) state.orgsMap[orgId] = { orgId, data: action.payload };
+    },
+    setLastId: (state, action: PayloadAction<string>) => {
+      const currentOrgId = state.currentOrgId;
+      if (!currentOrgId)
+        return log.warn('could not incrementLastId, "currentOrgId" needed');
+      const newLastId = action.payload || initialLastId;
+      state.orgsMap[currentOrgId].data.lastId = newLastId;
     },
     clearOrgs: (state) => {
       state.orgsMap = initialState.orgsMap;

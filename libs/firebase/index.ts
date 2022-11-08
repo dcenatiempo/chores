@@ -18,7 +18,12 @@ import {
   transformPerson,
   transformRoom,
 } from '../store/models/orgs/transformers';
-import { FirebasePerson, Person, Room } from '../store/models/orgs/types';
+import {
+  FirebasePerson,
+  FirebaseRoom,
+  Person,
+  Room,
+} from '../store/models/orgs/types';
 import { transformUser } from '../store/models/user/transformers';
 import { FirebaseUser, User } from '../store/models/user/types';
 import { Collection } from './types';
@@ -110,10 +115,11 @@ export async function addPersonToOrg({
   orgId: string;
 }) {
   const orgDocRef = doc(db, Collection.ORGS, orgId);
-  const newPerson = transformPerson.toFirebase(person);
+  const firebasePerson = transformPerson.toFirebase(person);
 
   const res = await updateDoc(orgDocRef, {
-    people: arrayUnion(newPerson),
+    people: arrayUnion(firebasePerson),
+    lastId: firebasePerson.id,
   });
 }
 
@@ -135,6 +141,27 @@ export async function updatePeopleFromOrg({
   });
 }
 
+export async function updateRoomsFromOrg({
+  rooms,
+  orgId,
+}: {
+  rooms: Room[];
+  orgId: string;
+}) {
+  console.log(rooms);
+  const firebaseRooms: FirebaseRoom[] = rooms?.map((room) =>
+    transformRoom.toFirebase(room)
+  );
+  console.log(firebaseRooms);
+
+  const docRef = doc(db, Collection.ORGS, orgId);
+
+  const res = await updateDoc(docRef, {
+    rooms: firebaseRooms,
+  });
+  console.log(res);
+}
+
 export async function addRoomtoOrg({
   orgId,
   room,
@@ -143,7 +170,10 @@ export async function addRoomtoOrg({
   room: Room;
 }) {
   const orgDocRef = doc(db, Collection.ORGS, orgId);
+  const firebaseRoom = transformRoom.toFirebase(room);
   const res = await updateDoc(orgDocRef, {
-    rooms: arrayUnion(transformRoom.toFirebase(room)),
+    rooms: arrayUnion(firebaseRoom),
+    lastId: firebaseRoom.id,
   });
+  console.log(res);
 }

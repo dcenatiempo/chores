@@ -52,6 +52,7 @@ export const transformOrg = {
         org.customSurfaces?.map(transformSurface.toFirebase) || [],
       customRoomTypes:
         org.customRoomTypes?.map(transformRoomType.toFirebase) || [],
+      lastId: org.lastId,
     };
   },
   fromFirebase(org: FirebaseOrg): Org {
@@ -69,6 +70,7 @@ export const transformOrg = {
         org.customSurfaces?.map(transformSurface.fromFirebase) || [],
       customRoomTypes:
         org.customRoomTypes?.map(transformRoomType.fromFirebase) || [],
+      lastId: org.lastId,
     };
   },
 };
@@ -76,11 +78,13 @@ export const transformOrg = {
 const transformChore = {
   toFirebase(chore: Chore): FirebaseChore {
     return {
+      id: '',
       name: '',
     };
   },
   fromFirebase(chore: FirebaseChore): Chore {
     return {
+      id: '',
       name: '',
     };
   },
@@ -136,6 +140,7 @@ const transformRoomType = {
 export const transformPerson = {
   toFirebase(person: Person): FirebasePerson {
     return {
+      id: person.id,
       firstName: person.firstName,
       lastName: person.lastName || '',
       ...(person.birthday
@@ -146,6 +151,7 @@ export const transformPerson = {
   fromFirebase(person: FirebasePerson): Person {
     return {
       ...person,
+      id: person.id || person.firstName, // todo: remove once data is clean
       birthday: person.birthday
         ? transformTimestamp.fromFirebase(person.birthday)
         : undefined,
@@ -164,8 +170,9 @@ const transformLevel = {
 
 export const transformRoom = {
   toFirebase(room: Room): FirebaseRoom {
-    const { level, name } = room;
+    const { level, name, id } = room;
     return {
+      id,
       level,
       name,
       surfaces: room.surfaces?.map(transformRoomSurface.toFirebase),
@@ -173,9 +180,9 @@ export const transformRoom = {
     };
   },
   fromFirebase(room: FirebaseRoom): Room {
-    const { level, name } = room;
+    const { level, name, id } = room;
     return {
-      id: toCamelCase(name),
+      id: id || toCamelCase(name),
       level,
       name,
       type: roomTypeRefTransformer(room.typeRef),
@@ -195,6 +202,7 @@ const transformRoomSurface = {
     //    ? doc(db, Collection.ORGS, orgId, customSurfaces, surface.id) // ?
     //    : doc(db, Collection.SURFACES, surface.id);
     return {
+      id: surface.id,
       surfaceRef: doc(db, Collection.SURFACES, surface.id),
       name: surface.name,
       descriptor: surface.descriptor || '',
@@ -203,7 +211,7 @@ const transformRoomSurface = {
   fromFirebase(surface: FirebaseSurface): Surface {
     return {
       id: surface.surfaceRef.id,
-      name: surface.name,
+      name: surface.name || surface.surfaceRef.id,
       descriptor: surface.descriptor || '',
     };
   },

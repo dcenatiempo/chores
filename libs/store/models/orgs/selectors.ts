@@ -19,6 +19,7 @@ const currentOrg = createSelector(
   (orgs, currentOrgId) => orgs?.[currentOrgId || '']?.data || {}
 );
 
+const lastId = createSelector(currentOrg, (org) => org?.lastId || '1000');
 const people = createSelector(currentOrg, (org) => org?.people || []);
 const levels = createSelector(currentOrg, (org) => org?.levels || []);
 const rooms = createSelector(currentOrg, (org) => org?.rooms || []);
@@ -27,4 +28,4 @@ const name = createSelector(currentOrg, (org) => org?.name || '');
 const id = createSelector(currentOrg, (org) => org?.id);
 
 const orgs = orgsArray;
-export { orgs, currentOrg, people, levels, rooms, chores, name, id };
+export { orgs, currentOrg, people, levels, rooms, chores, name, id, lastId };

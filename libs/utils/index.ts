@@ -14,3 +14,15 @@ export function cleanFromObject(obj: object, blacklist: any[]) {
     return { ...newObj, [key]: value };
   }, {});
 }
+
+/**
+ *
+ * @param hex a hexidecimal string
+ * @returns a hexidecimal string OR an empty string if there was an issue
+ */
+export function incrementHex(hex: string) {
+  const intified = parseInt(hex, 16);
+  if (isNaN(intified)) return '';
+  const newHex = (intified + 1).toString(16);
+  return newHex;
+}

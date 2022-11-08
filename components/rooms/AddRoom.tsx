@@ -1,10 +1,7 @@
 import { FC, useState } from 'react';
-import { addRoomtoOrg } from '../../libs/firebase';
 import { Room } from '../../libs/store/models/orgs/types';
-import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
 import { RoomType } from '../../libs/store/models/roomTypes/types';
 import { Surface } from '../../libs/store/models/surfaces/types';
-import { toCamelCase } from '../../libs/utils';
 import { Button, TextInput } from '../base';
 import Card from '../base/Card';
 import LevelSelector from '../levels/LevelSelector';
@@ -17,7 +14,6 @@ export interface AddRoomProps {
 
 const AddRoom: FC<AddRoomProps> = ({ onAddRoom }) => {
   const [name, setName] = useState('');
-  const { org } = useCurrentOrg();
 
   const [roomType, setRoomType] = useState<RoomType>();
   const [level, setLevel] = useState<string>();
@@ -45,13 +41,9 @@ const AddRoom: FC<AddRoomProps> = ({ onAddRoom }) => {
       level,
       name,
       type: roomType.id,
-      id: toCamelCase(name), // todo ensure this is unique
+      id: '',
       surfaces: surfaces,
     };
-    addRoomtoOrg({
-      orgId: org.id,
-      room: newRoom,
-    });
     resetForm();
     onAddRoom(newRoom);
   }

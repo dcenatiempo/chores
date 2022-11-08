@@ -24,7 +24,6 @@ function List<T>({
           if (hideSeparator) return '';
           return i < items.length - 1 ? styles.separator : '';
         })();
-
         return (
           <div key={keyExtractor(item, i)} className={style}>
             {renderedItem}

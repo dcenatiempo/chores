@@ -12,7 +12,7 @@ const PeopleList: FC<PeopleListProps> = ({ people = [], onClickDelete }) => {
   return (
     <List
       items={people}
-      keyExtractor={(person) => `${person.firstName + person.lastName}`}
+      keyExtractor={(person) => `${person.id || person.firstName}`}
       renderItem={(person) => (
         <PersonListItem
           onClickDelete={onClickDelete}
