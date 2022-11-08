@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import Head from 'next/head';
 import { logout, useIsAuthenticated } from '../../libs/authentication';
-import { Button } from '../base';
+import { Button, Icon, IconButton, IconColor, IconName } from '../base';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { organizationsStore } from '../../libs/store';
@@ -14,12 +14,6 @@ const Header: FC<Props> = () => {
 
   return (
     <div style={styles.container}>
-      <Head>
-        <title>Chores are FUN!</title>
-        <meta name="description" content="Making choes fun again" />
-        <link rel="icon" href="/favicon.ico" />
-      </Head>
-
       <div
         style={{
           display: 'flex',
@@ -28,9 +22,9 @@ const Header: FC<Props> = () => {
         }}
       >
         <h1 style={styles.title}>{orgName} Chores</h1>
-        <ThemeSelector />
         <LogInOutButton />
       </div>
+      <NavigationButtons />
     </div>
   );
 };
@@ -52,15 +46,42 @@ const LogInOutButton: FC = () => {
   const { isAuthenticated } = useIsAuthenticated();
   if (router.asPath.startsWith('/login')) return null;
   return isAuthenticated ? (
-    <Button onClick={logout} label="Logout" />
+    <IconButton
+      onClick={logout}
+      type="sentance"
+      iconName={IconName.LOGOUT}
+      outlined
+      size={36}
+    />
   ) : (
-    <Button
+    <IconButton
+      type="sentance"
       onClick={() =>
         router.push({
           pathname: '/login',
         })
       }
-      label="Login"
+      iconName={IconName.LOGIN}
+      outlined
+      size={36}
     />
+  );
+};
+
+const NavigationButtons: FC = () => {
+  const router = useRouter();
+  const tabs = ['dashboard', 'household', 'settings'];
+  return (
+    <div style={{ display: 'flex', flexDirection: 'row' }}>
+      {tabs.map((tab) => (
+        <Button
+          key={tab}
+          type="sentance"
+          onClick={() => router.push(tab)}
+          label={tab}
+          disabled={router.asPath.includes(tab)}
+        />
+      ))}
+    </div>
   );
 };

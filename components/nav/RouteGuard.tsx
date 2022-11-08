@@ -2,7 +2,6 @@ import { useState, useEffect, FC } from 'react';
 import { useRouter } from 'next/router';
 
 import { useIsAuthenticated } from '../../libs/authentication';
-import { useSelector } from 'react-redux';
 
 const publicPaths = ['/', '/login'];
 
@@ -13,13 +12,17 @@ interface Props {
 export default function RouteGuard({ children }: Props) {
   const router = useRouter();
   const { isAuthenticated, loading } = useIsAuthenticated();
-  const [isAuthorized, setIsAuthorized] = useState(false);
+  const [isAuthorized, setIsAuthorized] = useState(isAuthenticated);
 
   useEffect(() => {
+    if (isAuthenticated) return;
+
     authCheck(router.asPath);
 
     // on route change start - hide page content by setting authorized to false
-    const hideContent = () => setIsAuthorized(false);
+    const hideContent = () => {
+      setIsAuthorized(false);
+    };
     router.events.on('routeChangeStart', hideContent);
 
     // on route change complete - run auth check
@@ -54,7 +57,7 @@ export default function RouteGuard({ children }: Props) {
     } else if (isAuthenticated && path === '/login') {
       setIsAuthorized(true);
       router.push({
-        pathname: '/household',
+        pathname: '/dashboard',
       });
     } else {
       setIsAuthorized(true);
