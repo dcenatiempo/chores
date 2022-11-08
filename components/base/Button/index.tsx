@@ -22,7 +22,6 @@ const Button: FC<ButtonProps> = ({
   onClick = () => {},
 }) => {
   const style = useMemo(() => {
-    if (type === 'invisible') return styles.invisibleButton;
     const globalColorStyle = `${color}-color`;
     const localColorStyle = styles?.[`${color}-color`];
 
@@ -30,6 +29,9 @@ const Button: FC<ButtonProps> = ({
     const disabledStyle = disabled ? 'disabled' : '';
     const buttonStyle = styles.button;
     const typeStyle = styles?.[type];
+    const invisibleStyle = styles.invisible;
+
+    if (type === 'invisible') return `${buttonStyle} ${invisibleStyle}`;
 
     return `${buttonStyle} ${typeStyle} ${disabledStyle} ${colorStyle}`;
   }, [type, disabled, color]);

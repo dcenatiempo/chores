@@ -1,6 +1,8 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useSSR, usePortal } from '../../../libs/hooks';
+import { IconName } from '../Icon';
+import IconButton from '../IconButton';
 import styles from './Modal.module.css';
 
 export interface ModalProps {
@@ -42,8 +44,7 @@ const ModalContent: FC<Omit<ModalProps, 'visible'>> = ({
     }
   }
 
-  function handleCloseClick(e: React.MouseEvent<HTMLAnchorElement>) {
-    e.preventDefault();
+  function onClickClose() {
     onClose();
   }
 
@@ -52,9 +53,11 @@ const ModalContent: FC<Omit<ModalProps, 'visible'>> = ({
       <div className={styles.modalWrapper} ref={modalWrapperRef}>
         <div className={styles.modal}>
           <div className={styles.header}>
-            <a href="#" onClick={handleCloseClick}>
-              x
-            </a>
+            <IconButton
+              type="invisible"
+              iconName={IconName.X}
+              onClick={onClickClose}
+            />
           </div>
           {title && <div className={styles.title}>{title}</div>}
           <div className={styles.body}>{children}</div>

@@ -12,8 +12,9 @@
 }
 
 /* takes the shape of its contents */
-.invisibleButton {
-  min-height: 40px;
+.invisible {
+  border-color: transparent;
+  background-color: transparent;
 }
 
 .fill {
