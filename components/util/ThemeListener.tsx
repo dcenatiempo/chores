@@ -10,10 +10,9 @@ export default function ThemeListener() {
   const { isDark } = useAppState();
 
   useEffect(() => {
-    const app = document.querySelector('#__next');
-    if (!app) return;
-    // @ts-expect-error
-    app.dataset.theme = isDark ? Theme.DARK : Theme.LIGHT;
+    const body = document.querySelector('body');
+    if (!body) return;
+    body.dataset.theme = isDark ? Theme.DARK : Theme.LIGHT;
   }, [isDark]);
 
   return null;

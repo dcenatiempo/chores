@@ -9,12 +9,13 @@
 }
 
 .modalWrapper {
-  width: 500px;
-  height: 600px;
+  min-width: 500px;
+  min-height: 600px;
+  max-height: 90vh;
 }
 
 .modal {
-  background: white;
+  background-color: var(--component-bg-color);
   height:100%;
   width:100%;
   border-radius: 15px;

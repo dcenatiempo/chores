@@ -3,7 +3,7 @@
   --light-color: #e3f5fc;
 }
 
-#__next[data-theme="theme-light"] {
+body[data-theme="theme-light"] {
   --primary-color: #0072a3;
   --text-color: var(--dark-color);
   --basic-color: var(--dark-color);
@@ -15,7 +15,7 @@
   --success-color: rgb(7, 193, 72);
   --border-color: rgb(189, 189, 189);
 }
-#__next[data-theme="theme-dark"] {
+body[data-theme="theme-dark"] {
   --primary-color: #49afd9;
   --text-color: var(--light-color);
   --basic-color: var(--light-color);
@@ -73,7 +73,7 @@ a {
   box-sizing: border-box;
 }
 
-#__next {
+body {
   color: var(--text-color);
   background-color: var(--bg-color);
 }
