@@ -109,8 +109,7 @@ export { app, auth, db, fetchDocs, fetchDoc, listenForDocChanges };
 
 export async function createUser(userId: string, user: User) {
   const firebaseUser: FirebaseUser = transformUser.toFirebase(user);
-  const res = await setDoc(doc(db, 'users', userId), firebaseUser);
-  console.log('createUser', res);
+  await setDoc(doc(db, 'users', userId), firebaseUser);
 }
 
 export async function addPersonToOrg({
@@ -123,7 +122,7 @@ export async function addPersonToOrg({
   const orgDocRef = doc(db, Collection.ORGS, orgId);
   const firebasePerson = transformPerson.toFirebase(person);
 
-  const res = await updateDoc(orgDocRef, {
+  await updateDoc(orgDocRef, {
     people: arrayUnion(firebasePerson),
     lastId: firebasePerson.id,
   });
@@ -139,10 +138,9 @@ export async function addLevelToOrg({
   const orgDocRef = doc(db, Collection.ORGS, orgId);
   const firebaseLevel = transformLevel.toFirebase(level);
 
-  const res = await updateDoc(orgDocRef, {
+  await updateDoc(orgDocRef, {
     levels: arrayUnion(firebaseLevel),
   });
-  console.log(res);
 }
 
 export async function updatePeopleFromOrg({
@@ -157,7 +155,7 @@ export async function updatePeopleFromOrg({
   );
   const docRef = doc(db, Collection.ORGS, orgId);
 
-  const res = await updateDoc(docRef, {
+  await updateDoc(docRef, {
     people: firebasePeople,
   });
 }
@@ -169,18 +167,15 @@ export async function updateRoomsFromOrg({
   rooms: Room[];
   orgId: string;
 }) {
-  console.log(rooms);
   const firebaseRooms: FirebaseRoom[] = rooms?.map((room) =>
     transformRoom.toFirebase(room)
   );
-  console.log(firebaseRooms);
 
   const docRef = doc(db, Collection.ORGS, orgId);
 
-  const res = await updateDoc(docRef, {
+  await updateDoc(docRef, {
     rooms: firebaseRooms,
   });
-  console.log(res);
 }
 
 export async function updateTasksFromOrg({
@@ -193,14 +188,12 @@ export async function updateTasksFromOrg({
   const firebaseTasks: FirebaseTask[] = tasks?.map((task) =>
     transformTask.toFirebase(task)
   );
-  console.log(firebaseTasks);
 
   const docRef = doc(db, Collection.ORGS, orgId);
 
-  const res = await updateDoc(docRef, {
+  await updateDoc(docRef, {
     tasks: firebaseTasks,
   });
-  console.log(res);
 }
 
 export async function updateLevelsFromOrg({
@@ -216,10 +209,9 @@ export async function updateLevelsFromOrg({
 
   const docRef = doc(db, Collection.ORGS, orgId);
 
-  const res = await updateDoc(docRef, {
+  await updateDoc(docRef, {
     levels: firebaseLevels,
   });
-  console.log(res);
 }
 
 export async function addRoomToOrg({
@@ -231,11 +223,10 @@ export async function addRoomToOrg({
 }) {
   const orgDocRef = doc(db, Collection.ORGS, orgId);
   const firebaseRoom = transformRoom.toFirebase(room);
-  const res = await updateDoc(orgDocRef, {
+  await updateDoc(orgDocRef, {
     rooms: arrayUnion(firebaseRoom),
     lastId: firebaseRoom.id,
   });
-  console.log(res);
 }
 
 export async function addTaskToOrg({
@@ -247,9 +238,8 @@ export async function addTaskToOrg({
 }) {
   const orgDocRef = doc(db, Collection.ORGS, orgId);
   const firebaseTask = transformTask.toFirebase(task);
-  const res = await updateDoc(orgDocRef, {
+  await updateDoc(orgDocRef, {
     tasks: arrayUnion(firebaseTask),
     lastId: firebaseTask.id,
   });
-  console.log(res);
 }
