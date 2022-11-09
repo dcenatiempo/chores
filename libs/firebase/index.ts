@@ -15,12 +15,15 @@ import {
   QueryConstraint,
 } from 'firebase/firestore';
 import {
+  transformChore,
   transformLevel,
   transformPerson,
   transformRoom,
   transformTask,
 } from '../store/models/orgs/transformers';
 import {
+  Chore,
+  FirebaseChore,
   FirebaseLevel,
   FirebasePerson,
   FirebaseRoom,
@@ -196,6 +199,24 @@ export async function updateTasksFromOrg({
   });
 }
 
+export async function updateChoresFromOrg({
+  chores,
+  orgId,
+}: {
+  chores: Chore[];
+  orgId: string;
+}) {
+  const firebaseChores: FirebaseChore[] = chores?.map((chore) =>
+    transformChore.toFirebase(chore)
+  );
+
+  const docRef = doc(db, Collection.ORGS, orgId);
+
+  await updateDoc(docRef, {
+    chores: firebaseChores,
+  });
+}
+
 export async function updateLevelsFromOrg({
   levels,
   orgId,
@@ -241,5 +262,20 @@ export async function addTaskToOrg({
   await updateDoc(orgDocRef, {
     tasks: arrayUnion(firebaseTask),
     lastId: firebaseTask.id,
+  });
+}
+
+export async function addChoreToOrg({
+  orgId,
+  chore,
+}: {
+  orgId: string;
+  chore: Chore;
+}) {
+  const orgDocRef = doc(db, Collection.ORGS, orgId);
+  const firebaseChore = transformChore.toFirebase(chore);
+  await updateDoc(orgDocRef, {
+    chores: arrayUnion(firebaseChore),
+    lastId: firebaseChore.id,
   });
 }

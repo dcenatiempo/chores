@@ -25,8 +25,10 @@ export interface Room {
 }
 
 export interface Chore {
-  name: string;
   id: string;
+  name: string;
+  taskIds: string[];
+  defaultPeople: string[];
 }
 
 export interface Task {
@@ -111,7 +113,8 @@ export interface FirebasePerson {
 export interface FirebaseChore {
   id: string;
   name: string;
-  // ?
+  taskIds: string[];
+  defaultPeople: string[];
 }
 
 export interface FirebaseTask {

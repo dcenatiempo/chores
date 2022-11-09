@@ -1,10 +1,12 @@
 import { useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
+  addChoreToOrg,
   addLevelToOrg,
   addPersonToOrg,
   addRoomToOrg,
   addTaskToOrg,
+  updateChoresFromOrg,
   updateLevelsFromOrg,
   updatePeopleFromOrg,
   updateRoomsFromOrg,
@@ -13,7 +15,7 @@ import {
 import { incrementHex } from '../../../utils';
 import { actions } from './reducer';
 import * as selectors from './selectors';
-import { Level, Person, Room, Task } from './types';
+import { Chore, Level, Person, Room, Task } from './types';
 
 export default function useCurrentOrg() {
   const dispatch = useDispatch();
@@ -24,6 +26,7 @@ export default function useCurrentOrg() {
   const levels = useSelector(selectors.levels);
   const lastId = useSelector(selectors.lastId);
   const tasks = useSelector(selectors.tasks);
+  const chores = useSelector(selectors.chores);
   const customRoomTypes = useSelector(selectors.customRoomTypes);
   const customSurfaces = useSelector(selectors.customSurfaces);
   const lastIdRef = useRef(lastId);
@@ -67,6 +70,14 @@ export default function useCurrentOrg() {
     });
   }
 
+  function addChore(chore: Chore) {
+    if (!orgId) return;
+    addChoreToOrg({
+      orgId: orgId,
+      chore: { ...chore, id: getNextId() },
+    });
+  }
+
   function addLevel(level: Level) {
     if (!orgId) return;
     addLevelToOrg({
@@ -87,6 +98,14 @@ export default function useCurrentOrg() {
     if (!orgId) return;
     updateTasksFromOrg({
       tasks: tasks?.map((t) => (t.id === task.id ? task : t)) || [],
+      orgId: orgId,
+    });
+  }
+
+  function editChore(chore: Chore) {
+    if (!orgId) return;
+    updateChoresFromOrg({
+      chores: chores?.map((t) => (t.id === chore.id ? chore : t)) || [],
       orgId: orgId,
     });
   }
@@ -131,6 +150,14 @@ export default function useCurrentOrg() {
     });
   }
 
+  function deleteChore({ id }: Chore) {
+    if (!orgId) return;
+    updateChoresFromOrg({
+      chores: chores?.filter((chore) => chore.id !== id) || [],
+      orgId: orgId,
+    });
+  }
+
   function deleteLevel(level: Level) {
     if (!orgId) return;
     updateLevelsFromOrg({
@@ -140,6 +167,7 @@ export default function useCurrentOrg() {
   }
 
   return {
+    chores,
     tasks,
     rooms,
     levels,
@@ -161,5 +189,8 @@ export default function useCurrentOrg() {
     addTask,
     deleteTask,
     editTask,
+    addChore,
+    deleteChore,
+    editChore,
   };
 }

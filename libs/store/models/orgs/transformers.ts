@@ -78,18 +78,17 @@ export const transformOrg = {
   },
 };
 
-const transformChore = {
+export const transformChore = {
   toFirebase(chore: Chore): FirebaseChore {
     return {
-      id: '',
-      name: '',
+      id: chore.id,
+      name: chore.name,
+      taskIds: chore.taskIds,
+      defaultPeople: chore.defaultPeople,
     };
   },
   fromFirebase(chore: FirebaseChore): Chore {
-    return {
-      id: '',
-      name: '',
-    };
+    return chore;
   },
 };
 
