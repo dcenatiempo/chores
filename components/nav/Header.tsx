@@ -13,7 +13,7 @@ const Header: FC<Props> = () => {
   const orgName = useSelector(organizationsStore.selectors.name);
 
   return (
-    <div style={styles.container}>
+    <header style={styles.container}>
       <div
         style={{
           display: 'flex',
@@ -25,7 +25,7 @@ const Header: FC<Props> = () => {
         <LogInOutButton />
       </div>
       <NavigationButtons />
-    </div>
+    </header>
   );
 };
 
@@ -34,7 +34,7 @@ export default Header;
 const styles = {
   container: {
     flex: 'row',
-    height: 50,
+    minHeight: 50,
   },
   title: {
     color: '#0070f3',

@@ -22,7 +22,8 @@ const RoomListItem: FC<RoomListItemProps> = ({
   }
   return (
     <ListItem>
-      {room.name} ({room.type}) on the {room.level} level
+      {room.name} ({room.type}) on the {room.level} level {room.surfaces.length}{' '}
+      surfaces
       <div
         style={{
           display: 'flex',

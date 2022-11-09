@@ -27,30 +27,17 @@ const ModalContent: FC<Omit<ModalProps, 'visible'>> = ({
   const portal = usePortal('modal-root');
   const { isBrowser } = useSSR();
 
-  const modalWrapperRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!isBrowser) return;
-    window.addEventListener('click', backDropHandler);
-
-    return () => window.removeEventListener('click', backDropHandler);
-  }, [isBrowser]);
-
-  function backDropHandler(e: MouseEvent) {
-    if (!e) return;
-    // @ts-expect-error
-    if (!modalWrapperRef?.current?.contains(e.target)) {
-      onClose();
-    }
-  }
+  const overlayRef = useRef<HTMLDivElement>(null);
 
   function onClickClose() {
+    console.log('y');
     onClose();
   }
 
   const modalContent = (
-    <div className={styles.overlay}>
-      <div className={styles.modalWrapper} ref={modalWrapperRef}>
+    <>
+      <div className={styles.overlay} onClick={onClose} />
+      <div className={styles.modalWrapper}>
         <div className={styles.modal}>
           <div className={styles.header}>
             <IconButton
@@ -63,7 +50,7 @@ const ModalContent: FC<Omit<ModalProps, 'visible'>> = ({
           <div className={styles.body}>{children}</div>
         </div>
       </div>
-    </div>
+    </>
   );
 
   if (!portal || !isBrowser) return null;

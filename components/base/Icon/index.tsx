@@ -32,21 +32,27 @@ export interface IconProps {
   outlined?: boolean;
   size?: number;
   color?: IconColor;
+  tooltipTitle?: string;
 }
 
-const Icon: FC<IconProps> = ({ name, outlined = false, size = 16, color }) => {
+const Icon: FC<IconProps> = ({
+  name,
+  outlined = false,
+  size = 16,
+  color,
+  tooltipTitle,
+}) => {
   const TheIcon = useMemo(() => getIcon(name, outlined), [name, outlined]);
-  const title = 'test title';
 
   if (!TheIcon) return null;
   if (color)
     return (
       <span className={`${color}-color`}>
-        <TheIcon size={size} title={title} />
+        <TheIcon size={size} title={tooltipTitle} />
       </span>
     );
 
-  return <TheIcon size={size} title={title} />;
+  return <TheIcon size={size} title={tooltipTitle} />;
 };
 
 export default Icon;

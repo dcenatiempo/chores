@@ -9,15 +9,22 @@
 }
 
 .modalWrapper {
-  min-width: 500px;
-  min-height: 600px;
-  max-height: 90vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: transparent;
 }
 
 .modal {
   background-color: var(--component-bg-color);
-  height:100%;
-  width:100%;
+  min-width: 500px;
+  min-height: 100px;
+  max-height: 90vh;
   border-radius: 15px;
   padding: 15px;
 }
@@ -26,10 +33,7 @@
   position: fixed;
   top: 0;
   left: 0;
-  width: 100%;
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  width: 100vw;
+  height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
 }

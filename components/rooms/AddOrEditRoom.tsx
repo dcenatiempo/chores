@@ -3,7 +3,7 @@ import { Room } from '../../libs/store/models/orgs/types';
 import { useRoomTypes } from '../../libs/store/models/roomTypes';
 import { RoomType } from '../../libs/store/models/roomTypes/types';
 import { Surface } from '../../libs/store/models/surfaces/types';
-import { Button, TextInput } from '../base';
+import { Button, IconButton, IconName, TextInput } from '../base';
 import { AddOrEditResourceProps } from '../base/AddOrEditList';
 import Card from '../base/Card';
 import LevelSelector from '../levels/LevelSelector';
@@ -41,9 +41,9 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
     setSurfaces([surface, ...surfaces]);
   }
 
-  function removeSurface(i: number) {
-    surfaces.splice(i, 1);
-    setSurfaces([...surfaces]);
+  function removeSurface(index: number) {
+    const newSurfaces = surfaces.filter((_, i) => i !== index);
+    setSurfaces(newSurfaces);
   }
 
   const disabled = !(name && roomType && level && surfaces.length);
@@ -53,6 +53,7 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
     setSurfaces([]);
   }
   function onClickSubmitRoom() {
+    debugger;
     if (disabled) return;
     const newRoom: Room = {
       level,
@@ -67,7 +68,6 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
 
   return (
     <Card>
-      {`${isEdit ? 'EDIT' : 'ADD'} ROOM`}
       <br />
       <TextInput value={name} label="name" onChange={setName} />
       <br />
@@ -75,15 +75,25 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
       <br />
       <LevelSelector selected={level} onSelect={setLevel} />
       <br />
+      <SurfaceSelector onSelect={addSurface} excluding={surfaces} />
+
       {surfaces.map((surface, i) => (
-        <div key={`${i}`}>
-          <>
-            {surface.name} {surface.descriptor}
-            <Button label="-" onClick={() => removeSurface(i)} />
-          </>
+        <div
+          style={{
+            flexDirection: 'row',
+            display: 'flex',
+            alignItems: 'center',
+          }}
+          key={`${surface.id}-${surface.descriptor}`}
+        >
+          {surface.name} {surface.descriptor ? `(${surface.descriptor})` : ''}
+          <IconButton
+            onClick={() => removeSurface(i)}
+            iconName={IconName.MINUS}
+            type="sentance"
+          />
         </div>
       ))}
-      <SurfaceSelector onSelect={addSurface} />
       <Button
         label={`${isEdit ? 'Edit' : 'Add'} Room`}
         disabled={disabled}

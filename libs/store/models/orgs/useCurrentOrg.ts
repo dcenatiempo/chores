@@ -62,6 +62,7 @@ export default function useCurrentOrg() {
 
   function editPerson(person: Person) {
     if (!orgId) return;
+    debugger;
     updatePeopleFromOrg({
       people: org.people?.map((p) => (p.id === person.id ? person : p)) || [],
       orgId: orgId,

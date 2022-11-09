@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
 import { useSurfaces } from '../../libs/store/models/surfaces';
 import {
@@ -11,16 +11,28 @@ import { AddButton } from '../buttons';
 
 export interface SurfaceSelectorProps {
   onSelect: (surface: Surface | undefined) => void;
+  excluding: Surface[];
 }
 
-const SurfaceSelector: FC<SurfaceSelectorProps> = ({ onSelect }) => {
+const SurfaceSelector: FC<SurfaceSelectorProps> = ({ onSelect, excluding }) => {
   const [surface, setSurface] = useState<SurfaceTemplate>();
   const [surfaceDescriptor, setSurfaceDescriptor] = useState<string>();
 
   const { org } = useCurrentOrg();
   const { surfaces } = useSurfaces();
   const customSurfaces = org.customSurfaces || [];
-  const allSurfaces = [...surfaces, ...customSurfaces];
+  const allSurfaces = useMemo(() => {
+    return [...surfaces, ...customSurfaces].reduce<SurfaceTemplate[]>(
+      (acc, s) => {
+        const excluded = excluding.find(
+          (excluded) => excluded.id === s.id && !s.descriptors.length
+        );
+        if (excluded) return acc;
+        return [...acc, s];
+      },
+      []
+    );
+  }, [surfaces, customSurfaces, excluding]);
 
   function onAdd() {
     if (!surface) return;

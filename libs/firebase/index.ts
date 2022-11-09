@@ -152,7 +152,7 @@ export async function updatePeopleFromOrg({
   const firebasePeople: FirebasePerson[] = people?.map((person) =>
     transformPerson.toFirebase(person)
   );
-
+  debugger;
   const docRef = doc(db, Collection.ORGS, orgId);
 
   const res = await updateDoc(docRef, {

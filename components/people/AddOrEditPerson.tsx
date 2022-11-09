@@ -11,6 +11,8 @@ const AddPerson: FC<AddOrEditPersonProps> = ({
   initialResource,
   onSubmitResource,
 }) => {
+  const personId = initialResource?.id || '';
+
   const [firstName, setFirstName] = useState(initialResource?.firstName || '');
   const [lastName, setLastName] = useState(initialResource?.lastName || '');
   const [date, setDate] = useState(initialResource?.birthday);
@@ -20,7 +22,7 @@ const AddPerson: FC<AddOrEditPersonProps> = ({
     setFirstName('');
     setLastName('');
     setDate(undefined);
-    onSubmitResource({ firstName, lastName, birthday: date, id: '' });
+    onSubmitResource({ firstName, lastName, birthday: date, id: personId });
   }
 
   return (

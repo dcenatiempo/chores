@@ -64,5 +64,5 @@ export default function RouteGuard({ children }: Props) {
     }
   }
 
-  return isAuthorized ? <>{children}</> : null;
+  return isAuthorized ? <>{children}</> : <div style={{ flex: 1 }} />;
 }
