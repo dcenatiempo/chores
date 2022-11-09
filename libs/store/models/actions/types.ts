@@ -1,13 +1,13 @@
 import { BaseSlice } from '../types';
 
-export interface Action {
+export interface ActionsState extends BaseSlice {
+  data: FBAction[];
+}
+
+export interface FBAction {
   name: string;
 }
 
-export interface ActionsState extends BaseSlice {
-  data: Action[];
-}
-
-export interface FirebaseAction {
+export interface Action {
   name: string;
 }

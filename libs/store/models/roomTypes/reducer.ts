@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { RoomType, RoomTypesState } from './types';
+import { FBRoomType, RoomTypesState } from './types';
 
 const initialState: RoomTypesState = {
   data: [],
@@ -11,7 +11,7 @@ export const roomTypes = createSlice({
   name: 'roomTypes',
   initialState,
   reducers: {
-    setRoomTypes: (state, action: PayloadAction<RoomType[]>) => {
+    setRoomTypes: (state, action: PayloadAction<FBRoomType[]>) => {
       state.data = action.payload;
     },
     clearRoomTypes: (state) => {

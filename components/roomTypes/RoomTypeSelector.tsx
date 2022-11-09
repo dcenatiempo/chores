@@ -13,9 +13,9 @@ const RoomTypeSelector: FC<RoomTypeSelectorProps> = ({
   onSelect,
   selected,
 }) => {
-  const { customRoomTypes } = useCurrentOrg();
-  const { roomTypes } = useRoomTypes();
-  const allRoomTypes = [...roomTypes, ...customRoomTypes];
+  const { customRoomTypesArray } = useCurrentOrg();
+  const { roomTypesArray } = useRoomTypes();
+  const allRoomTypes = [...roomTypesArray, ...customRoomTypesArray];
   return (
     <div>
       <Dropdown

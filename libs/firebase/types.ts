@@ -1,11 +1,11 @@
 import { DocumentReference, Timestamp } from 'firebase/firestore';
 
-export interface FirebaseTimestamp extends Timestamp {}
+export interface FBTimestamp extends Timestamp {}
 
-export interface FirebaseReference extends DocumentReference {}
+export interface FBReference extends DocumentReference {}
 
 export enum Collection {
-  ORGS = 'organization', // todo: change to "orgs"
+  ORGS = 'orgs', // todo: change to "orgs"
   SURFACES = 'surfaces',
   ROOM_TYPES = 'roomTypes',
   ACTIONS = 'actions',

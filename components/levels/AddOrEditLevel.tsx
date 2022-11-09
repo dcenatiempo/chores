@@ -10,12 +10,15 @@ const AddOrEditLevel: FC<AddOrEditLevelProps> = ({
   initialResource,
   onSubmitResource,
 }) => {
-  const [level, setLevel] = useState(initialResource || '');
+  const levelId = initialResource?.id || '';
+  const [levelName, setLevelName] = useState<string>(
+    initialResource?.name || ''
+  );
 
   function onClickAddLevel() {
-    if (!level) return;
-    onSubmitResource(level);
-    setLevel('');
+    if (!levelName) return;
+    onSubmitResource({ id: levelId, name: levelName });
+    setLevelName('');
   }
 
   return (
@@ -29,7 +32,7 @@ const AddOrEditLevel: FC<AddOrEditLevelProps> = ({
         paddingRight: 10,
       }}
     >
-      <TextInput label="Level" value={level} onChange={setLevel} />
+      <TextInput label="Level" value={levelName} onChange={setLevelName} />
       <AddButton onClick={onClickAddLevel} />
     </div>
   );

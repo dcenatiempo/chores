@@ -1,34 +1,106 @@
 import { UnixTimestamp } from '../../../dateTime';
-import { FirebaseReference, FirebaseTimestamp } from '../../../firebase';
-import { Action, FirebaseAction } from '../actions/types';
-import { FirebaseRoomType, RoomType } from '../roomTypes/types';
+import { FBTimestamp } from '../../../firebase';
+import { Action, FBAction } from '../actions/types';
+import { FBRoomType, RoomType } from '../roomTypes/types';
 import {
-  FirebaseSurfaceTemplate,
+  FBSurface,
+  FBSurfaceTemplate,
   Surface,
   SurfaceTemplate,
 } from '../surfaces/types';
-import { BaseSlice } from '../types';
+import { BaseSlice, Map } from '../types';
 
-export interface Person {
+// export interface Settings {
+//   timeZone: string;
+// }
+
+export interface OrgMap<T> {
+  [key: string]: {
+    orgId: string;
+    data: T;
+  };
+}
+
+export interface OrgsMap extends OrgMap<FBOrg> {}
+
+export interface OrgsState extends BaseSlice {
+  orgsMap: OrgsMap;
+  currentOrgId: string | undefined;
+}
+
+export interface FBOrg {
   id: string;
-  lastName?: string;
-  birthday?: UnixTimestamp;
-  firstName: string;
+  name: string;
+  levels: Map<FBLevel>;
+  rooms: Map<FBRoom>;
+  people: Map<FBPerson>;
+  chores: Map<FBChore>;
+  tasks: Map<FBTask>;
+  customSurfaces?: Map<FBSurfaceTemplate>;
+  customActions?: Map<FBAction>;
+  customRoomTypes?: Map<FBRoomType>;
+  lastId: string; // hexedecimal string starting at 1000, last id that was assigned to a resource in the org, should be incremented and set when new resource id is needed
+}
+
+export interface Org {
+  id: string;
+  name: string;
+  levels: Map<Level>;
+  rooms: Map<Room>;
+  people: Map<Person>;
+  chores: Map<Chore>;
+  tasks: Map<Task>;
+  customSurfaces?: Map<SurfaceTemplate>;
+  customActions?: Map<Action>;
+  customRoomTypes?: Map<RoomType>;
+  lastId: string; // hexedecimal string starting at 1000, last id that was assigned to a resource in the org, should be incremented and set when new resource id is needed
+}
+
+export interface FBLevel {
+  id: string;
+  name: string;
+}
+
+export interface Level {
+  id: string;
+  name: string;
+}
+
+export interface FBRoom {
+  id: string;
+  name: string;
+  levelId: string;
+  surfaces: Map<FBSurface>;
+  roomTypeId: string;
 }
 
 export interface Room {
-  surfaces: Surface[];
-  level: string;
-  name: string;
-  type: string;
   id: string;
+  name: string;
+  level: Level;
+  surfaces: Map<Surface>;
+  roomType: RoomType;
 }
 
-export interface Chore {
+export interface FBPerson {
   id: string;
-  name: string;
-  taskIds: string[];
-  defaultPeople: string[];
+  firstName: string;
+  lastName?: string;
+  birthday?: FBTimestamp;
+}
+
+export interface Person {
+  id: string;
+  firstName: string;
+  lastName?: string;
+  birthday?: UnixTimestamp;
+}
+
+export interface FBTask {
+  id: string;
+  actionId: string;
+  roomId: string;
+  surfaceId: string;
 }
 
 export interface Task {
@@ -38,94 +110,16 @@ export interface Task {
   surface?: Surface;
 }
 
-export interface Org {
+export interface FBChore {
   id: string;
   name: string;
-  levels: Level[];
-  rooms: Room[];
-  people: Person[];
-  chores: Chore[];
-  tasks: Task[];
-  customSurfaces: SurfaceTemplate[];
-  customActions: Action[];
-  customRoomTypes: RoomType[];
-  lastId: string; // hexedecimal string starting at 1000, last id that was assigned to a resource in the org, should be incremented and set when new resource id is needed
-  // settings?: Settings;
+  taskIds: Map<string>;
+  defaultPeopleIds: Map<string>;
 }
 
-// export interface Settings {
-//   timeZone: string;
-// }
-
-export type Level = string;
-
-export interface OrgMap<T> {
-  [key: string]: {
-    orgId: string;
-    data: T;
-  };
-}
-
-export interface OrgsMap extends OrgMap<Org> {}
-
-export interface OrgsState extends BaseSlice {
-  orgsMap: OrgsMap;
-  currentOrgId: string | undefined;
-}
-
-export interface FirebaseOrg {
+export interface Chore {
   id: string;
   name: string;
-  levels: FirebaseLevel[];
-  rooms: FirebaseRoom[];
-  people: FirebasePerson[];
-  chores: FirebaseChore[];
-  tasks: FirebaseTask[];
-  customSurfaces?: FirebaseCustomSurface[];
-  customActions?: FirebaseCustomAction[];
-  customRoomTypes?: FirebaseCustomRoomType[];
-  lastId: string; // hexedecimal string starting at 1000, last id that was assigned to a resource in the org, should be incremented and set when new resource id is needed
+  tasks: Map<Task>;
+  defaultPeople: Map<Person>;
 }
-
-export type FirebaseLevel = string;
-
-export interface FirebaseRoom {
-  id: string;
-  level: string;
-  name: string;
-  surfaces: FirebaseSurface[];
-  typeRef: FirebaseReference;
-}
-
-export interface FirebaseSurface {
-  id: string;
-  surfaceRef: FirebaseReference;
-  descriptor: string;
-}
-
-export interface FirebasePerson {
-  id: string;
-  firstName: string;
-  lastName: string;
-  birthday?: FirebaseTimestamp;
-}
-
-export interface FirebaseChore {
-  id: string;
-  name: string;
-  taskIds: string[];
-  defaultPeople: string[];
-}
-
-export interface FirebaseTask {
-  id: string;
-  actionId: string;
-  roomId: string;
-  surfaceId: string;
-}
-
-export interface FirebaseCustomSurface extends FirebaseSurfaceTemplate {}
-
-export interface FirebaseCustomAction extends FirebaseAction {}
-
-export interface FirebaseCustomRoomType extends FirebaseRoomType {}

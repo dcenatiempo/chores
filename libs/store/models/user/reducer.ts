@@ -1,14 +1,13 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { User, UserState } from './types';
+import { FBUser, UserState } from './types';
 
 export const initialState: UserState = {
   data: {
-    id: '',
-    birthday: 0,
+    authId: '',
     firstName: '',
     lastName: '',
     email: '',
-    organizationIds: [],
+    organizations: [],
   },
   loading: false,
   error: null,
@@ -18,7 +17,7 @@ export const user = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setUser: (state, action: PayloadAction<User>) => {
+    setUser: (state, action: PayloadAction<FBUser>) => {
       state.data = action.payload;
     },
     clearUser: (state) => {

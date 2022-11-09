@@ -17,26 +17,25 @@ const SurfaceSelector: FC<SurfaceSelectorProps> = ({ onSelect, excluding }) => {
   const [surface, setSurface] = useState<SurfaceTemplate>();
   const [surfaceDescriptor, setSurfaceDescriptor] = useState<string>();
 
-  const { customSurfaces } = useCurrentOrg();
-  const { surfaces } = useSurfaces();
+  const { customSurfacesArray } = useCurrentOrg();
+  const { surfaceTemplatesArray } = useSurfaces();
   const allSurfaces = useMemo(() => {
-    return [...surfaces, ...customSurfaces].reduce<SurfaceTemplate[]>(
-      (acc, s) => {
-        const excluded = excluding.find(
-          (excluded) => excluded.id === s.id && s.descriptors.length
-        );
-        if (excluded) return acc;
-        return [...acc, s];
-      },
-      []
-    );
-  }, [surfaces, customSurfaces, excluding]);
+    return [...surfaceTemplatesArray, ...customSurfacesArray].reduce<
+      SurfaceTemplate[]
+    >((acc, s) => {
+      const excluded = excluding.find(
+        (excluded) => excluded.id === s.id && s.descriptors.length
+      );
+      if (excluded) return acc;
+      return [...acc, s];
+    }, []);
+  }, [surfaceTemplatesArray, customSurfacesArray, excluding]);
 
   function onAdd() {
     if (!surface) return;
     const surfaceToAdd = {
       id: '',
-      surfaceId: surface.id,
+      surfaceTemplate: surface,
       name: surface.name,
       descriptor: surfaceDescriptor || '',
     };

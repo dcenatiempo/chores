@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   addChoreToOrg,
@@ -13,6 +13,7 @@ import {
   updateTasksFromOrg,
 } from '../../../firebase';
 import { incrementHex } from '../../../utils';
+// import { Map } from '../types';
 import { actions } from './reducer';
 import * as selectors from './selectors';
 import { Chore, Level, Person, Room, Task } from './types';
@@ -30,6 +31,19 @@ export default function useCurrentOrg() {
   const customRoomTypes = useSelector(selectors.customRoomTypes);
   const customSurfaces = useSelector(selectors.customSurfaces);
   const lastIdRef = useRef(lastId);
+  const choresArray = useMemo(() => Object.values(chores), [chores]);
+  const peopleArray = useMemo(() => Object.values(people), [people]);
+  const roomsArray = useMemo(() => Object.values(rooms), [rooms]);
+  const tasksArray = useMemo(() => Object.values(tasks), [tasks]);
+  const levelsArray = useMemo(() => Object.values(levels), [levels]);
+  const customRoomTypesArray = useMemo(
+    () => Object.values(customRoomTypes),
+    [customRoomTypes]
+  );
+  const customSurfacesArray = useMemo(
+    () => Object.values(customSurfaces),
+    [customSurfaces]
+  );
 
   function getNextId() {
     if (!lastIdRef.current) lastIdRef.current = lastId;
@@ -53,10 +67,7 @@ export default function useCurrentOrg() {
       orgId: orgId,
       room: {
         ...room,
-        surfaces: room.surfaces.map((s) => ({
-          ...s,
-          id: getNextId(),
-        })),
+        surfaces: room.surfaces,
         id: getNextId(),
       },
     });
@@ -81,92 +92,120 @@ export default function useCurrentOrg() {
   function addLevel(level: Level) {
     if (!orgId) return;
     addLevelToOrg({
-      orgId: orgId,
-      level,
+      orgId,
+      level: { ...level, id: getNextId() },
     });
   }
 
   function editRoom(room: Room) {
     if (!orgId) return;
+    const roomsCopy = { ...rooms };
+    roomsCopy[room.id] = room;
     updateRoomsFromOrg({
-      rooms: rooms?.map((r) => (r.id === room.id ? room : r)) || [],
-      orgId: orgId,
+      rooms: roomsCopy,
+      orgId,
     });
   }
 
   function editTask(task: Task) {
     if (!orgId) return;
+    const tasksCopy = { ...tasks };
+    tasksCopy[task.id] = task;
     updateTasksFromOrg({
-      tasks: tasks?.map((t) => (t.id === task.id ? task : t)) || [],
-      orgId: orgId,
+      tasks: tasksCopy,
+      orgId,
     });
   }
 
   function editChore(chore: Chore) {
     if (!orgId) return;
+    const choresCopy = { ...chores };
+    choresCopy[chore.id] = chore;
     updateChoresFromOrg({
-      chores: chores?.map((t) => (t.id === chore.id ? chore : t)) || [],
-      orgId: orgId,
+      chores: choresCopy,
+      orgId,
     });
   }
 
   function editPerson(person: Person) {
     if (!orgId) return;
+    const peopleCopy = { ...people };
+    peopleCopy[person.id] = person;
     updatePeopleFromOrg({
-      people: people?.map((p) => (p.id === person.id ? person : p)) || [],
-      orgId: orgId,
+      people: peopleCopy,
+      orgId,
     });
   }
 
-  // function editLevel(person: Level) {
-  //   if (!orgId) return;
-  //   updateLevelsFromOrg({
-  //     levels: org.levels?.map((l) => (p.id === person.id ? person : p)) || [],
-  //     orgId: orgId,
-  //   });
-  // }
+  function editLevel(level: Level) {
+    if (!orgId) return;
+    const levelsCopy = { ...levels };
+    levelsCopy[level.id] = level;
+    updateLevelsFromOrg({
+      levels: levelsCopy,
+      orgId,
+    });
+  }
 
   function deletePerson({ id }: Person) {
     if (!orgId) return;
+    const peopleCopy = { ...people };
+    delete peopleCopy[id];
     updatePeopleFromOrg({
-      people: people?.filter((person) => person.id !== id) || [],
+      people: peopleCopy,
       orgId: orgId,
     });
   }
 
   function deleteRoom({ id }: Room) {
     if (!orgId) return;
+    const roomsCopy = { ...rooms };
+    delete roomsCopy[id];
     updateRoomsFromOrg({
-      rooms: rooms?.filter((room) => room.id !== id) || [],
+      rooms: roomsCopy,
       orgId: orgId,
     });
   }
 
   function deleteTask({ id }: Task) {
     if (!orgId) return;
+    const tasksCopy = { ...tasks };
+    delete tasksCopy[id];
     updateTasksFromOrg({
-      tasks: tasks?.filter((task) => task.id !== id) || [],
+      tasks: tasksCopy,
       orgId: orgId,
     });
   }
 
   function deleteChore({ id }: Chore) {
     if (!orgId) return;
+    const choresCopy = { ...chores };
+    delete choresCopy[id];
     updateChoresFromOrg({
-      chores: chores?.filter((chore) => chore.id !== id) || [],
+      chores: choresCopy,
       orgId: orgId,
     });
   }
 
-  function deleteLevel(level: Level) {
+  function deleteLevel({ id }: Level) {
+    debugger;
     if (!orgId) return;
+    const levelsCopy = { ...levels };
+    delete levelsCopy[id];
     updateLevelsFromOrg({
-      levels: levels?.filter((l) => level !== l) || [],
+      levels: levelsCopy,
       orgId: orgId,
     });
   }
 
   return {
+    peopleArray,
+    roomsArray,
+    tasksArray,
+    choresArray,
+    levelsArray,
+    customSurfacesArray,
+    customRoomTypesArray,
     chores,
     tasks,
     rooms,
@@ -184,7 +223,7 @@ export default function useCurrentOrg() {
     editRoom,
     editPerson,
     addLevel,
-    // editLevel,
+    editLevel,
     deleteLevel,
     addTask,
     deleteTask,

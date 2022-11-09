@@ -9,14 +9,14 @@ export interface ActionsSelectorProps {
 }
 
 const ActionsSelector: FC<ActionsSelectorProps> = ({ onSelect, selected }) => {
-  const { actions } = useActions();
+  const { actionsArray } = useActions();
   return (
     <div>
       <Dropdown
         label="Actions"
         valueKey={(option) => option?.name || ''}
         labelKey={(option) => option?.name || ''}
-        options={actions}
+        options={actionsArray}
         onSelect={onSelect}
         selected={selected}
         id="actions"

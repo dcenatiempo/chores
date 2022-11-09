@@ -1,7 +1,8 @@
 import { FC, useState } from 'react';
-import { Room } from '../../libs/store/models/orgs/types';
+import { Level, Room } from '../../libs/store/models/orgs/types';
 import { useRoomTypes } from '../../libs/store/models/roomTypes';
 import { RoomType } from '../../libs/store/models/roomTypes/types';
+import { arrayToMap } from '../../libs/store/models/sharedTransformers';
 import { Surface } from '../../libs/store/models/surfaces/types';
 import { Button, IconButton, IconName, TextInput } from '../base';
 import { AddOrEditResourceProps } from '../base/AddOrEditList';
@@ -19,21 +20,13 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
   const isEdit = !!initialResource;
   const roomId = initialResource?.id || '';
   const [name, setName] = useState(initialResource?.name || '');
-  const { roomTypes } = useRoomTypes();
-
-  function hydrateRoomType(type?: string) {
-    if (!type) return undefined;
-    return roomTypes.find((rt) => rt.id === type);
-  }
 
   const [roomType, setRoomType] = useState<RoomType | undefined>(
-    hydrateRoomType(initialResource?.type)
+    initialResource?.roomType
   );
-  const [level, setLevel] = useState<string | undefined>(
-    initialResource?.level || undefined
-  );
+  const [level, setLevel] = useState<Level | undefined>(initialResource?.level);
   const [surfaces, setSurfaces] = useState<Surface[]>(
-    initialResource?.surfaces || []
+    Object.values(initialResource?.surfaces || {})
   );
 
   function addSurface(surface: Surface | undefined) {
@@ -57,9 +50,9 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
     const newRoom: Room = {
       level,
       name,
-      type: roomType.id,
+      roomType: roomType,
       id: roomId,
-      surfaces: surfaces,
+      surfaces: arrayToMap(surfaces),
     };
     resetForm();
     onSubmitResource(newRoom);
@@ -85,8 +78,7 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
           }}
           key={`${surface.id}-${surface.descriptor}`}
         >
-          {surface.surfaceId}{' '}
-          {surface.descriptor ? `(${surface.descriptor})` : ''}
+          {surface.name} {surface.descriptor ? `(${surface.descriptor})` : ''}
           <IconButton
             onClick={() => removeSurface(i)}
             iconName={IconName.MINUS}

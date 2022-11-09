@@ -1,11 +1,21 @@
-import { FirebaseRoomType, RoomType } from './types';
+import { Map } from '../types';
+import { FBRoomType, RoomType } from './types';
 
-export function transformRoomTypesFromFirebase(
-  roomTypes: FirebaseRoomType[] = []
-): RoomType[] {
-  return roomTypes.map((rt) => ({
-    id: rt.id,
-    name: rt.name,
-    description: rt?.description,
-  }));
-}
+export const transformRoomType = {
+  fromFB(type: FBRoomType): RoomType {
+    return {
+      id: type.id,
+      name: type.name,
+      description: type.description,
+    };
+  },
+  toFB(type: RoomType): FBRoomType {
+    return { id: type.id, description: type.description, name: type.name };
+  },
+  hydrate(roomTypeId: string, roomTypes: Map<RoomType>) {
+    return roomTypes[roomTypeId];
+  },
+  dehydrate(roomType: RoomType): string {
+    return roomType.id;
+  },
+};

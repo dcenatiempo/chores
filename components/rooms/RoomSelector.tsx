@@ -9,14 +9,14 @@ export interface RoomSelectorProps {
 }
 
 const RoomSelector: FC<RoomSelectorProps> = ({ onSelect, selected }) => {
-  const { rooms } = useCurrentOrg();
+  const { roomsArray } = useCurrentOrg();
   return (
     <div>
       <Dropdown
         label="Room"
         valueKey={(option) => option?.id || ''}
         labelKey={(option) => option?.name || ''}
-        options={rooms}
+        options={roomsArray}
         onSelect={onSelect}
         selected={selected}
         id="roomTypes"

@@ -1,6 +1,6 @@
 import { Collection, fetchDocs } from '../../../firebase';
-import { FirebaseSurfaceTemplate } from './types';
+import { FBSurfaceTemplate } from './types';
 
 export async function fetchSurfaces() {
-  return fetchDocs<FirebaseSurfaceTemplate>(Collection.SURFACES);
+  return fetchDocs<FBSurfaceTemplate>(Collection.SURFACES);
 }

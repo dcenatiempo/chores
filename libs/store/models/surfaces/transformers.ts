@@ -1,18 +1,25 @@
-import { FirebaseSurfaceTemplate, SurfaceTemplate } from './types';
+import { Map } from '../types';
+import { FBSurfaceTemplate, SurfaceTemplate } from './types';
 
 export const transformSurfaceTemplate = {
-  fromFirebase(surface: FirebaseSurfaceTemplate): SurfaceTemplate {
+  fromFB(surface: FBSurfaceTemplate): SurfaceTemplate {
     return {
       id: surface.id,
       name: surface.name,
       descriptors: surface.descriptors || [],
     };
   },
-  toFirebase(surface: SurfaceTemplate): FirebaseSurfaceTemplate {
+  toFB(surface: SurfaceTemplate): FBSurfaceTemplate {
     return {
       id: surface.id,
       name: surface.name,
       descriptors: surface.descriptors || [],
     };
+  },
+  dehydrate(surface: SurfaceTemplate): string {
+    return surface.id;
+  },
+  hydrate(surfaceTemplateId: string, surfaceTemplates: Map<SurfaceTemplate>) {
+    return surfaceTemplates[surfaceTemplateId];
   },
 };

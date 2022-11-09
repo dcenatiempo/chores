@@ -1,6 +1,6 @@
 import { Collection, fetchDocs } from '../../../firebase';
-import { FirebaseRoomType } from './types';
+import { FBRoomType } from './types';
 
 export async function fetchRoomTypes() {
-  return fetchDocs<FirebaseRoomType>(Collection.ROOM_TYPES);
+  return fetchDocs<FBRoomType>(Collection.ROOM_TYPES);
 }

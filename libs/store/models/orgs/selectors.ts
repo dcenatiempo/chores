@@ -1,14 +1,20 @@
 import { defaultMemoize, createSelector } from 'reselect';
 import { RootState } from '../../store';
-import { surfaces } from '../surfaces/selectors';
+import { roomTypes } from '../roomTypes/selectors';
+import { surfaceTemplates } from '../surfaces/selectors';
+import { transformMap } from '../sharedTransformers';
+import { transformOrg } from './transformers';
+import { initialLastId } from './reducer';
 
-const orgsMap = defaultMemoize((state: RootState) => state.orgs.orgsMap);
-const orgsArray = createSelector(orgsMap, (map) => {
-  Object.keys(orgsMap).map((key) => {
-    // @ts-expect-error
-    return orgsMap[key].data;
-  });
-});
+const fbOrgsMap = defaultMemoize((state: RootState) => state.orgs.orgsMap);
+
+const orgsMap = createSelector(
+  fbOrgsMap,
+  roomTypes,
+  surfaceTemplates,
+  (fbom, rt, st) =>
+    transformMap(fbom, (x) => transformOrg.fromFB(x.data, rt, st))
+);
 
 const currentOrgId = defaultMemoize(
   (state: RootState) => state.orgs.currentOrgId
@@ -17,26 +23,30 @@ const currentOrgId = defaultMemoize(
 const currentOrg = createSelector(
   orgsMap,
   currentOrgId,
-  (orgs, currentOrgId) => orgs?.[currentOrgId || '']?.data || {}
+  (orgs, currentOrgId) => orgs?.[currentOrgId || ''] || {}
 );
 
-const lastId = createSelector(currentOrg, (org) => org?.lastId);
+const lastId = createSelector(
+  currentOrg,
+  (org) => org?.lastId || initialLastId
+);
 const people = createSelector(currentOrg, (org) => org?.people || []);
 const levels = createSelector(currentOrg, (org) => org?.levels || []);
 const rooms = createSelector(currentOrg, (org) => org?.rooms || []);
 const chores = createSelector(currentOrg, (org) => org?.chores || []);
 const name = createSelector(currentOrg, (org) => org?.name || '');
-const id = createSelector(currentOrg, (org) => org?.id);
-const tasks = createSelector(currentOrg, (org) => org?.tasks);
+const id = createSelector(currentOrg, (org) => org?.id || '');
+const tasks = createSelector(currentOrg, (org) => org?.tasks || {});
 const customRoomTypes = createSelector(
   currentOrg,
-  (org) => org?.customRoomTypes
+  (org) => org?.customRoomTypes || {}
 );
-const customSurfaces = createSelector(currentOrg, (org) => org?.customSurfaces);
+const customSurfaces = createSelector(
+  currentOrg,
+  (org) => org?.customSurfaces || {}
+);
 
-const orgs = orgsArray;
 export {
-  orgs,
   currentOrg,
   people,
   levels,

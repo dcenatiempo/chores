@@ -11,7 +11,7 @@ import store from '../../libs/store/store';
 
 export default function Firebase() {
   const dispatch = useDispatch<typeof store.dispatch>();
-  const { fetchSurfaces } = useSurfaces();
+  const { fetchSurfaceTemplates } = useSurfaces();
   const { fetchRoomTypes } = useRoomTypes();
   const { fetchActions } = useActions();
   const { fetchUser } = useUser();
@@ -27,13 +27,13 @@ export default function Firebase() {
       // Signed in
       fetchUser(userId)
         .then((user) => {
-          return fetchOrgs(user.organizationIds || []);
+          return fetchOrgs(user?.organizations?.map((o) => o.id) || []);
         })
         .then(() => {
           dispatch(organizationsStore.asyncActions.listenForOrgChanges());
         });
       fetchRoomTypes();
-      fetchSurfaces();
+      fetchSurfaceTemplates();
       fetchActions();
     }
 

@@ -1,4 +1,4 @@
-import { FirebaseReference, FirebaseTimestamp } from '../../../firebase';
+import { FBReference, FBTimestamp } from '../../../firebase';
 import { BaseSlice } from '../types';
 
 export interface User {
@@ -11,23 +11,23 @@ export interface User {
 }
 
 export interface UserState extends BaseSlice {
-  data: User;
+  data: FBUser;
 }
 
-export interface FirebaseUserInput {
+export interface FBUserInput {
   authId: string;
-  birthday?: FirebaseTimestamp; // TODO
+  birthday?: FBTimestamp; // TODO
   email?: string;
   firstName?: string;
   lastName?: string;
   organizations?: string[]; // TODO
 }
 
-export interface FirebaseUser {
+export interface FBUser {
   authId: string;
-  birthday?: FirebaseTimestamp;
+  birthday?: FBTimestamp;
   email?: string;
   firstName?: string;
   lastName?: string;
-  organizations?: FirebaseReference[]; // array of references
+  organizations?: FBReference[]; // array of references
 }

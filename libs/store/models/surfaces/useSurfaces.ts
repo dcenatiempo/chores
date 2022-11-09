@@ -7,18 +7,18 @@ import { transformSurfaceTemplate } from './transformers';
 export default function useSurfaces() {
   const dispatch = useDispatch();
 
-  const surfaces = useSelector(selectors.surfaces);
+  const surfaceTemplates = useSelector(selectors.surfaceTemplates);
+  const surfaceTemplatesArray = useSelector(selectors.surfaceTemplatesArray);
 
-  async function fetchSurfaces() {
+  async function fetchSurfaceTemplates() {
     return firebase.fetchSurfaces().then((surfaces) => {
-      const cleanSurfaces = surfaces.map(transformSurfaceTemplate.fromFirebase);
-      dispatch(actions.setSurfaces(cleanSurfaces));
-      return cleanSurfaces;
+      dispatch(actions.setSurfaces(surfaces));
     });
   }
 
   return {
-    surfaces,
-    fetchSurfaces,
+    surfaceTemplates,
+    surfaceTemplatesArray,
+    fetchSurfaceTemplates,
   };
 }

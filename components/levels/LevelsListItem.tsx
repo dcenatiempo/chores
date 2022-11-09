@@ -22,7 +22,7 @@ const LevelListItem: FC<LevelListItemProps> = ({
   }
   return (
     <ListItem>
-      {level}
+      {level.name}
       <div
         style={{
           display: 'flex',

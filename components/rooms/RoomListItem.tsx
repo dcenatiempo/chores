@@ -22,19 +22,22 @@ const RoomListItem: FC<RoomListItemProps> = ({
   }
   return (
     <ListItem>
-      {room.name} ({room.type}) on the {room.level} level {room.surfaces.length}{' '}
-      surfaces
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'center',
-          columnGap: 10,
-        }}
-      >
-        {onClickEdit ? <EditButton onClick={onClickEditRoom} /> : null}
-        {onClickDelete ? <DeleteButton onClick={onClickDeleteRoom} /> : null}
-      </div>
+      <>
+        {' '}
+        {room.name} ({room.roomType}) on the {room.level} level{' '}
+        {room.surfaces.length} surfaces
+        <div
+          style={{
+            display: 'flex',
+            flexDirection: 'row',
+            alignItems: 'center',
+            columnGap: 10,
+          }}
+        >
+          {onClickEdit ? <EditButton onClick={onClickEditRoom} /> : null}
+          {onClickDelete ? <DeleteButton onClick={onClickDeleteRoom} /> : null}
+        </div>
+      </>
     </ListItem>
   );
 };

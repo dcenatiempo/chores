@@ -1,6 +1,7 @@
 import { FC, useState } from 'react';
 import { Chore, Person, Task } from '../../libs/store/models/orgs/types';
 import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
+import { arrayToMap } from '../../libs/store/models/sharedTransformers';
 import { TextInput } from '../base';
 import { AddOrEditResourceProps } from '../base/AddOrEditList';
 import MultiselectDropdown from '../base/MultiselectDropdown';
@@ -13,7 +14,7 @@ const AddOrEditChore: FC<AddOrEditChoreProps> = ({
   onSubmitResource,
 }) => {
   const choreId = initialResource?.id || '';
-  const { people: orgPeople, tasks: orgTasks } = useCurrentOrg();
+  const { peopleArray, tasksArray } = useCurrentOrg();
   const [tasks, setTasks] = useState<Task[]>([]);
   const [people, setPeople] = useState<Person[]>([]);
   const [name, setName] = useState('');
@@ -25,8 +26,8 @@ const AddOrEditChore: FC<AddOrEditChoreProps> = ({
     setName('');
     onSubmitResource({
       name,
-      defaultPeople: people.map((p) => p.id),
-      taskIds: tasks.map((t) => t.id),
+      defaultPeople: arrayToMap(people),
+      tasks: arrayToMap(tasks),
       id: choreId,
     });
   }
@@ -44,7 +45,7 @@ const AddOrEditChore: FC<AddOrEditChoreProps> = ({
     >
       <TextInput value={name} onChange={setName} label="Name" />
       <MultiselectDropdown
-        options={orgPeople || []}
+        options={peopleArray}
         valueKey={(option) => option?.id || ''}
         labelKey={(option) =>
           `${option?.firstName || ''} ${option?.lastName || ''}`.trim()
@@ -55,11 +56,11 @@ const AddOrEditChore: FC<AddOrEditChoreProps> = ({
         label={'Default People'}
       />
       <MultiselectDropdown
-        options={orgTasks || []}
+        options={tasksArray}
         valueKey={(option) => option?.id || ''}
         labelKey={(option) =>
           `${option?.action.name || ''} ${option?.room?.name || ''} ${
-            option?.surface?.surfaceId || ''
+            option?.surface?.name || ''
           }`.trim()
         }
         id={'defaultPeople'}

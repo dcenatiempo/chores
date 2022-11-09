@@ -10,11 +10,11 @@ import AddOrEditChoresList from '../../components/chores/AddOrEditChoresList';
 
 const Household: NextPage = () => {
   const {
-    people,
-    rooms,
-    tasks,
-    chores,
-    levels,
+    peopleArray,
+    roomsArray,
+    tasksArray,
+    choresArray,
+    levelsArray,
     addPerson,
     deletePerson,
     deleteRoom,
@@ -23,6 +23,7 @@ const Household: NextPage = () => {
     editPerson,
     addLevel,
     deleteLevel,
+    editLevel,
     addTask,
     deleteTask,
     editTask,
@@ -34,34 +35,34 @@ const Household: NextPage = () => {
   return (
     <PageWrapper metaTitle="Chore Household">
       <AddOrEditChoresList
-        chores={chores}
+        chores={choresArray}
         onClickAdd={addChore}
         onClickDelete={deleteChore}
         onClickEdit={editChore}
       />
       <AddOrEditTasksList
-        tasks={tasks}
+        tasks={tasksArray}
         onClickAdd={addTask}
         onClickDelete={deleteTask}
         onClickEdit={editTask}
       />
       <AddOrEditPeopleList
-        people={people}
+        people={peopleArray}
         onClickAdd={addPerson}
         onClickDelete={deletePerson}
         onClickEdit={editPerson}
       />
       <AddOrEditRoomsList
-        rooms={rooms}
+        rooms={roomsArray}
         onClickAdd={addRoom}
         onClickDelete={deleteRoom}
         onClickEdit={editRoom}
       />
       <AddOrEditLevelsList
-        levels={levels}
+        levels={levelsArray}
         onClickAdd={addLevel}
         onClickDelete={deleteLevel}
-        // onClickEdit={editLevel}
+        onClickEdit={editLevel}
       />
     </PageWrapper>
   );

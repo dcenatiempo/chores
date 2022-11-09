@@ -10,7 +10,6 @@ import {
   setDoc,
   query,
   updateDoc,
-  arrayUnion,
   onSnapshot,
   QueryConstraint,
 } from 'firebase/firestore';
@@ -23,18 +22,20 @@ import {
 } from '../store/models/orgs/transformers';
 import {
   Chore,
-  FirebaseChore,
-  FirebaseLevel,
-  FirebasePerson,
-  FirebaseRoom,
-  FirebaseTask,
+  FBChore,
+  FBLevel,
+  FBPerson,
+  FBRoom,
+  FBTask,
   Level,
   Person,
   Room,
   Task,
 } from '../store/models/orgs/types';
+import { transformMap } from '../store/models/sharedTransformers';
+import { Map } from '../store/models/types';
 import { transformUser } from '../store/models/user/transformers';
-import { FirebaseUser, User } from '../store/models/user/types';
+import { FBUser, User } from '../store/models/user/types';
 import { Collection } from './types';
 export * from './types';
 
@@ -83,25 +84,23 @@ function getUnsubscribeMap() {
   return unsubscribeMap;
 }
 
-function listenForDocChanges<A, B>({
+function listenForDocChanges<A>({
   collectionName,
   docId,
-  transformer,
   callback,
 }: {
   collectionName: Collection;
   docId: string;
-  transformer(doc: A): B;
-  callback: (entity: B) => void;
+  callback: (entity: A) => void;
 }) {
   const listenerKey = `${collectionName}-${docId}`;
   const map = getUnsubscribeMap();
   map?.[listenerKey]?.();
   map[listenerKey] = onSnapshot(doc(db, collectionName, docId), (doc) => {
-    const newDoc: B = transformer({
+    const newDoc: A = {
       id: docId,
       ...doc?.data?.(),
-    } as A);
+    } as A;
     callback(newDoc);
   });
 }
@@ -111,50 +110,20 @@ export { app, auth, db, fetchDocs, fetchDoc, listenForDocChanges };
 /////////////////////////////////////////////////////////////////////////////////////
 
 export async function createUser(userId: string, user: User) {
-  const firebaseUser: FirebaseUser = transformUser.toFirebase(user);
-  await setDoc(doc(db, 'users', userId), firebaseUser);
-}
-
-export async function addPersonToOrg({
-  person,
-  orgId,
-}: {
-  person: Person;
-  orgId: string;
-}) {
-  const orgDocRef = doc(db, Collection.ORGS, orgId);
-  const firebasePerson = transformPerson.toFirebase(person);
-
-  await updateDoc(orgDocRef, {
-    people: arrayUnion(firebasePerson),
-    lastId: firebasePerson.id,
-  });
-}
-
-export async function addLevelToOrg({
-  level,
-  orgId,
-}: {
-  level: Level;
-  orgId: string;
-}) {
-  const orgDocRef = doc(db, Collection.ORGS, orgId);
-  const firebaseLevel = transformLevel.toFirebase(level);
-
-  await updateDoc(orgDocRef, {
-    levels: arrayUnion(firebaseLevel),
-  });
+  const fbUser: FBUser = transformUser.toFB(user);
+  await setDoc(doc(db, 'users', userId), fbUser);
 }
 
 export async function updatePeopleFromOrg({
   people,
   orgId,
 }: {
-  people: Person[];
+  people: Map<Person>;
   orgId: string;
 }) {
-  const firebasePeople: FirebasePerson[] = people?.map((person) =>
-    transformPerson.toFirebase(person)
+  const firebasePeople: Map<FBPerson> = transformMap(
+    people,
+    transformPerson.toFB
   );
   const docRef = doc(db, Collection.ORGS, orgId);
 
@@ -167,17 +136,15 @@ export async function updateRoomsFromOrg({
   rooms,
   orgId,
 }: {
-  rooms: Room[];
+  rooms: Map<Room>;
   orgId: string;
 }) {
-  const firebaseRooms: FirebaseRoom[] = rooms?.map((room) =>
-    transformRoom.toFirebase(room)
-  );
+  const fbRooms: Map<FBRoom> = transformMap(rooms, transformRoom.toFB);
 
   const docRef = doc(db, Collection.ORGS, orgId);
 
   await updateDoc(docRef, {
-    rooms: firebaseRooms,
+    rooms: fbRooms,
   });
 }
 
@@ -185,17 +152,15 @@ export async function updateTasksFromOrg({
   tasks,
   orgId,
 }: {
-  tasks: Task[];
+  tasks: Map<Task>;
   orgId: string;
 }) {
-  const firebaseTasks: FirebaseTask[] = tasks?.map((task) =>
-    transformTask.toFirebase(task)
-  );
+  const fbTasks: Map<FBTask> = transformMap(tasks, transformTask.toFB);
 
   const docRef = doc(db, Collection.ORGS, orgId);
 
   await updateDoc(docRef, {
-    tasks: firebaseTasks,
+    tasks: fbTasks,
   });
 }
 
@@ -203,17 +168,15 @@ export async function updateChoresFromOrg({
   chores,
   orgId,
 }: {
-  chores: Chore[];
+  chores: Map<Chore>;
   orgId: string;
 }) {
-  const firebaseChores: FirebaseChore[] = chores?.map((chore) =>
-    transformChore.toFirebase(chore)
-  );
+  const fbChores: Map<FBChore> = transformMap(chores, transformChore.toFB);
 
   const docRef = doc(db, Collection.ORGS, orgId);
 
   await updateDoc(docRef, {
-    chores: firebaseChores,
+    chores: fbChores,
   });
 }
 
@@ -221,17 +184,16 @@ export async function updateLevelsFromOrg({
   levels,
   orgId,
 }: {
-  levels: Level[];
+  levels: Map<Level>;
   orgId: string;
 }) {
-  const firebaseLevels: FirebaseLevel[] = levels?.map((level) =>
-    transformLevel.toFirebase(level)
-  );
+  debugger;
+  const fbLevels: Map<FBLevel> = transformMap(levels, transformLevel.toFB);
 
   const docRef = doc(db, Collection.ORGS, orgId);
 
   await updateDoc(docRef, {
-    levels: firebaseLevels,
+    levels: fbLevels,
   });
 }
 
@@ -243,10 +205,10 @@ export async function addRoomToOrg({
   room: Room;
 }) {
   const orgDocRef = doc(db, Collection.ORGS, orgId);
-  const firebaseRoom = transformRoom.toFirebase(room);
+  const fbRoom = transformRoom.toFB(room);
   await updateDoc(orgDocRef, {
-    rooms: arrayUnion(firebaseRoom),
-    lastId: firebaseRoom.id,
+    [`rooms.${fbRoom.id}`]: fbRoom,
+    lastId: fbRoom.id,
   });
 }
 
@@ -258,10 +220,10 @@ export async function addTaskToOrg({
   task: Task;
 }) {
   const orgDocRef = doc(db, Collection.ORGS, orgId);
-  const firebaseTask = transformTask.toFirebase(task);
+  const fbTask = transformTask.toFB(task);
   await updateDoc(orgDocRef, {
-    tasks: arrayUnion(firebaseTask),
-    lastId: firebaseTask.id,
+    [`task.${fbTask.id}`]: fbTask,
+    lastId: fbTask.id,
   });
 }
 
@@ -273,9 +235,41 @@ export async function addChoreToOrg({
   chore: Chore;
 }) {
   const orgDocRef = doc(db, Collection.ORGS, orgId);
-  const firebaseChore = transformChore.toFirebase(chore);
+  const fbChore = transformChore.toFB(chore);
   await updateDoc(orgDocRef, {
-    chores: arrayUnion(firebaseChore),
-    lastId: firebaseChore.id,
+    [`chore.${fbChore.id}`]: fbChore,
+    lastId: fbChore.id,
+  });
+}
+
+export async function addLevelToOrg({
+  level,
+  orgId,
+}: {
+  level: Level;
+  orgId: string;
+}) {
+  const orgDocRef = doc(db, Collection.ORGS, orgId);
+  const fbLevel = transformLevel.toFB(level);
+
+  await updateDoc(orgDocRef, {
+    [`levels.${fbLevel.id}`]: fbLevel,
+    lastId: fbLevel.id,
+  });
+}
+
+export async function addPersonToOrg({
+  person,
+  orgId,
+}: {
+  person: Person;
+  orgId: string;
+}) {
+  const orgDocRef = doc(db, Collection.ORGS, orgId);
+  const fbPerson = transformPerson.toFB(person);
+
+  await updateDoc(orgDocRef, {
+    [`people.${fbPerson.id}`]: fbPerson,
+    lastId: fbPerson.id,
   });
 }

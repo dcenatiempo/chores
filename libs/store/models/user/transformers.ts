@@ -2,40 +2,47 @@ import { Collection } from '../../../firebase';
 import { cleanFromObject } from '../../../utils';
 import { transformReference, transformTimestamp } from '../sharedTransformers';
 import { initialState } from './reducer';
-import { FirebaseUser, User } from './types';
+import { FBUser, User } from './types';
 
 export const transformUser = {
-  fromFirebase(user: FirebaseUser | null): User {
-    const blankUser = initialState.data;
+  fromFB(user: FBUser | null): User {
+    const blankUser: User = {
+      id: '',
+      birthday: undefined,
+      firstName: undefined,
+      lastName: undefined,
+      email: undefined,
+      organizationIds: undefined,
+    };
     if (!user) return blankUser;
     return {
       id: user.authId,
       birthday: user.birthday
-        ? transformTimestamp.fromFirebase(user.birthday)
+        ? transformTimestamp.fromFB(user.birthday)
         : blankUser.birthday,
       firstName: user.firstName || user.authId,
       lastName: user.lastName || blankUser.lastName,
       email: user.email || blankUser.email,
       organizationIds: user.organizations
-        ? user.organizations.map((r) => transformReference.fromFirebase(r))
+        ? user.organizations.map((r) => transformReference.fromFB(r))
         : blankUser.organizationIds,
     };
   },
-  toFirebase(user: User): FirebaseUser {
+  toFB(user: User): FBUser {
     let firebaseUser = {
       authId: user.id,
       birthday: user.birthday
-        ? transformTimestamp.toFirebase(user.birthday)
+        ? transformTimestamp.toFB(user.birthday)
         : undefined,
       email: user.email,
       firstName: user.firstName,
       lastName: user.lastName,
       organizations: user.organizationIds?.map((id) =>
-        transformReference.toFirebase(Collection.USER, id)
+        transformReference.toFB(Collection.USER, id)
       ),
     };
     // @ts-expect-error
     firebaseUser = cleanFromObject(firebaseUser, [undefined, null, '']);
-    return firebaseUser as FirebaseUser;
+    return firebaseUser as FBUser;
   },
 };

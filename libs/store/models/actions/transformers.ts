@@ -1,10 +1,10 @@
-import { FirebaseAction, Action } from './types';
+import { FBAction, Action } from './types';
 
 export const transformAction = {
-  fromFirebase(action: FirebaseAction): Action {
+  fromFB(action: FBAction): Action {
     return action;
   },
-  toFirebase(action: Action): FirebaseAction {
+  toFB(action: Action): FBAction {
     return action;
   },
 };

@@ -1,4 +1,4 @@
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { Action } from '../../libs/store/models/actions/types';
 import { Room, Task } from '../../libs/store/models/orgs/types';
 import { Surface } from '../../libs/store/models/surfaces/types';
@@ -17,6 +17,10 @@ const AddOrEditTask: FC<AddOrEditTaskProps> = ({
   const taskId = initialResource?.id || '';
 
   const [room, setRoom] = useState<Room>();
+  const roomSurfaces = useMemo(
+    () => Object.values(room?.surfaces || {}),
+    [room?.surfaces]
+  );
   const [surface, setSurface] = useState<Surface>(); //initialResource?.surfaceId ? { id: initialResource?.surfaceId } : undefined
   const [action, setAction] = useState<Action>();
 
@@ -46,10 +50,10 @@ const AddOrEditTask: FC<AddOrEditTaskProps> = ({
     >
       <RoomSelector selected={room} onSelect={setRoom} />
       <Dropdown
-        options={room?.surfaces || []}
-        valueKey={(option) => option?.surfaceId || ''}
+        options={roomSurfaces}
+        valueKey={(option) => option?.id || ''}
         labelKey={(option) =>
-          `${option?.surfaceId || ''} ${option?.descriptor || ''}`.trim()
+          `${option?.id || ''} ${option?.descriptor || ''}`.trim()
         }
         id={'surface'}
         onSelect={setSurface}

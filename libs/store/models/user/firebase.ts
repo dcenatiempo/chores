@@ -1,6 +1,6 @@
-import { Collection, db, fetchDoc, fetchDocs } from '../../../firebase';
-import { FirebaseUser } from './types';
+import { Collection, fetchDoc } from '../../../firebase';
+import { FBUser } from './types';
 
-export async function fetchUser(userId: string): Promise<FirebaseUser | null> {
-  return fetchDoc<FirebaseUser>(Collection.USER, userId);
+export async function fetchUser(userId: string): Promise<FBUser | null> {
+  return fetchDoc<FBUser>(Collection.USER, userId);
 }

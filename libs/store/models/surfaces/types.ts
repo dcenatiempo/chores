@@ -1,10 +1,10 @@
 import { BaseSlice } from '../types';
 
 export interface SurfacesState extends BaseSlice {
-  data: SurfaceTemplate[];
+  data: FBSurfaceTemplate[];
 }
 
-export interface FirebaseSurfaceTemplate {
+export interface FBSurfaceTemplate {
   id: string;
   name: string;
   descriptors: string[];
@@ -18,12 +18,14 @@ export interface SurfaceTemplate {
 
 export interface Surface {
   id: string;
-  surfaceId: string;
-  descriptor: string;
+  name?: string; // custom name - otherwise surface name is the effective name
+  descriptor?: string;
+  surfaceTemplate: SurfaceTemplate;
 }
 
-export interface FirebaseSurface {
+export interface FBSurface {
   id: string;
-  surfaceRef: string;
+  name?: string; // custom name - otherwise surface name is the effective name
   descriptor?: string;
+  surfaceTemplateId: string;
 }

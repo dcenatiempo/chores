@@ -1,5 +1,5 @@
-import { createSlice } from '@reduxjs/toolkit';
-import { ActionsState } from './types';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { ActionsState, FBAction } from './types';
 
 const initialState: ActionsState = {
   data: [],
@@ -11,7 +11,7 @@ export const actionsSlice = createSlice({
   name: 'actions',
   initialState,
   reducers: {
-    setActions: (state, action) => {
+    setActions: (state, action: PayloadAction<FBAction[]>) => {
       state.data = action.payload;
     },
   },

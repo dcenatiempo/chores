@@ -8,17 +8,17 @@ export default function useActions() {
   const dispatch = useDispatch();
 
   const actions = useSelector(selectors.actions);
+  const actionsArray = useSelector(selectors.actionsArray);
 
   async function fetchActions() {
     return firebase.fetchActions().then((actions) => {
-      const cleanActions = actions.map(transformAction.fromFirebase);
-      dispatch(reducerActions.setActions(cleanActions));
-      return cleanActions;
+      dispatch(reducerActions.setActions(actions));
     });
   }
 
   return {
     actions,
+    actionsArray,
     fetchActions,
   };
 }

@@ -2,31 +2,30 @@ import { FC } from 'react';
 import { Level } from '../../libs/store/models/orgs/types';
 import AddOrEditList from '../base/AddOrEditList';
 import AddOrEditLevel from './AddOrEditLevel';
-// import AddOrEditPerson from './AddOrEditLevel';
 import LevelsListItem from './LevelsListItem';
 
 interface AddPeopleProps {
   levels: Level[] | undefined;
   onClickAdd?: (level: Level) => void;
   onClickDelete?: (level: Level) => void;
-  // onClickEdit?: (level: Level) => void;
+  onClickEdit?: (level: Level) => void;
 }
 
 const AddOrEditLevelsList: FC<AddPeopleProps> = ({
   levels = [],
   onClickAdd,
   onClickDelete,
-  // onClickEdit,
+  onClickEdit,
 }) => {
   return (
     <AddOrEditList
       resources={levels}
       addResource={onClickAdd}
       deleteResource={onClickDelete}
-      // editResource={onClickEdit}
+      editResource={onClickEdit}
       resourceName={'Level'}
       renderResource={(item) => <LevelsListItem level={item} />}
-      keyExtractor={(resource) => resource}
+      keyExtractor={(level) => level.id}
       AddOrEditResource={AddOrEditLevel}
     />
   );
