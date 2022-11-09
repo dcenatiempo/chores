@@ -53,7 +53,6 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
     setSurfaces([]);
   }
   function onClickSubmitRoom() {
-    debugger;
     if (disabled) return;
     const newRoom: Room = {
       level,
@@ -86,7 +85,8 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
           }}
           key={`${surface.id}-${surface.descriptor}`}
         >
-          {surface.name} {surface.descriptor ? `(${surface.descriptor})` : ''}
+          {surface.surfaceId}{' '}
+          {surface.descriptor ? `(${surface.descriptor})` : ''}
           <IconButton
             onClick={() => removeSurface(i)}
             iconName={IconName.MINUS}

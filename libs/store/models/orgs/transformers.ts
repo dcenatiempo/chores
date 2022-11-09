@@ -2,9 +2,11 @@ import { doc } from '@firebase/firestore';
 import { db } from '../../../firebase';
 import { Collection, FirebaseReference } from '../../../firebase/types';
 import { toCamelCase } from '../../../utils';
+import actions from '../actions';
+import { transformAction } from '../actions/transformers';
 import { Action, FirebaseAction } from '../actions/types';
 import { RoomType } from '../roomTypes/types';
-import { transformTimestamp } from '../sharedTransformers';
+import { transformReference, transformTimestamp } from '../sharedTransformers';
 import {
   FirebaseSurfaceTemplate,
   Surface,
@@ -57,14 +59,15 @@ export const transformOrg = {
   },
   fromFirebase(org: FirebaseOrg): Org {
     const { id, name } = org;
+    const rooms = org.rooms?.map(transformRoom.fromFirebase) || [];
     return {
       id,
       name,
       levels: org.levels?.map(transformLevel.fromFirebase) || [],
-      rooms: org.rooms?.map(transformRoom.fromFirebase) || [],
+      rooms,
       people: org.people?.map(transformPerson.fromFirebase) || [],
       chores: org.chores?.map(transformChore.fromFirebase) || [],
-      tasks: org.tasks?.map(transformTask.fromFirebase) || [],
+      tasks: org.tasks?.map((t) => transformTask.fromFirebase(t, rooms)) || [],
       customActions: org.customActions?.map(transformAction.fromFirebase) || [],
       customSurfaces:
         org.customSurfaces?.map(transformSurface.fromFirebase) || [],
@@ -90,23 +93,22 @@ const transformChore = {
   },
 };
 
-const transformTask = {
+export const transformTask = {
   toFirebase(task: Task): FirebaseTask {
-    return task;
-  },
-  fromFirebase(task: FirebaseTask): Task {
-    return { id: '', actionId: '', roomId: '', surfaceId: '' };
-  },
-};
-
-const transformAction = {
-  toFirebase(action: Action): FirebaseAction {
-    return { id: action.id, name: action.name };
-  },
-  fromFirebase(action: FirebaseAction): Action {
     return {
-      id: action.id || toCamelCase(action.name),
-      name: action.name,
+      id: task.id,
+      actionId: task.action.name,
+      surfaceId: task.surface?.id || '',
+      roomId: task.room?.id || '',
+    };
+  },
+  fromFirebase(task: FirebaseTask, rooms: Room[]): Task {
+    const room = rooms.find((r) => (r.id = task.id));
+    return {
+      id: task.id,
+      action: { name: task.actionId },
+      room,
+      surface: room?.surfaces.find((s) => s.id === task.surfaceId),
     };
   },
 };
@@ -208,15 +210,17 @@ const transformRoomSurface = {
     //    : doc(db, Collection.SURFACES, surface.id);
     return {
       id: surface.id,
-      surfaceRef: doc(db, Collection.SURFACES, surface.id),
-      name: surface.name,
+      surfaceRef: transformReference.toFirebase(
+        Collection.SURFACES,
+        surface.surfaceId
+      ),
       descriptor: surface.descriptor || '',
     };
   },
   fromFirebase(surface: FirebaseSurface): Surface {
     return {
-      id: surface.surfaceRef.id,
-      name: surface.name || surface.surfaceRef.id,
+      id: surface.id,
+      surfaceId: transformReference.fromFirebase(surface.surfaceRef),
       descriptor: surface.descriptor || '',
     };
   },

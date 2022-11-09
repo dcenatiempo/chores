@@ -5,10 +5,14 @@ import PageWrapper from '../../components/nav/PageWrapper';
 import AddOrEditPeopleList from '../../components/people/AddOrEditPeopleList';
 import AddOrEditRoomsList from '../../components/rooms/AddOrEditRoomsList';
 import AddOrEditLevelsList from '../../components/levels/AddOrEditLevelsList';
+import AddOrEditTasksList from '../../components/tasks/AddOrEditTasksList';
 
 const Household: NextPage = () => {
   const {
-    org,
+    people,
+    rooms,
+    tasks,
+    levels,
     addPerson,
     deletePerson,
     deleteRoom,
@@ -17,24 +21,33 @@ const Household: NextPage = () => {
     editPerson,
     addLevel,
     deleteLevel,
+    addTask,
+    deleteTask,
+    editTask,
   } = useCurrentOrg();
 
   return (
     <PageWrapper metaTitle="Chore Household">
+      <AddOrEditTasksList
+        tasks={tasks}
+        onClickAdd={addTask}
+        onClickDelete={deleteTask}
+        onClickEdit={editTask}
+      />
       <AddOrEditPeopleList
-        people={org.people}
+        people={people}
         onClickAdd={addPerson}
         onClickDelete={deletePerson}
         onClickEdit={editPerson}
       />
       <AddOrEditRoomsList
-        rooms={org.rooms}
+        rooms={rooms}
         onClickAdd={addRoom}
         onClickDelete={deleteRoom}
         onClickEdit={editRoom}
       />
       <AddOrEditLevelsList
-        levels={org.levels}
+        levels={levels}
         onClickAdd={addLevel}
         onClickDelete={deleteLevel}
         // onClickEdit={editLevel}

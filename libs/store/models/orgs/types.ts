@@ -31,9 +31,9 @@ export interface Chore {
 
 export interface Task {
   id: string;
-  actionId: string;
-  roomId: string;
-  surfaceId: string;
+  action: Action;
+  room?: Room;
+  surface?: Surface;
 }
 
 export interface Org {
@@ -98,7 +98,6 @@ export interface FirebaseRoom {
 export interface FirebaseSurface {
   id: string;
   surfaceRef: FirebaseReference;
-  name: string;
   descriptor: string;
 }
 
@@ -117,7 +116,9 @@ export interface FirebaseChore {
 
 export interface FirebaseTask {
   id: string;
-  // ?
+  actionId: string;
+  roomId: string;
+  surfaceId: string;
 }
 
 export interface FirebaseCustomSurface extends FirebaseSurfaceTemplate {}

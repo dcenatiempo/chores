@@ -5,7 +5,6 @@ import {
   Surface,
   SurfaceTemplate,
 } from '../../libs/store/models/surfaces/types';
-import { Button } from '../base';
 import Dropdown from '../base/Dropdown';
 import { AddButton } from '../buttons';
 
@@ -18,14 +17,13 @@ const SurfaceSelector: FC<SurfaceSelectorProps> = ({ onSelect, excluding }) => {
   const [surface, setSurface] = useState<SurfaceTemplate>();
   const [surfaceDescriptor, setSurfaceDescriptor] = useState<string>();
 
-  const { org } = useCurrentOrg();
+  const { customSurfaces } = useCurrentOrg();
   const { surfaces } = useSurfaces();
-  const customSurfaces = org.customSurfaces || [];
   const allSurfaces = useMemo(() => {
     return [...surfaces, ...customSurfaces].reduce<SurfaceTemplate[]>(
       (acc, s) => {
         const excluded = excluding.find(
-          (excluded) => excluded.id === s.id && !s.descriptors.length
+          (excluded) => excluded.id === s.id && s.descriptors.length
         );
         if (excluded) return acc;
         return [...acc, s];
@@ -37,7 +35,8 @@ const SurfaceSelector: FC<SurfaceSelectorProps> = ({ onSelect, excluding }) => {
   function onAdd() {
     if (!surface) return;
     const surfaceToAdd = {
-      id: surface.id,
+      id: '',
+      surfaceId: surface.id,
       name: surface.name,
       descriptor: surfaceDescriptor || '',
     };

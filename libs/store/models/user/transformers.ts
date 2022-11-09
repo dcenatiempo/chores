@@ -17,7 +17,7 @@ export const transformUser = {
       lastName: user.lastName || blankUser.lastName,
       email: user.email || blankUser.email,
       organizationIds: user.organizations
-        ? transformReference.fromFirebase(user.organizations)
+        ? user.organizations.map((r) => transformReference.fromFirebase(r))
         : blankUser.organizationIds,
     };
   },

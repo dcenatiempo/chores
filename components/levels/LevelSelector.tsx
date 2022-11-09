@@ -8,8 +8,7 @@ export interface LevelSelectorProps {
 }
 
 const LevelSelector: FC<LevelSelectorProps> = ({ onSelect, selected }) => {
-  const { org } = useCurrentOrg();
-  const levels = org.levels || [];
+  const { levels } = useCurrentOrg();
   return (
     <Dropdown
       label="Level"

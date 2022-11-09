@@ -18,13 +18,12 @@ export interface SurfaceTemplate {
 
 export interface Surface {
   id: string;
-  name: string;
+  surfaceId: string;
   descriptor: string;
 }
 
 export interface FirebaseSurface {
-  // id is camelCaseName
   id: string;
-  name: string;
+  surfaceRef: string;
   descriptor?: string;
 }

@@ -38,7 +38,6 @@ function AddOrEditResourceList<T>({
     ? resourceName
     : [resourceName, `${resourceName}s`];
   const [singularName, pluralName] = resourceNameArray;
-  console.log('showModal', showModal);
   return (
     <>
       <Card>
@@ -70,7 +69,6 @@ function AddOrEditResourceList<T>({
         visible={showModal !== 'none'}
         onClose={() => {
           setResourceToEdit(undefined);
-          console.log('a');
           setShowModal('none');
         }}
         title={`${showModal === 'edit' ? 'EDIT' : 'ADD'} ${singularName}`}
@@ -80,7 +78,6 @@ function AddOrEditResourceList<T>({
             if (showModal === 'add') addResource?.(resource);
             if (showModal === 'edit') editResource?.(resource);
             setResourceToEdit(undefined);
-            console.log('b');
             setShowModal('none');
           }}
           initialResource={showModal === 'edit' ? resourceToEdit : undefined}

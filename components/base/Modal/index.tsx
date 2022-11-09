@@ -30,7 +30,6 @@ const ModalContent: FC<Omit<ModalProps, 'visible'>> = ({
   const overlayRef = useRef<HTMLDivElement>(null);
 
   function onClickClose() {
-    console.log('y');
     onClose();
   }
 

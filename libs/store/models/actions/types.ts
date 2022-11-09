@@ -1,8 +1,6 @@
 import { BaseSlice } from '../types';
 
 export interface Action {
-  // id is camelCaseName
-  id: string;
   name: string;
 }
 
@@ -11,7 +9,5 @@ export interface ActionsState extends BaseSlice {
 }
 
 export interface FirebaseAction {
-  // id is camelCaseName
-  id: string;
   name: string;
 }

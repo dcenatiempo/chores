@@ -18,14 +18,17 @@ import {
   transformLevel,
   transformPerson,
   transformRoom,
+  transformTask,
 } from '../store/models/orgs/transformers';
 import {
   FirebaseLevel,
   FirebasePerson,
   FirebaseRoom,
+  FirebaseTask,
   Level,
   Person,
   Room,
+  Task,
 } from '../store/models/orgs/types';
 import { transformUser } from '../store/models/user/transformers';
 import { FirebaseUser, User } from '../store/models/user/types';
@@ -152,7 +155,6 @@ export async function updatePeopleFromOrg({
   const firebasePeople: FirebasePerson[] = people?.map((person) =>
     transformPerson.toFirebase(person)
   );
-  debugger;
   const docRef = doc(db, Collection.ORGS, orgId);
 
   const res = await updateDoc(docRef, {
@@ -181,6 +183,26 @@ export async function updateRoomsFromOrg({
   console.log(res);
 }
 
+export async function updateTasksFromOrg({
+  tasks,
+  orgId,
+}: {
+  tasks: Task[];
+  orgId: string;
+}) {
+  const firebaseTasks: FirebaseTask[] = tasks?.map((task) =>
+    transformTask.toFirebase(task)
+  );
+  console.log(firebaseTasks);
+
+  const docRef = doc(db, Collection.ORGS, orgId);
+
+  const res = await updateDoc(docRef, {
+    tasks: firebaseTasks,
+  });
+  console.log(res);
+}
+
 export async function updateLevelsFromOrg({
   levels,
   orgId,
@@ -200,7 +222,7 @@ export async function updateLevelsFromOrg({
   console.log(res);
 }
 
-export async function addRoomtoOrg({
+export async function addRoomToOrg({
   orgId,
   room,
 }: {
@@ -212,6 +234,22 @@ export async function addRoomtoOrg({
   const res = await updateDoc(orgDocRef, {
     rooms: arrayUnion(firebaseRoom),
     lastId: firebaseRoom.id,
+  });
+  console.log(res);
+}
+
+export async function addTaskToOrg({
+  orgId,
+  task,
+}: {
+  orgId: string;
+  task: Task;
+}) {
+  const orgDocRef = doc(db, Collection.ORGS, orgId);
+  const firebaseTask = transformTask.toFirebase(task);
+  const res = await updateDoc(orgDocRef, {
+    tasks: arrayUnion(firebaseTask),
+    lastId: firebaseTask.id,
   });
   console.log(res);
 }

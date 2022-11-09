@@ -17,10 +17,10 @@ export const transformTimestamp = {
 };
 
 export const transformReference = {
-  fromFirebase(firebaseReference: FirebaseReference[]) {
-    return firebaseReference.map((fr) => fr.id);
+  fromFirebase(firebaseReference: FirebaseReference) {
+    return firebaseReference.id;
   },
   toFirebase(collection: Collection, refId: string) {
-    return doc(db, collection, refId).path;
+    return doc(db, collection, refId);
   },
 };
