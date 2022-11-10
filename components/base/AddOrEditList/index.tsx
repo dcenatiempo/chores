@@ -1,23 +1,22 @@
 import { useState } from 'react';
+import { AddButton, SaveButton } from '../../buttons';
 import Button from '../Button';
 import Card from '../Card';
 import Modal from '../Modal';
 import ResourceList from './ResourceList';
 
-export interface AddOrEditResourceProps<T> {
-  onSubmitResource: (resource: T) => void;
-  initialResource?: T;
-}
-
 export interface AddOrEditResourceListProps<T> {
   resources: T[] | undefined;
-  addResource?: (resource: T) => void;
-  deleteResource?: (resource: T) => void;
+  onClickAdd?: () => void;
+  onClickSave?: () => void;
+  onClickDelete?: (resource: T) => void;
   editResource?: (resource: T) => void;
   resourceName: string | string[];
   renderResource: (resource: T) => React.ReactNode;
   keyExtractor: (item: T, index: number) => string;
-  AddOrEditResource: React.ElementType<AddOrEditResourceProps<T>>;
+  addOrEditResource: React.ReactNode;
+  setResourceToEdit?: (resource?: T) => void;
+  disabled: boolean;
 }
 
 type Modals = 'none' | 'add' | 'edit';
@@ -25,19 +24,40 @@ type Modals = 'none' | 'add' | 'edit';
 function AddOrEditResourceList<T>({
   resources = [],
   resourceName,
-  addResource,
-  deleteResource,
-  editResource,
+  onClickAdd,
+  onClickSave,
+  onClickDelete,
   renderResource,
   keyExtractor,
-  AddOrEditResource,
+  addOrEditResource,
+  setResourceToEdit,
+  disabled,
 }: React.PropsWithChildren<AddOrEditResourceListProps<T>>) {
   const [showModal, setShowModal] = useState<Modals>('none');
-  const [resourceToEdit, setResourceToEdit] = useState<T>();
   const resourceNameArray = Array.isArray(resourceName)
     ? resourceName
     : [resourceName, `${resourceName}s`];
   const [singularName, pluralName] = resourceNameArray;
+
+  function _onClickAdd() {
+    setShowModal('none');
+    onClickAdd?.();
+  }
+
+  function _onClickSave() {
+    setShowModal('none');
+    onClickSave?.();
+  }
+
+  function _onClickEdit(resource: T) {
+    setResourceToEdit?.(resource);
+    setShowModal('edit');
+  }
+
+  function _onClickDelete(resource: T) {
+    onClickDelete?.(resource);
+  }
+
   return (
     <>
       <Card>
@@ -48,40 +68,36 @@ function AddOrEditResourceList<T>({
           <ResourceList
             resources={resources}
             renderResource={renderResource}
-            onClickDelete={deleteResource}
+            onClickDelete={onClickDelete ? _onClickDelete : undefined}
             onClickEdit={
-              editResource
-                ? (resource) => {
-                    setResourceToEdit(resource);
-                    setShowModal('edit');
-                  }
-                : undefined
+              setResourceToEdit && onClickSave ? _onClickEdit : undefined
             }
             keyExtractor={keyExtractor}
           />
-          <Button
-            onClick={() => setShowModal('add')}
-            label={`Add ${singularName}`}
-          />
+          {onClickAdd ? (
+            <Button
+              onClick={() => setShowModal('add')}
+              label={`Add ${singularName}`}
+            />
+          ) : null}
         </>
       </Card>
       <Modal
         visible={showModal !== 'none'}
         onClose={() => {
-          setResourceToEdit(undefined);
+          setResourceToEdit?.(undefined);
           setShowModal('none');
         }}
         title={`${showModal === 'edit' ? 'EDIT' : 'ADD'} ${singularName}`}
       >
-        <AddOrEditResource
-          onSubmitResource={(resource) => {
-            if (showModal === 'add') addResource?.(resource);
-            if (showModal === 'edit') editResource?.(resource);
-            setResourceToEdit(undefined);
-            setShowModal('none');
-          }}
-          initialResource={showModal === 'edit' ? resourceToEdit : undefined}
-        />
+        {addOrEditResource}
+
+        {showModal === 'add' ? (
+          <AddButton disabled={disabled} onClick={_onClickAdd} />
+        ) : null}
+        {showModal === 'edit' ? (
+          <SaveButton disabled={disabled} onClick={_onClickSave} />
+        ) : null}
       </Modal>
     </>
   );

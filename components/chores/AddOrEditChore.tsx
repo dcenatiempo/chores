@@ -1,44 +1,27 @@
-import { FC, useState } from 'react';
-import { Chore, Person, Task } from '../../libs/store/models/orgs/types';
+import { FC } from 'react';
+import { Person, Task } from '../../libs/store/models/orgs/types';
 import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
-import {
-  arrayToMap,
-  mapToArray,
-} from '../../libs/store/models/sharedTransformers';
 import { TextInput } from '../base';
-import { AddOrEditResourceProps } from '../base/AddOrEditList';
 import MultiselectDropdown from '../base/MultiselectDropdown';
-import { AddButton } from '../buttons';
 
-interface AddOrEditChoreProps extends AddOrEditResourceProps<Chore> {}
+interface AddOrEditChoreProps {
+  name: string;
+  setName: (name: string) => void;
+  people: Person[];
+  setPeople: (people: Person[]) => void;
+  tasks: Task[];
+  setTasks: (tasks: Task[]) => void;
+}
 
 const AddOrEditChore: FC<AddOrEditChoreProps> = ({
-  initialResource,
-  onSubmitResource,
+  name,
+  setName,
+  people,
+  setPeople,
+  tasks,
+  setTasks,
 }) => {
-  const choreId = initialResource?.id || '';
-
   const { peopleArray, tasksArray } = useCurrentOrg();
-  const [tasks, setTasks] = useState<Task[]>(
-    mapToArray(initialResource?.tasks)
-  );
-  const [people, setPeople] = useState<Person[]>(
-    mapToArray(initialResource?.defaultPeople)
-  );
-  const [name, setName] = useState(initialResource?.name || '');
-
-  function onClickAddChore() {
-    if (!tasks.length) return;
-    setTasks([]);
-    setPeople([]);
-    setName('');
-    onSubmitResource({
-      name,
-      defaultPeople: arrayToMap(people),
-      tasks: arrayToMap(tasks),
-      id: choreId,
-    });
-  }
 
   return (
     <div
@@ -76,7 +59,6 @@ const AddOrEditChore: FC<AddOrEditChoreProps> = ({
         selected={tasks}
         label={'Tasks'}
       />
-      <AddButton onClick={onClickAddChore} />
     </div>
   );
 };

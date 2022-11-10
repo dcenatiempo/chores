@@ -42,17 +42,17 @@ const Household: NextPage = () => {
       {showChores ? (
         <AddOrEditChoresList
           chores={choresArray}
-          onClickAdd={addChore}
-          onClickDelete={deleteChore}
-          onClickEdit={editChore}
+          addChore={addChore}
+          deleteChore={deleteChore}
+          editChore={editChore}
         />
       ) : null}
       {showTasks ? (
         <AddOrEditTasksList
           tasks={tasksArray}
-          onClickAdd={addTask}
-          onClickDelete={deleteTask}
-          onClickEdit={editTask}
+          addTask={addTask}
+          deleteTask={deleteTask}
+          editTask={editTask}
         />
       ) : null}
       <AddOrEditPeopleList
@@ -64,9 +64,9 @@ const Household: NextPage = () => {
       {showRooms ? (
         <AddOrEditRoomsList
           rooms={roomsArray}
-          onClickAdd={addRoom}
-          onClickDelete={deleteRoom}
-          onClickEdit={editRoom}
+          addRoom={addRoom}
+          deleteRoom={deleteRoom}
+          editRoom={editRoom}
         />
       ) : null}
       <AddOrEditLevelsList

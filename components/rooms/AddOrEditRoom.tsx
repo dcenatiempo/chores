@@ -1,37 +1,35 @@
-import { FC, useState } from 'react';
-import { Level, Room } from '../../libs/store/models/orgs/types';
-import { useRoomTypes } from '../../libs/store/models/roomTypes';
+import { FC } from 'react';
+import { Level } from '../../libs/store/models/orgs/types';
 import { RoomType } from '../../libs/store/models/roomTypes/types';
-import {
-  arrayToMap,
-  mapToArray,
-} from '../../libs/store/models/sharedTransformers';
+
 import { Surface } from '../../libs/store/models/surfaces/types';
-import { Button, IconButton, IconName, TextInput } from '../base';
-import { AddOrEditResourceProps } from '../base/AddOrEditList';
+import { IconButton, IconName, TextInput } from '../base';
 import Card from '../base/Card';
 import LevelSelector from '../levels/LevelSelector';
 import RoomTypeSelector from '../roomTypes/RoomTypeSelector';
 import SurfaceSelector from '../surfaces/SurfaceSelector';
 
-export interface AddOrEditRoomProps extends AddOrEditResourceProps<Room> {}
+export interface AddOrEditRoomProps {
+  name: string;
+  setName: (name: string) => void;
+  level?: Level;
+  setLevel: (level: Level | undefined) => void;
+  surfaces: Surface[];
+  setSurfaces: (surfaces: Surface[]) => void;
+  roomType?: RoomType;
+  setRoomType: (roomType: RoomType | undefined) => void;
+}
 
 const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
-  initialResource,
-  onSubmitResource,
+  name,
+  setName,
+  level,
+  setLevel,
+  surfaces,
+  setSurfaces,
+  roomType,
+  setRoomType,
 }) => {
-  const isEdit = !!initialResource;
-  const roomId = initialResource?.id || '';
-  const [name, setName] = useState(initialResource?.name || '');
-
-  const [roomType, setRoomType] = useState<RoomType | undefined>(
-    initialResource?.roomType
-  );
-  const [level, setLevel] = useState<Level | undefined>(initialResource?.level);
-  const [surfaces, setSurfaces] = useState<Surface[]>(
-    mapToArray(initialResource?.surfaces)
-  );
-  console.log(surfaces);
   function addSurface(surface: Surface | undefined) {
     if (!surface) return;
     setSurfaces([surface, ...surfaces]);
@@ -41,26 +39,7 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
     const newSurfaces = surfaces.filter((_, i) => i !== index);
     setSurfaces(newSurfaces);
   }
-
-  const disabled = !(name && roomType && level && surfaces.length);
-
-  function resetForm() {
-    setName('');
-    setSurfaces([]);
-  }
-  function onClickSubmitRoom() {
-    if (disabled) return;
-    const newRoom: Room = {
-      level,
-      name,
-      roomType: roomType,
-      id: roomId,
-      surfaces: arrayToMap(surfaces),
-    };
-    resetForm();
-    onSubmitResource(newRoom);
-  }
-
+  console.log(surfaces);
   return (
     <Card>
       <br />
@@ -89,11 +68,6 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
           />
         </div>
       ))}
-      <Button
-        label={`${isEdit ? 'Edit' : 'Add'} Room`}
-        disabled={disabled}
-        onClick={onClickSubmitRoom}
-      />
     </Card>
   );
 };

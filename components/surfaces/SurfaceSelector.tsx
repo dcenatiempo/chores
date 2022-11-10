@@ -23,7 +23,7 @@ const SurfaceSelector: FC<SurfaceSelectorProps> = ({ onSelect, excluding }) => {
     return [...surfaceTemplatesArray, ...customSurfacesArray].reduce<
       SurfaceTemplate[]
     >((acc, s) => {
-      // todo: don't allow any duplicates
+      // todo: don't allow any duplicates... maybe
       const excluded = excluding.find(
         (exclude) =>
           exclude.surfaceTemplate.id === s.id && !s.descriptors.length
@@ -43,6 +43,7 @@ const SurfaceSelector: FC<SurfaceSelectorProps> = ({ onSelect, excluding }) => {
     };
     onSelect(surfaceToAdd);
   }
+
   return (
     <div>
       <Dropdown
@@ -68,7 +69,12 @@ const SurfaceSelector: FC<SurfaceSelectorProps> = ({ onSelect, excluding }) => {
           label={`${surface.name} type`}
         />
       ) : null}
-      <AddButton onClick={onAdd} />
+      <AddButton
+        disabled={
+          !surface || (!!surface?.descriptors?.length && !surfaceDescriptor)
+        }
+        onClick={onAdd}
+      />
     </div>
   );
 };
