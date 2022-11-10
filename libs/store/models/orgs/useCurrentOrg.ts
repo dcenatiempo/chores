@@ -63,6 +63,7 @@ export default function useCurrentOrg() {
 
   function addRoom(room: Room) {
     if (!orgId) return;
+
     addRoomToOrg({
       orgId: orgId,
       room: {
@@ -188,7 +189,6 @@ export default function useCurrentOrg() {
   }
 
   function deleteLevel({ id }: Level) {
-    debugger;
     if (!orgId) return;
     const levelsCopy = { ...levels };
     delete levelsCopy[id];

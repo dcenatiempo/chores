@@ -187,7 +187,6 @@ export async function updateLevelsFromOrg({
   levels: Map<Level>;
   orgId: string;
 }) {
-  debugger;
   const fbLevels: Map<FBLevel> = transformMap(levels, transformLevel.toFB);
 
   const docRef = doc(db, Collection.ORGS, orgId);

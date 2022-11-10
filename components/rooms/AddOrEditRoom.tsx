@@ -76,7 +76,7 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
             display: 'flex',
             alignItems: 'center',
           }}
-          key={`${surface.id}-${surface.descriptor}`}
+          key={`${surface.surfaceTemplate.id}-${surface.id}-${surface.descriptor}`}
         >
           {surface.name} {surface.descriptor ? `(${surface.descriptor})` : ''}
           <IconButton

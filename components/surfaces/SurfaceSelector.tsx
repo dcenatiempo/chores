@@ -17,14 +17,16 @@ const SurfaceSelector: FC<SurfaceSelectorProps> = ({ onSelect, excluding }) => {
   const [surface, setSurface] = useState<SurfaceTemplate>();
   const [surfaceDescriptor, setSurfaceDescriptor] = useState<string>();
 
-  const { customSurfacesArray } = useCurrentOrg();
+  const { customSurfacesArray, getNextId } = useCurrentOrg();
   const { surfaceTemplatesArray } = useSurfaces();
   const allSurfaces = useMemo(() => {
     return [...surfaceTemplatesArray, ...customSurfacesArray].reduce<
       SurfaceTemplate[]
     >((acc, s) => {
+      // todo: don't allow any duplicates
       const excluded = excluding.find(
-        (excluded) => excluded.id === s.id && s.descriptors.length
+        (exclude) =>
+          exclude.surfaceTemplate.id === s.id && !s.descriptors.length
       );
       if (excluded) return acc;
       return [...acc, s];
@@ -34,7 +36,7 @@ const SurfaceSelector: FC<SurfaceSelectorProps> = ({ onSelect, excluding }) => {
   function onAdd() {
     if (!surface) return;
     const surfaceToAdd = {
-      id: '',
+      id: getNextId(),
       surfaceTemplate: surface,
       name: surface.name,
       descriptor: surfaceDescriptor || '',

@@ -39,7 +39,10 @@ export function transformMap<A, B>(
 export function arrayToMap<T>(a: T[], key: string = 'id'): Map<T> {
   const map: Map<T> = {};
   a.forEach((item) => {
-    map[key] = item as T;
+    // @ts-expect-error
+    const mapKey = item[key];
+    if (!mapKey) return;
+    map[mapKey] = item as T;
   });
   return map;
 }

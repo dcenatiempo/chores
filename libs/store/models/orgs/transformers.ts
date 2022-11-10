@@ -1,7 +1,6 @@
 import { doc } from '@firebase/firestore';
 import { db } from '../../../firebase';
 import { Collection, FBReference } from '../../../firebase/types';
-import { toCamelCase } from '../../../utils';
 import { transformAction } from '../actions/transformers';
 import { transformRoomType } from '../roomTypes/transformers';
 import { FBRoomType, RoomType } from '../roomTypes/types';
@@ -68,9 +67,7 @@ export const transformOrg = {
     surfaceTemplates: Map<SurfaceTemplate>
   ): Org {
     const { id, name } = org;
-    debugger;
     const levels = transformMap(org.levels, transformLevel.fromFB);
-    debugger;
     const rooms = transformMap(org.rooms, (room) =>
       transformRoom.fromFB(room, levels, roomTypes, surfaceTemplates)
     );

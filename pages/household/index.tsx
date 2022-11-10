@@ -32,32 +32,42 @@ const Household: NextPage = () => {
     editChore,
   } = useCurrentOrg();
 
+  const showRooms = !!levelsArray.length;
+  const showChores = !!tasksArray.length && !!peopleArray.length;
+  const showTasks = !!roomsArray.length && !!peopleArray.length;
+
   return (
     <PageWrapper metaTitle="Chore Household">
-      <AddOrEditChoresList
-        chores={choresArray}
-        onClickAdd={addChore}
-        onClickDelete={deleteChore}
-        onClickEdit={editChore}
-      />
-      <AddOrEditTasksList
-        tasks={tasksArray}
-        onClickAdd={addTask}
-        onClickDelete={deleteTask}
-        onClickEdit={editTask}
-      />
+      {showChores ? (
+        <AddOrEditChoresList
+          chores={choresArray}
+          onClickAdd={addChore}
+          onClickDelete={deleteChore}
+          onClickEdit={editChore}
+        />
+      ) : null}
+      {showTasks ? (
+        <AddOrEditTasksList
+          tasks={tasksArray}
+          onClickAdd={addTask}
+          onClickDelete={deleteTask}
+          onClickEdit={editTask}
+        />
+      ) : null}
       <AddOrEditPeopleList
         people={peopleArray}
         onClickAdd={addPerson}
         onClickDelete={deletePerson}
         onClickEdit={editPerson}
       />
-      <AddOrEditRoomsList
-        rooms={roomsArray}
-        onClickAdd={addRoom}
-        onClickDelete={deleteRoom}
-        onClickEdit={editRoom}
-      />
+      {showRooms ? (
+        <AddOrEditRoomsList
+          rooms={roomsArray}
+          onClickAdd={addRoom}
+          onClickDelete={deleteRoom}
+          onClickEdit={editRoom}
+        />
+      ) : null}
       <AddOrEditLevelsList
         levels={levelsArray}
         onClickAdd={addLevel}

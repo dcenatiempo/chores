@@ -20,12 +20,13 @@ const RoomListItem: FC<RoomListItemProps> = ({
   function onClickEditRoom() {
     onClickEdit?.(room);
   }
+
   return (
     <ListItem>
       <>
         {' '}
-        {room.name} ({room.roomType}) on the {room.level} level{' '}
-        {room.surfaces.length} surfaces
+        {/* {room.name} ({room.roomType?.name}) on the {room.level} level{' '} */}
+        {/* {room.surfaces.length} surfaces */}
         <div
           style={{
             display: 'flex',
