@@ -13,6 +13,7 @@ import {
   updateTasksFromOrg,
 } from '../../../firebase';
 import { incrementHex } from '../../../utils';
+import { mapToArray } from '../sharedTransformers';
 // import { Map } from '../types';
 import { actions } from './reducer';
 import * as selectors from './selectors';
@@ -31,17 +32,17 @@ export default function useCurrentOrg() {
   const customRoomTypes = useSelector(selectors.customRoomTypes);
   const customSurfaces = useSelector(selectors.customSurfaces);
   const lastIdRef = useRef(lastId);
-  const choresArray = useMemo(() => Object.values(chores), [chores]);
-  const peopleArray = useMemo(() => Object.values(people), [people]);
-  const roomsArray = useMemo(() => Object.values(rooms), [rooms]);
-  const tasksArray = useMemo(() => Object.values(tasks), [tasks]);
-  const levelsArray = useMemo(() => Object.values(levels), [levels]);
+  const choresArray = useMemo(() => mapToArray(chores), [chores]);
+  const peopleArray = useMemo(() => mapToArray(people), [people]);
+  const roomsArray = useMemo(() => mapToArray(rooms), [rooms]);
+  const tasksArray = useMemo(() => mapToArray(tasks), [tasks]);
+  const levelsArray = useMemo(() => mapToArray(levels), [levels]);
   const customRoomTypesArray = useMemo(
-    () => Object.values(customRoomTypes),
+    () => mapToArray(customRoomTypes),
     [customRoomTypes]
   );
   const customSurfacesArray = useMemo(
-    () => Object.values(customSurfaces),
+    () => mapToArray(customSurfaces),
     [customSurfaces]
   );
 

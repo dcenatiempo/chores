@@ -2,7 +2,10 @@ import { FC, useState } from 'react';
 import { Level, Room } from '../../libs/store/models/orgs/types';
 import { useRoomTypes } from '../../libs/store/models/roomTypes';
 import { RoomType } from '../../libs/store/models/roomTypes/types';
-import { arrayToMap } from '../../libs/store/models/sharedTransformers';
+import {
+  arrayToMap,
+  mapToArray,
+} from '../../libs/store/models/sharedTransformers';
 import { Surface } from '../../libs/store/models/surfaces/types';
 import { Button, IconButton, IconName, TextInput } from '../base';
 import { AddOrEditResourceProps } from '../base/AddOrEditList';
@@ -26,7 +29,7 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
   );
   const [level, setLevel] = useState<Level | undefined>(initialResource?.level);
   const [surfaces, setSurfaces] = useState<Surface[]>(
-    Object.values(initialResource?.surfaces || {})
+    mapToArray(initialResource?.surfaces)
   );
   console.log(surfaces);
   function addSurface(surface: Surface | undefined) {

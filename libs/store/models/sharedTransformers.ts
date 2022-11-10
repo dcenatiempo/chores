@@ -36,8 +36,10 @@ export function transformMap<A, B>(
   return newMap;
 }
 
-export function arrayToMap<T>(a: T[], key: string = 'id'): Map<T> {
+export function arrayToMap<T>(a?: T[], key: string = 'id'): Map<T> {
   const map: Map<T> = {};
+  if (!a) return map;
+
   a.forEach((item) => {
     // @ts-expect-error
     const mapKey = item[key];
@@ -45,4 +47,9 @@ export function arrayToMap<T>(a: T[], key: string = 'id'): Map<T> {
     map[mapKey] = item as T;
   });
   return map;
+}
+
+export function mapToArray<T>(m?: Map<T>): T[] {
+  if (!m) return [] as T[];
+  return Object.values(m);
 }

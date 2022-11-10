@@ -1,6 +1,7 @@
 import { FC, useMemo, useState } from 'react';
 import { Action } from '../../libs/store/models/actions/types';
 import { Room, Task } from '../../libs/store/models/orgs/types';
+import { mapToArray } from '../../libs/store/models/sharedTransformers';
 import { Surface } from '../../libs/store/models/surfaces/types';
 import ActionsSelector from '../actions/ActionsSelector';
 import { Dropdown } from '../base';
@@ -16,13 +17,17 @@ const AddOrEditTask: FC<AddOrEditTaskProps> = ({
 }) => {
   const taskId = initialResource?.id || '';
 
-  const [room, setRoom] = useState<Room>();
+  const [room, setRoom] = useState<Room | undefined>(initialResource?.room);
   const roomSurfaces = useMemo(
-    () => Object.values(room?.surfaces || {}),
+    () => mapToArray(room?.surfaces),
     [room?.surfaces]
   );
-  const [surface, setSurface] = useState<Surface>(); //initialResource?.surfaceId ? { id: initialResource?.surfaceId } : undefined
-  const [action, setAction] = useState<Action>();
+  const [surface, setSurface] = useState<Surface | undefined>(
+    initialResource?.surface
+  );
+  const [action, setAction] = useState<Action | undefined>(
+    initialResource?.action
+  );
 
   function onClickAddTask() {
     if (!room || !surface || !action) return;

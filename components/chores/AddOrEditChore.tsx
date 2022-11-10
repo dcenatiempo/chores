@@ -1,7 +1,10 @@
 import { FC, useState } from 'react';
 import { Chore, Person, Task } from '../../libs/store/models/orgs/types';
 import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
-import { arrayToMap } from '../../libs/store/models/sharedTransformers';
+import {
+  arrayToMap,
+  mapToArray,
+} from '../../libs/store/models/sharedTransformers';
 import { TextInput } from '../base';
 import { AddOrEditResourceProps } from '../base/AddOrEditList';
 import MultiselectDropdown from '../base/MultiselectDropdown';
@@ -14,10 +17,15 @@ const AddOrEditChore: FC<AddOrEditChoreProps> = ({
   onSubmitResource,
 }) => {
   const choreId = initialResource?.id || '';
+
   const { peopleArray, tasksArray } = useCurrentOrg();
-  const [tasks, setTasks] = useState<Task[]>([]);
-  const [people, setPeople] = useState<Person[]>([]);
-  const [name, setName] = useState('');
+  const [tasks, setTasks] = useState<Task[]>(
+    mapToArray(initialResource?.tasks)
+  );
+  const [people, setPeople] = useState<Person[]>(
+    mapToArray(initialResource?.defaultPeople)
+  );
+  const [name, setName] = useState(initialResource?.name || '');
 
   function onClickAddChore() {
     if (!tasks.length) return;
