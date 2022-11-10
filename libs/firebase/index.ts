@@ -107,6 +107,57 @@ function listenForDocChanges<A>({
 
 export { app, auth, db, fetchDocs, fetchDoc, listenForDocChanges };
 
+enum OrgeEntityType {
+  ROOM = 'rooms',
+  TASK = 'tasks',
+  CHORE = 'chores',
+  PERSON = 'people',
+  LEVEL = 'levels',
+}
+interface Entity {
+  id: string;
+}
+export async function addEntityToOrg<T, FBT extends Entity>({
+  orgId,
+  entity,
+  transformEntity,
+  entityType,
+}: {
+  orgId: string;
+  entity: T;
+  transformEntity: { toFB: (entity: T) => FBT };
+  entityType: OrgeEntityType;
+}) {
+  const orgDocRef = doc(db, Collection.ORGS, orgId);
+  const fbEntity = transformEntity.toFB(entity);
+  await updateDoc(orgDocRef, {
+    [`${entityType}.${fbEntity.id}`]: fbEntity,
+    lastId: fbEntity.id,
+  });
+}
+
+export async function updateEntitiesFromOrg<T, FBT extends Entity>({
+  entities,
+  orgId,
+  transformEntity,
+  entityType,
+}: {
+  entities: Map<T>;
+  orgId: string;
+  transformEntity: { toFB: (entity: T) => FBT };
+  entityType: OrgeEntityType;
+}) {
+  const firebaseEntities: Map<FBT> = transformMap(
+    entities,
+    transformEntity.toFB
+  );
+  const docRef = doc(db, Collection.ORGS, orgId);
+
+  await updateDoc(docRef, {
+    [entityType]: firebaseEntities,
+  });
+}
+
 /////////////////////////////////////////////////////////////////////////////////////
 
 export async function createUser(userId: string, user: User) {
@@ -114,161 +165,109 @@ export async function createUser(userId: string, user: User) {
   await setDoc(doc(db, 'users', userId), fbUser);
 }
 
-export async function updatePeopleFromOrg({
-  people,
-  orgId,
-}: {
-  people: Map<Person>;
+interface AddEntityParams<T> {
+  entity: T;
   orgId: string;
-}) {
-  const firebasePeople: Map<FBPerson> = transformMap(
-    people,
-    transformPerson.toFB
-  );
-  const docRef = doc(db, Collection.ORGS, orgId);
+}
 
-  await updateDoc(docRef, {
-    people: firebasePeople,
+interface UpdateEntitiesParams<T> {
+  entities: Map<T>;
+  orgId: string;
+}
+
+const roomConfig = {
+  transformEntity: transformRoom,
+  entityType: OrgeEntityType.ROOM,
+};
+
+export async function addRoomToOrg(params: AddEntityParams<Room>) {
+  return addEntityToOrg({
+    ...params,
+    ...roomConfig,
   });
 }
 
-export async function updateRoomsFromOrg({
-  rooms,
-  orgId,
-}: {
-  rooms: Map<Room>;
-  orgId: string;
-}) {
-  const fbRooms: Map<FBRoom> = transformMap(rooms, transformRoom.toFB);
-
-  const docRef = doc(db, Collection.ORGS, orgId);
-
-  await updateDoc(docRef, {
-    rooms: fbRooms,
+export async function updateRoomsFromOrg(params: UpdateEntitiesParams<Room>) {
+  return updateEntitiesFromOrg({
+    ...params,
+    ...roomConfig,
   });
 }
 
-export async function updateTasksFromOrg({
-  tasks,
-  orgId,
-}: {
-  tasks: Map<Task>;
-  orgId: string;
-}) {
-  const fbTasks: Map<FBTask> = transformMap(tasks, transformTask.toFB);
+const taskConfig = {
+  transformEntity: transformTask,
+  entityType: OrgeEntityType.TASK,
+};
 
-  const docRef = doc(db, Collection.ORGS, orgId);
-
-  await updateDoc(docRef, {
-    tasks: fbTasks,
+export async function addTaskToOrg(params: AddEntityParams<Task>) {
+  return addEntityToOrg({
+    ...params,
+    ...taskConfig,
   });
 }
 
-export async function updateChoresFromOrg({
-  chores,
-  orgId,
-}: {
-  chores: Map<Chore>;
-  orgId: string;
-}) {
-  const fbChores: Map<FBChore> = transformMap(chores, transformChore.toFB);
-
-  const docRef = doc(db, Collection.ORGS, orgId);
-
-  await updateDoc(docRef, {
-    chores: fbChores,
+export async function updateTasksFromOrg(params: UpdateEntitiesParams<Task>) {
+  return updateEntitiesFromOrg({
+    ...params,
+    ...taskConfig,
   });
 }
 
-export async function updateLevelsFromOrg({
-  levels,
-  orgId,
-}: {
-  levels: Map<Level>;
-  orgId: string;
-}) {
-  const fbLevels: Map<FBLevel> = transformMap(levels, transformLevel.toFB);
+const choreConfig = {
+  transformEntity: transformChore,
+  entityType: OrgeEntityType.CHORE,
+};
 
-  const docRef = doc(db, Collection.ORGS, orgId);
-
-  await updateDoc(docRef, {
-    levels: fbLevels,
+export async function addChoreToOrg(params: AddEntityParams<Chore>) {
+  return addEntityToOrg({
+    ...params,
+    ...choreConfig,
   });
 }
 
-export async function addRoomToOrg({
-  orgId,
-  room,
-}: {
-  orgId: string;
-  room: Room;
-}) {
-  const orgDocRef = doc(db, Collection.ORGS, orgId);
-  const fbRoom = transformRoom.toFB(room);
-  await updateDoc(orgDocRef, {
-    [`rooms.${fbRoom.id}`]: fbRoom,
-    lastId: fbRoom.id,
+export async function updateChoresFromOrg(params: UpdateEntitiesParams<Chore>) {
+  return updateEntitiesFromOrg({
+    ...params,
+    ...choreConfig,
   });
 }
 
-export async function addTaskToOrg({
-  orgId,
-  task,
-}: {
-  orgId: string;
-  task: Task;
-}) {
-  const orgDocRef = doc(db, Collection.ORGS, orgId);
-  const fbTask = transformTask.toFB(task);
-  await updateDoc(orgDocRef, {
-    [`task.${fbTask.id}`]: fbTask,
-    lastId: fbTask.id,
+const levelConfig = {
+  transformEntity: transformLevel,
+  entityType: OrgeEntityType.LEVEL,
+};
+
+export async function addLevelToOrg(params: AddEntityParams<Level>) {
+  return addEntityToOrg({
+    ...params,
+    ...levelConfig,
   });
 }
 
-export async function addChoreToOrg({
-  orgId,
-  chore,
-}: {
-  orgId: string;
-  chore: Chore;
-}) {
-  const orgDocRef = doc(db, Collection.ORGS, orgId);
-  const fbChore = transformChore.toFB(chore);
-  await updateDoc(orgDocRef, {
-    [`chore.${fbChore.id}`]: fbChore,
-    lastId: fbChore.id,
+export async function updateLevelsFromOrg(params: UpdateEntitiesParams<Level>) {
+  return updateEntitiesFromOrg({
+    ...params,
+    ...levelConfig,
   });
 }
 
-export async function addLevelToOrg({
-  level,
-  orgId,
-}: {
-  level: Level;
-  orgId: string;
-}) {
-  const orgDocRef = doc(db, Collection.ORGS, orgId);
-  const fbLevel = transformLevel.toFB(level);
+const personConfig = {
+  transformEntity: transformPerson,
+  entityType: OrgeEntityType.PERSON,
+};
 
-  await updateDoc(orgDocRef, {
-    [`levels.${fbLevel.id}`]: fbLevel,
-    lastId: fbLevel.id,
+export async function addPersonToOrg(params: AddEntityParams<Person>) {
+  return addEntityToOrg({
+    ...params,
+    ...personConfig,
   });
 }
 
-export async function addPersonToOrg({
-  person,
-  orgId,
-}: {
-  person: Person;
-  orgId: string;
-}) {
-  const orgDocRef = doc(db, Collection.ORGS, orgId);
-  const fbPerson = transformPerson.toFB(person);
-
-  await updateDoc(orgDocRef, {
-    [`people.${fbPerson.id}`]: fbPerson,
-    lastId: fbPerson.id,
+export async function updatePeopleFromOrg(
+  params: UpdateEntitiesParams<Person>
+) {
+  return updateEntitiesFromOrg({
+    ...params,
+    ...personConfig,
   });
 }

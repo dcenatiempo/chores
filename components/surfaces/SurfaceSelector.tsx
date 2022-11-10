@@ -36,7 +36,7 @@ const SurfaceSelector: FC<SurfaceSelectorProps> = ({ onSelect, excluding }) => {
   function onAdd() {
     if (!surface) return;
     const surfaceToAdd = {
-      id: getNextId(),
+      id: surface.id || getNextId(),
       surfaceTemplate: surface,
       name: surface.name,
       descriptor: surfaceDescriptor || '',

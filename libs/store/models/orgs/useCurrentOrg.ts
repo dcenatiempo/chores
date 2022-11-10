@@ -56,7 +56,7 @@ export default function useCurrentOrg() {
   function addPerson(person: Person) {
     if (!orgId) return;
     addPersonToOrg({
-      person: { ...person, id: getNextId() },
+      entity: { ...person, id: getNextId() },
       orgId: orgId,
     });
   }
@@ -66,7 +66,7 @@ export default function useCurrentOrg() {
 
     addRoomToOrg({
       orgId: orgId,
-      room: {
+      entity: {
         ...room,
         surfaces: room.surfaces,
         id: getNextId(),
@@ -76,9 +76,10 @@ export default function useCurrentOrg() {
 
   function addTask(task: Task) {
     if (!orgId) return;
+    console.log('task', task);
     addTaskToOrg({
       orgId: orgId,
-      task: { ...task, id: getNextId() },
+      entity: { ...task, id: getNextId() },
     });
   }
 
@@ -86,7 +87,7 @@ export default function useCurrentOrg() {
     if (!orgId) return;
     addChoreToOrg({
       orgId: orgId,
-      chore: { ...chore, id: getNextId() },
+      entity: { ...chore, id: getNextId() },
     });
   }
 
@@ -94,7 +95,7 @@ export default function useCurrentOrg() {
     if (!orgId) return;
     addLevelToOrg({
       orgId,
-      level: { ...level, id: getNextId() },
+      entity: { ...level, id: getNextId() },
     });
   }
 
@@ -103,7 +104,7 @@ export default function useCurrentOrg() {
     const roomsCopy = { ...rooms };
     roomsCopy[room.id] = room;
     updateRoomsFromOrg({
-      rooms: roomsCopy,
+      entities: roomsCopy,
       orgId,
     });
   }
@@ -113,7 +114,7 @@ export default function useCurrentOrg() {
     const tasksCopy = { ...tasks };
     tasksCopy[task.id] = task;
     updateTasksFromOrg({
-      tasks: tasksCopy,
+      entities: tasksCopy,
       orgId,
     });
   }
@@ -123,7 +124,7 @@ export default function useCurrentOrg() {
     const choresCopy = { ...chores };
     choresCopy[chore.id] = chore;
     updateChoresFromOrg({
-      chores: choresCopy,
+      entities: choresCopy,
       orgId,
     });
   }
@@ -133,7 +134,7 @@ export default function useCurrentOrg() {
     const peopleCopy = { ...people };
     peopleCopy[person.id] = person;
     updatePeopleFromOrg({
-      people: peopleCopy,
+      entities: peopleCopy,
       orgId,
     });
   }
@@ -143,7 +144,7 @@ export default function useCurrentOrg() {
     const levelsCopy = { ...levels };
     levelsCopy[level.id] = level;
     updateLevelsFromOrg({
-      levels: levelsCopy,
+      entities: levelsCopy,
       orgId,
     });
   }
@@ -153,7 +154,7 @@ export default function useCurrentOrg() {
     const peopleCopy = { ...people };
     delete peopleCopy[id];
     updatePeopleFromOrg({
-      people: peopleCopy,
+      entities: peopleCopy,
       orgId: orgId,
     });
   }
@@ -163,7 +164,7 @@ export default function useCurrentOrg() {
     const roomsCopy = { ...rooms };
     delete roomsCopy[id];
     updateRoomsFromOrg({
-      rooms: roomsCopy,
+      entities: roomsCopy,
       orgId: orgId,
     });
   }
@@ -173,7 +174,7 @@ export default function useCurrentOrg() {
     const tasksCopy = { ...tasks };
     delete tasksCopy[id];
     updateTasksFromOrg({
-      tasks: tasksCopy,
+      entities: tasksCopy,
       orgId: orgId,
     });
   }
@@ -183,7 +184,7 @@ export default function useCurrentOrg() {
     const choresCopy = { ...chores };
     delete choresCopy[id];
     updateChoresFromOrg({
-      chores: choresCopy,
+      entities: choresCopy,
       orgId: orgId,
     });
   }
@@ -193,7 +194,7 @@ export default function useCurrentOrg() {
     const levelsCopy = { ...levels };
     delete levelsCopy[id];
     updateLevelsFromOrg({
-      levels: levelsCopy,
+      entities: levelsCopy,
       orgId: orgId,
     });
   }

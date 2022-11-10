@@ -53,7 +53,7 @@ const AddOrEditTask: FC<AddOrEditTaskProps> = ({
         options={roomSurfaces}
         valueKey={(option) => option?.id || ''}
         labelKey={(option) =>
-          `${option?.id || ''} ${option?.descriptor || ''}`.trim()
+          `${option?.name || ''} ${option?.descriptor || ''}`.trim()
         }
         id={'surface'}
         onSelect={setSurface}

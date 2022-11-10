@@ -251,6 +251,7 @@ const transformSurface = {
   fromFB(surface: FBSurface, surfaces: Map<SurfaceTemplate>): Surface {
     return {
       id: surface.id,
+      name: surface.name,
       surfaceTemplate: transformSurfaceTemplate.hydrate(
         surface.surfaceTemplateId,
         surfaces

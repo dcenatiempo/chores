@@ -28,7 +28,7 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
   const [surfaces, setSurfaces] = useState<Surface[]>(
     Object.values(initialResource?.surfaces || {})
   );
-
+  console.log(surfaces);
   function addSurface(surface: Surface | undefined) {
     if (!surface) return;
     setSurfaces([surface, ...surfaces]);
