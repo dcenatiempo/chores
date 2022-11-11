@@ -13,7 +13,6 @@ const Household: NextPage = () => {
     peopleArray,
     roomsArray,
     tasksArray,
-    tasks,
     choresArray,
     levelsArray,
     addPerson,
@@ -32,7 +31,7 @@ const Household: NextPage = () => {
     deleteChore,
     editChore,
   } = useCurrentOrg();
-  console.log(tasksArray, tasks);
+
   const showRooms = !!levelsArray.length;
   const showChores = !!tasksArray.length && !!peopleArray.length;
   const showTasks = !!roomsArray.length && !!peopleArray.length;
@@ -57,9 +56,9 @@ const Household: NextPage = () => {
       ) : null}
       <AddOrEditPeopleList
         people={peopleArray}
-        onClickAdd={addPerson}
-        onClickDelete={deletePerson}
-        onClickEdit={editPerson}
+        addPerson={addPerson}
+        deletePerson={deletePerson}
+        editPerson={editPerson}
       />
       {showRooms ? (
         <AddOrEditRoomsList

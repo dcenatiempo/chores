@@ -25,7 +25,7 @@ export function DateSelector({ id, onChange, date }: DateSelectorProps) {
         id={id}
         name={id}
         onChange={onChangeInner}
-        value={date ? timestampToISODate(date) : date}
+        value={date ? timestampToISODate(date) : ''}
       />
     </InputField>
   );

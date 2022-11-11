@@ -1,30 +1,24 @@
-import { FC, useState } from 'react';
-import { Person } from '../../libs/store/models/orgs/types';
+import { FC } from 'react';
 import { TextInput } from '../base';
-import { AddOrEditResourceProps } from '../base/AddOrEditList';
 import { DateSelector } from '../base/DateSelector';
-import { AddButton } from '../buttons';
 
-interface AddOrEditPersonProps extends AddOrEditResourceProps<Person> {}
+interface AddOrEditPersonProps {
+  firstName: string;
+  setFirstName: (firstName: string) => void;
+  lastName: string;
+  setLastName: (lastName: string) => void;
+  birthday: number | undefined;
+  setBirthday: (birthday: number | undefined) => void;
+}
 
 const AddPerson: FC<AddOrEditPersonProps> = ({
-  initialResource,
-  onSubmitResource,
+  firstName,
+  setFirstName,
+  lastName,
+  setLastName,
+  birthday,
+  setBirthday,
 }) => {
-  const personId = initialResource?.id || '';
-
-  const [firstName, setFirstName] = useState(initialResource?.firstName || '');
-  const [lastName, setLastName] = useState(initialResource?.lastName || '');
-  const [date, setDate] = useState(initialResource?.birthday);
-
-  function onClickAddPerson() {
-    if (firstName.length === 0) return;
-    setFirstName('');
-    setLastName('');
-    setDate(undefined);
-    onSubmitResource({ firstName, lastName, birthday: date, id: personId });
-  }
-
   return (
     <div
       style={{
@@ -38,8 +32,7 @@ const AddPerson: FC<AddOrEditPersonProps> = ({
     >
       <TextInput label="First" value={firstName} onChange={setFirstName} />
       <TextInput label="Last" value={lastName} onChange={setLastName} />
-      <DateSelector id="birthday" onChange={setDate} date={date} />
-      <AddButton onClick={onClickAddPerson} />
+      <DateSelector id="birthday" onChange={setBirthday} date={birthday} />
     </div>
   );
 };
