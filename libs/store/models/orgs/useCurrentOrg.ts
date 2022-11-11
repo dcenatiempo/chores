@@ -1,4 +1,4 @@
-import { useMemo, useRef } from 'react';
+import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
   addChoreToOrg,
@@ -26,12 +26,10 @@ export default function useCurrentOrg() {
   const orgName = useSelector(selectors.name);
   const orgId = useSelector(selectors.id);
   const levels = useSelector(selectors.levels);
-  const lastId = useSelector(selectors.lastId);
   const tasks = useSelector(selectors.tasks);
   const chores = useSelector(selectors.chores);
   const customRoomTypes = useSelector(selectors.customRoomTypes);
   const customSurfaces = useSelector(selectors.customSurfaces);
-  const lastIdRef = useRef(lastId);
   const choresArray = useMemo(() => mapToArray(chores), [chores]);
   const peopleArray = useMemo(() => mapToArray(people), [people]);
   const roomsArray = useMemo(() => mapToArray(rooms), [rooms]);
@@ -45,6 +43,12 @@ export default function useCurrentOrg() {
     () => mapToArray(customSurfaces),
     [customSurfaces]
   );
+
+  const lastId = useSelector(selectors.lastId);
+  const lastIdRef = useRef(lastId);
+  useEffect(() => {
+    if (lastId > lastIdRef.current) lastIdRef.current = lastId;
+  }, [lastId]);
 
   function getNextId() {
     if (!lastIdRef.current) lastIdRef.current = lastId;
@@ -77,7 +81,6 @@ export default function useCurrentOrg() {
 
   function addTask(task: Task) {
     if (!orgId) return;
-    console.log('task', task);
     addTaskToOrg({
       orgId: orgId,
       entity: { ...task, id: getNextId() },

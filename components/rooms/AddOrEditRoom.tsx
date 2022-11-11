@@ -39,7 +39,7 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
     const newSurfaces = surfaces.filter((_, i) => i !== index);
     setSurfaces(newSurfaces);
   }
-  console.log(surfaces);
+
   return (
     <Card>
       <br />
