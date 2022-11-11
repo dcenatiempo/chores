@@ -6,3 +6,5 @@ export interface BaseSlice {
 export interface Map<T> {
   [id: string]: T;
 }
+
+export type Environment = 'indoors' | 'outdoors';

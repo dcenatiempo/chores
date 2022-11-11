@@ -32,6 +32,7 @@ const AddOrEditRoomsList: FC<AddOrEditRoomsListProps> = ({
   const disabled = !isFormValid();
 
   function setForm(room?: Room) {
+    setName(room?.name || '');
     setRoomId(room?.id || '');
     setRoomType(room?.roomType);
     setLevel(room?.level);
@@ -39,6 +40,7 @@ const AddOrEditRoomsList: FC<AddOrEditRoomsListProps> = ({
   }
 
   function clearForm() {
+    setName('');
     setRoomId('');
     setRoomType(undefined);
     setLevel(undefined);

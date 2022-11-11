@@ -17,3 +17,5 @@ export default function ThemeListener() {
 
   return null;
 }
+
+// https://medium.com/swlh/dark-mode-using-css-variables-cf065a7fa133

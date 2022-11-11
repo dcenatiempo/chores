@@ -8,12 +8,15 @@ interface ResourceListItemProps<T> {
   onClickEdit?: (resource: T) => void;
 }
 
+export interface CanDelete {
+  noDelete?: boolean;
+}
 function ResourceListItem<T>({
   resource,
   renderResource,
   onClickDelete,
   onClickEdit,
-}: React.PropsWithChildren<ResourceListItemProps<T>>) {
+}: React.PropsWithChildren<ResourceListItemProps<T & CanDelete>>) {
   function onClickDeleteResource() {
     onClickDelete?.(resource);
   }
@@ -21,6 +24,7 @@ function ResourceListItem<T>({
   function onClickEditResource() {
     onClickEdit?.(resource);
   }
+
   return (
     <ListItem>
       {renderResource(resource)}
@@ -34,7 +38,10 @@ function ResourceListItem<T>({
       >
         {onClickEdit ? <EditButton onClick={onClickEditResource} /> : null}
         {onClickDelete ? (
-          <DeleteButton onClick={onClickDeleteResource} />
+          <DeleteButton
+            disabled={!!resource.noDelete}
+            onClick={onClickDeleteResource}
+          />
         ) : null}
       </div>
     </ListItem>

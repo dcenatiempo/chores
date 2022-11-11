@@ -1,5 +1,6 @@
-import { FC, useState } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { Level } from '../../libs/store/models/orgs/types';
+import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
 import AddOrEditList from '../base/AddOrEditList';
 import AddOrEditLevel from './AddOrEditLevel';
 import LevelsListItem from './LevelsListItem';
@@ -17,6 +18,14 @@ const AddOrEditLevelsList: FC<AddLevelProps> = ({
   deleteLevel,
   editLevel,
 }) => {
+  const { roomsGroupedByLevel } = useCurrentOrg();
+  const levelsWithExtra = useMemo(() => {
+    return levels.map((l) => ({
+      ...l,
+      noDelete: !!roomsGroupedByLevel[l.id]?.length,
+    }));
+  }, [roomsGroupedByLevel, levels]);
+
   const [levelName, setLevelName] = useState('');
   const [levelId, setLevelId] = useState('');
 
@@ -58,7 +67,7 @@ const AddOrEditLevelsList: FC<AddLevelProps> = ({
 
   return (
     <AddOrEditList
-      resources={levels}
+      resources={levelsWithExtra}
       onClickAdd={addLevel ? _onClickAdd : undefined}
       onClickSave={editLevel ? _onClickEdit : undefined}
       onClickDelete={deleteLevel ? _onClickDelete : undefined}

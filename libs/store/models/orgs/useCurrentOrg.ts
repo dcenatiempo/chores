@@ -30,11 +30,12 @@ export default function useCurrentOrg() {
   const chores = useSelector(selectors.chores);
   const customRoomTypes = useSelector(selectors.customRoomTypes);
   const customSurfaces = useSelector(selectors.customSurfaces);
-  const choresArray = useMemo(() => mapToArray(chores), [chores]);
-  const peopleArray = useMemo(() => mapToArray(people), [people]);
-  const roomsArray = useMemo(() => mapToArray(rooms), [rooms]);
-  const tasksArray = useMemo(() => mapToArray(tasks), [tasks]);
-  const levelsArray = useMemo(() => mapToArray(levels), [levels]);
+  const choresArray = useSelector(selectors.choresArray);
+  const peopleArray = useSelector(selectors.peopleArray);
+  const roomsArray = useSelector(selectors.roomsArray);
+  const tasksArray = useSelector(selectors.tasksArray);
+  const levelsArray = useSelector(selectors.levelsArray);
+  const roomsGroupedByLevel = useSelector(selectors.roomsGroupedByLevel);
   const customRoomTypesArray = useMemo(
     () => mapToArray(customRoomTypes),
     [customRoomTypes]
@@ -236,5 +237,6 @@ export default function useCurrentOrg() {
     addChore,
     deleteChore,
     editChore,
+    roomsGroupedByLevel,
   };
 }

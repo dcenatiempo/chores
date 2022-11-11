@@ -1,5 +1,5 @@
 import List from '../List';
-import ResourceListItem from './ResourceListItem';
+import ResourceListItem, { CanDelete } from './ResourceListItem';
 
 export interface ResourceListProps<T> {
   resources: T[] | undefined;
@@ -15,7 +15,7 @@ function ResourceList<T>({
   keyExtractor,
   onClickDelete,
   onClickEdit,
-}: React.PropsWithChildren<ResourceListProps<T>>) {
+}: React.PropsWithChildren<ResourceListProps<T & CanDelete>>) {
   return (
     <List
       items={resources}

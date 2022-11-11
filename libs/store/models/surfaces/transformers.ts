@@ -7,6 +7,7 @@ export const transformSurfaceTemplate = {
       id: surface.id,
       name: surface.name,
       descriptors: surface.descriptors || [],
+      attached: surface.attached,
     };
   },
   toFB(surface: SurfaceTemplate): FBSurfaceTemplate {
@@ -14,6 +15,7 @@ export const transformSurfaceTemplate = {
       id: surface.id,
       name: surface.name,
       descriptors: surface.descriptors || [],
+      attached: surface.attached,
     };
   },
   dehydrate(surface: SurfaceTemplate): string {

@@ -4,6 +4,7 @@ import Button from '../Button';
 import Card from '../Card';
 import Modal from '../Modal';
 import ResourceList from './ResourceList';
+import { CanDelete } from './ResourceListItem';
 
 export interface AddOrEditResourceListProps<T> {
   resources: T[] | undefined;
@@ -31,7 +32,7 @@ function AddOrEditResourceList<T>({
   addOrEditResource,
   setResourceToEdit,
   disabled,
-}: React.PropsWithChildren<AddOrEditResourceListProps<T>>) {
+}: React.PropsWithChildren<AddOrEditResourceListProps<T & CanDelete>>) {
   const [showModal, setShowModal] = useState<Modals>('none');
   const resourceNameArray = Array.isArray(resourceName)
     ? resourceName

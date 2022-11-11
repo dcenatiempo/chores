@@ -8,7 +8,7 @@ import {
   Surface,
   SurfaceTemplate,
 } from '../surfaces/types';
-import { BaseSlice, Map } from '../types';
+import { BaseSlice, Environment, Map } from '../types';
 
 // export interface Settings {
 //   timeZone: string;
