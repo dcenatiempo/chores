@@ -71,9 +71,9 @@ const Household: NextPage = () => {
       ) : null}
       <AddOrEditLevelsList
         levels={levelsArray}
-        onClickAdd={addLevel}
-        onClickDelete={deleteLevel}
-        onClickEdit={editLevel}
+        addLevel={addLevel}
+        deleteLevel={deleteLevel}
+        editLevel={editLevel}
       />
     </PageWrapper>
   );

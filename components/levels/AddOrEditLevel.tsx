@@ -1,26 +1,15 @@
-import { FC, useState } from 'react';
-import { Level } from '../../libs/store/models/orgs/types';
+import { FC } from 'react';
 import { TextInput } from '../base';
-import { AddOrEditResourceProps } from '../base/AddOrEditList';
-import { AddButton } from '../buttons';
 
-interface AddOrEditLevelProps extends AddOrEditResourceProps<Level> {}
+interface AddOrEditLevelProps {
+  levelName: string;
+  setLevelName: (levelName: string) => void;
+}
 
 const AddOrEditLevel: FC<AddOrEditLevelProps> = ({
-  initialResource,
-  onSubmitResource,
+  levelName,
+  setLevelName,
 }) => {
-  const levelId = initialResource?.id || '';
-  const [levelName, setLevelName] = useState<string>(
-    initialResource?.name || ''
-  );
-
-  function onClickAddLevel() {
-    if (!levelName) return;
-    onSubmitResource({ id: levelId, name: levelName });
-    setLevelName('');
-  }
-
   return (
     <div
       style={{
@@ -33,7 +22,6 @@ const AddOrEditLevel: FC<AddOrEditLevelProps> = ({
       }}
     >
       <TextInput label="Level" value={levelName} onChange={setLevelName} />
-      <AddButton onClick={onClickAddLevel} />
     </div>
   );
 };

@@ -10,7 +10,6 @@ export interface AddOrEditResourceListProps<T> {
   onClickAdd?: () => void;
   onClickSave?: () => void;
   onClickDelete?: (resource: T) => void;
-  editResource?: (resource: T) => void;
   resourceName: string | string[];
   renderResource: (resource: T) => React.ReactNode;
   keyExtractor: (item: T, index: number) => string;

@@ -1,32 +1,75 @@
-import { FC } from 'react';
+import { FC, useState } from 'react';
 import { Level } from '../../libs/store/models/orgs/types';
 import AddOrEditList from '../base/AddOrEditList';
 import AddOrEditLevel from './AddOrEditLevel';
 import LevelsListItem from './LevelsListItem';
 
-interface AddPeopleProps {
+interface AddLevelProps {
   levels: Level[] | undefined;
-  onClickAdd?: (level: Level) => void;
-  onClickDelete?: (level: Level) => void;
-  onClickEdit?: (level: Level) => void;
+  addLevel?: (level: Level) => void;
+  deleteLevel?: (level: Level) => void;
+  editLevel?: (level: Level) => void;
 }
 
-const AddOrEditLevelsList: FC<AddPeopleProps> = ({
+const AddOrEditLevelsList: FC<AddLevelProps> = ({
   levels = [],
-  onClickAdd,
-  onClickDelete,
-  onClickEdit,
+  addLevel,
+  deleteLevel,
+  editLevel,
 }) => {
+  const [levelName, setLevelName] = useState('');
+  const [levelId, setLevelId] = useState('');
+
+  const disabled = !isFormValid();
+
+  function setForm(level?: Level) {
+    setLevelId(level?.id || '');
+    setLevelName(level?.name || '');
+  }
+
+  function clearForm() {
+    setLevelId('');
+    setLevelName('');
+  }
+
+  function isFormValid() {
+    if (!levelName) return false;
+    return true;
+  }
+
+  function onClickAddOrSave(callback?: (level: Level) => void) {
+    if (!isFormValid()) return;
+    clearForm();
+    callback?.({
+      name: levelName,
+      id: levelId,
+    });
+  }
+
+  function _onClickAdd() {
+    onClickAddOrSave(addLevel);
+  }
+  function _onClickEdit() {
+    onClickAddOrSave(editLevel);
+  }
+  function _onClickDelete(level: Level) {
+    deleteLevel?.(level);
+  }
+
   return (
     <AddOrEditList
       resources={levels}
-      addResource={onClickAdd}
-      deleteResource={onClickDelete}
-      editResource={onClickEdit}
+      onClickAdd={addLevel ? _onClickAdd : undefined}
+      onClickSave={editLevel ? _onClickEdit : undefined}
+      onClickDelete={deleteLevel ? _onClickDelete : undefined}
       resourceName={'Level'}
       renderResource={(item) => <LevelsListItem level={item} />}
       keyExtractor={(level) => level.id}
-      AddOrEditResource={AddOrEditLevel}
+      disabled={disabled}
+      addOrEditResource={
+        <AddOrEditLevel levelName={levelName} setLevelName={setLevelName} />
+      }
+      setResourceToEdit={setForm}
     />
   );
 };
