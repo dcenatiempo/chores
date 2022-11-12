@@ -119,7 +119,7 @@ export interface FBChore {
   name: string;
   taskIds: Map<string>;
   defaultPeopleIds: Map<string>;
-  roomId?: string; // might have a room with generic roomType tasks
+  roomId?: string; // TODO: is this necessary? might have a room with generic roomType tasks
 }
 
 export interface Chore {
@@ -127,5 +127,5 @@ export interface Chore {
   name: string;
   tasks: Map<Task>;
   defaultPeople: Map<Person>;
-  room: Room; // might have a room with generic roomType tasks
+  room?: Room; // TODO: is this necessary? might have a room with generic roomType tasks
 }

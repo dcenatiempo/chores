@@ -1,6 +1,8 @@
 import { FC } from 'react';
 import { Level } from '../../libs/store/models/orgs/types';
+import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
 import { RoomType } from '../../libs/store/models/roomTypes/types';
+import { useSurfaces } from '../../libs/store/models/surfaces';
 
 import { Surface } from '../../libs/store/models/surfaces/types';
 import { IconButton, IconName, TextInput } from '../base';
@@ -30,6 +32,8 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
   roomType,
   setRoomType,
 }) => {
+  const { surfaceTemplates } = useSurfaces();
+  const { getNextId } = useCurrentOrg();
   function addSurface(surface: Surface | undefined) {
     if (!surface) return;
     setSurfaces([surface, ...surfaces]);
@@ -45,7 +49,25 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
       <br />
       <TextInput value={name} label="name" onChange={setName} />
       <br />
-      <RoomTypeSelector selected={roomType} onSelect={setRoomType} />
+      <RoomTypeSelector
+        selected={roomType}
+        onSelect={(rt) => {
+          if (!surfaces?.length) {
+            const hydratedSurfaces: Surface[] = [];
+            rt?.defaultSurfaces?.forEach((sId) => {
+              const st = surfaceTemplates[sId];
+              if (!st) return;
+              hydratedSurfaces.push({
+                id: getNextId(),
+                name: st.name,
+                surfaceTemplate: st,
+              });
+            });
+            setSurfaces(hydratedSurfaces);
+          }
+          setRoomType(rt);
+        }}
+      />
       <br />
       <LevelSelector selected={level} onSelect={setLevel} />
       <br />
