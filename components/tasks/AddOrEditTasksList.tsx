@@ -1,11 +1,15 @@
-import { FC, useMemo, useState } from 'react';
+import { FC, useCallback, useMemo, useState } from 'react';
 import { Action } from '../../libs/store/models/actions/types';
 import { Room, Task } from '../../libs/store/models/orgs/types';
+import { RoomType } from '../../libs/store/models/roomTypes/types';
 import {
   arrayToMap,
   mapToArray,
 } from '../../libs/store/models/sharedTransformers';
-import { Surface } from '../../libs/store/models/surfaces/types';
+import {
+  Surface,
+  SurfaceTemplate,
+} from '../../libs/store/models/surfaces/types';
 import AddOrEditList from '../base/AddOrEditList';
 import AddOrEditTask from './AddOrEditTask';
 import TaskListItem from './TaskListItem';
@@ -26,14 +30,20 @@ const AddOrEditTasksList: FC<AddOrEditTasksListProps> = ({
   const [taskId, setTaskId] = useState('');
   const [room, setRoom] = useState<Room | undefined>();
   const [surface, setSurface] = useState<Surface | undefined>();
+  const [roomType, setRoomType] = useState<RoomType | undefined>();
+  const [surfaceTemplate, setSurfaceTemplate] = useState<
+    SurfaceTemplate | undefined
+  >();
   const [action, setAction] = useState<Action | undefined>();
 
-  const disabled = !isFormValid();
+  const [generic, setGeneric] = useState(true);
 
   function setForm(task?: Task) {
     setTaskId(task?.id || '');
     setRoom(task?.room);
     setSurface(task?.surface);
+    setRoomType(task?.roomType);
+    setSurfaceTemplate(task?.surfaceTemplate);
     setAction(task?.action);
   }
 
@@ -41,15 +51,21 @@ const AddOrEditTasksList: FC<AddOrEditTasksListProps> = ({
     setTaskId('');
     setRoom(undefined);
     setSurface(undefined);
+    setRoomType(undefined);
+    setSurfaceTemplate(undefined);
     setAction(undefined);
   }
 
-  function isFormValid() {
-    if (!surface) return false;
-    if (!room) return false;
+  const isFormValid = useCallback(() => {
+    if (generic) {
+      if (!roomType) return false;
+    } else {
+      if (!room) return false;
+    }
+
     if (!action) return false;
     return true;
-  }
+  }, [generic, roomType, room, action]);
 
   function onClickAddOrSave(callback?: (task: Task) => void) {
     if (!isFormValid()) return;
@@ -59,6 +75,8 @@ const AddOrEditTasksList: FC<AddOrEditTasksListProps> = ({
       action,
       room,
       surface,
+      roomType,
+      surfaceTemplate,
     } as Task);
   }
 
@@ -71,6 +89,9 @@ const AddOrEditTasksList: FC<AddOrEditTasksListProps> = ({
   function _onClickDelete(task: Task) {
     deleteTask?.(task);
   }
+
+  const disabled = !isFormValid();
+
   return (
     <AddOrEditList
       resources={tasks}
@@ -84,11 +105,17 @@ const AddOrEditTasksList: FC<AddOrEditTasksListProps> = ({
       addOrEditResource={
         <AddOrEditTask
           room={room}
+          roomType={roomType}
+          setRoomType={setRoomType}
+          surfaceTemplate={surfaceTemplate}
+          setSurfaceTemplate={setSurfaceTemplate}
           setRoom={setRoom}
           surface={surface}
           setSurface={setSurface}
           action={action}
           setAction={setAction}
+          generic={generic}
+          setGeneric={setGeneric}
         />
       }
       setResourceToEdit={setForm}

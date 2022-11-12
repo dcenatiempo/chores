@@ -7,7 +7,7 @@ import { IconButton, IconName, TextInput } from '../base';
 import Card from '../base/Card';
 import LevelSelector from '../levels/LevelSelector';
 import RoomTypeSelector from '../roomTypes/RoomTypeSelector';
-import SurfaceSelector from '../surfaces/SurfaceSelector';
+import RoomSurfaceSelector from '../surfaces/RoomSurfaceSelector';
 
 export interface AddOrEditRoomProps {
   name: string;
@@ -49,7 +49,11 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
       <br />
       <LevelSelector selected={level} onSelect={setLevel} />
       <br />
-      <SurfaceSelector onSelect={addSurface} excluding={surfaces} />
+      <RoomSurfaceSelector
+        onSelect={addSurface}
+        excluding={surfaces}
+        detached={roomType?.name === 'none'}
+      />
 
       {surfaces.map((surface, i) => (
         <div
@@ -58,9 +62,9 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
             display: 'flex',
             alignItems: 'center',
           }}
-          key={`${surface.surfaceTemplate.id}-${surface.id}-${surface.descriptor}`}
+          key={`${surface.surfaceTemplate.id}-${surface.id}`}
         >
-          {surface.name} {surface.descriptor ? `(${surface.descriptor})` : ''}
+          {surface.name}
           <IconButton
             onClick={() => removeSurface(i)}
             iconName={IconName.MINUS}

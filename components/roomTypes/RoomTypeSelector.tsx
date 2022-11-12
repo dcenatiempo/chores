@@ -7,11 +7,13 @@ import Dropdown from '../base/Dropdown';
 export interface RoomTypeSelectorProps {
   onSelect: (roomType: RoomType | undefined) => void;
   selected: RoomType | undefined;
+  roomTypes?: RoomType[];
 }
 
 const RoomTypeSelector: FC<RoomTypeSelectorProps> = ({
   onSelect,
   selected,
+  roomTypes,
 }) => {
   const { customRoomTypesArray } = useCurrentOrg();
   const { roomTypesArray } = useRoomTypes();
@@ -22,7 +24,7 @@ const RoomTypeSelector: FC<RoomTypeSelectorProps> = ({
         label="Room Type"
         valueKey={(option) => option?.id || ''}
         labelKey={(option) => option?.name || ''}
-        options={allRoomTypes}
+        options={roomTypes || allRoomTypes}
         onSelect={onSelect}
         selected={selected}
         id="roomTypes"

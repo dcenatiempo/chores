@@ -6,9 +6,10 @@ import Dropdown from '../base/Dropdown';
 export interface RoomSelectorProps {
   onSelect: (room: Room | undefined) => void;
   selected: Room | undefined;
+  rooms?: Room[];
 }
 
-const RoomSelector: FC<RoomSelectorProps> = ({ onSelect, selected }) => {
+const RoomSelector: FC<RoomSelectorProps> = ({ onSelect, selected, rooms }) => {
   const { roomsArray } = useCurrentOrg();
   return (
     <div>
@@ -16,7 +17,7 @@ const RoomSelector: FC<RoomSelectorProps> = ({ onSelect, selected }) => {
         label="Room"
         valueKey={(option) => option?.id || ''}
         labelKey={(option) => option?.name || ''}
-        options={roomsArray}
+        options={rooms || roomsArray}
         onSelect={onSelect}
         selected={selected}
         id="roomTypes"

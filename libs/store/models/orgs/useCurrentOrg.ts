@@ -36,6 +36,7 @@ export default function useCurrentOrg() {
   const tasksArray = useSelector(selectors.tasksArray);
   const levelsArray = useSelector(selectors.levelsArray);
   const roomsGroupedByLevel = useSelector(selectors.roomsGroupedByLevel);
+  const roomsGroupedByRoomType = useSelector(selectors.roomsGroupedByRoomType);
   const customRoomTypesArray = useMemo(
     () => mapToArray(customRoomTypes),
     [customRoomTypes]
@@ -238,5 +239,6 @@ export default function useCurrentOrg() {
     deleteChore,
     editChore,
     roomsGroupedByLevel,
+    roomsGroupedByRoomType,
   };
 }

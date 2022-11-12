@@ -23,7 +23,8 @@ const TaskListItem: FC<TaskListItemProps> = ({
 
   return (
     <ListItem>
-      {task.action.name} {task.room?.name} {task.surface?.name}
+      {task.action.name} {task.room?.name || task.roomType?.name}{' '}
+      {task.surface?.name || task.surfaceTemplate?.name}
       <div
         style={{
           display: 'flex',

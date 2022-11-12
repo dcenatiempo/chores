@@ -5,6 +5,13 @@ import PageWrapper from '../../components/nav/PageWrapper';
 import AddOrEditPeopleList from '../../components/people/AddOrEditPeopleList';
 import AddOrEditRoomsList from '../../components/rooms/AddOrEditRoomsList';
 import AddOrEditLevelsList from '../../components/levels/AddOrEditLevelsList';
+import LevelSelector from '../../components/levels/LevelSelector';
+import { Level } from '../../libs/store/models/orgs/types';
+import { useMemo, useState } from 'react';
+import { Dropdown } from '../../components/base';
+import { RoomType } from '../../libs/store/models/roomTypes/types';
+import RoomSelector from '../../components/rooms/RoomSelector';
+import RoomTypeSelector from '../../components/roomTypes/RoomTypeSelector';
 
 const Household: NextPage = () => {
   const {
@@ -23,18 +30,51 @@ const Household: NextPage = () => {
   } = useCurrentOrg();
 
   const showRooms = !!levelsArray.length;
+  const [level, setLevel] = useState<Level>();
+  const [roomType, setRoomType] = useState<RoomType>();
+  const uniqueRoomTypes = useMemo(() => {
+    const obj = roomsArray.reduce<{ [roomType: string]: RoomType }>(
+      (acc, r) => {
+        const roomTypeId = r.roomType.id;
+        if (!acc[roomTypeId]) acc[roomTypeId] = r.roomType;
+        return { ...acc };
+      },
+      {}
+    );
+    return Object.values(obj);
+  }, [roomsArray]);
 
+  const uniqueLevels = useMemo(() => {
+    const obj = roomsArray.reduce<{ [roomType: string]: Level }>((acc, r) => {
+      const levelId = r.level.id;
+      if (!acc[levelId]) acc[levelId] = r.level;
+      return { ...acc };
+    }, {});
+    return Object.values(obj);
+  }, [roomsArray]);
+
+  const roomsToShow = useMemo(() => {
+    return roomsArray.filter(
+      (r) =>
+        (level ? r.level.id === level?.id : true) &&
+        (roomType ? r.roomType.id === roomType?.id : true)
+    );
+  }, [roomsArray, level, roomType]);
   return (
     <PageWrapper metaTitle="Chore Household">
-      <AddOrEditPeopleList
-        people={peopleArray}
-        addPerson={addPerson}
-        deletePerson={deletePerson}
-        editPerson={editPerson}
+      <LevelSelector
+        onSelect={setLevel}
+        selected={level}
+        levels={uniqueLevels}
+      />
+      <RoomTypeSelector
+        onSelect={setRoomType}
+        selected={roomType}
+        roomTypes={uniqueRoomTypes}
       />
       {showRooms ? (
         <AddOrEditRoomsList
-          rooms={roomsArray}
+          rooms={roomsToShow}
           addRoom={addRoom}
           deleteRoom={deleteRoom}
           editRoom={editRoom}
@@ -45,6 +85,12 @@ const Household: NextPage = () => {
         addLevel={addLevel}
         deleteLevel={deleteLevel}
         editLevel={editLevel}
+      />
+      <AddOrEditPeopleList
+        people={peopleArray}
+        addPerson={addPerson}
+        deletePerson={deletePerson}
+        editPerson={editPerson}
       />
     </PageWrapper>
   );

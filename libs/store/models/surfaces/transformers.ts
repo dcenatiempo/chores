@@ -6,7 +6,6 @@ export const transformSurfaceTemplate = {
     return {
       id: surface.id,
       name: surface.name,
-      descriptors: surface.descriptors || [],
       attached: surface.attached,
     };
   },
@@ -14,7 +13,6 @@ export const transformSurfaceTemplate = {
     return {
       id: surface.id,
       name: surface.name,
-      descriptors: surface.descriptors || [],
       attached: surface.attached,
     };
   },

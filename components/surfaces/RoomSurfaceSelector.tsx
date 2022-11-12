@@ -5,28 +5,36 @@ import {
   Surface,
   SurfaceTemplate,
 } from '../../libs/store/models/surfaces/types';
+import { TextInput } from '../base';
 import Dropdown from '../base/Dropdown';
 import { AddButton } from '../buttons';
 
-export interface SurfaceSelectorProps {
+export interface RoomSurfaceSelectorProps {
   onSelect: (surface: Surface | undefined) => void;
   excluding: Surface[];
+  detached?: boolean;
 }
 
-const SurfaceSelector: FC<SurfaceSelectorProps> = ({ onSelect, excluding }) => {
+const RoomSurfaceSelector: FC<RoomSurfaceSelectorProps> = ({
+  onSelect,
+  excluding,
+  detached = false,
+}) => {
   const [surface, setSurface] = useState<SurfaceTemplate>();
-  const [surfaceDescriptor, setSurfaceDescriptor] = useState<string>();
+  const [surfaceName, setSurfaceName] = useState<string>('');
 
   const { customSurfacesArray, getNextId } = useCurrentOrg();
-  const { surfaceTemplatesArray } = useSurfaces();
+  const { detachedSurfacesTemplatesArray, attachedSurfacesTemplatesArray } =
+    useSurfaces();
+  const surfaceTemplatesArray = detached
+    ? detachedSurfacesTemplatesArray
+    : attachedSurfacesTemplatesArray;
   const allSurfaces = useMemo(() => {
     return [...surfaceTemplatesArray, ...customSurfacesArray].reduce<
       SurfaceTemplate[]
     >((acc, s) => {
-      // todo: don't allow any duplicates... maybe
       const excluded = excluding.find(
-        (exclude) =>
-          exclude.surfaceTemplate.id === s.id && !s.descriptors.length
+        (exclude) => exclude.surfaceTemplate.id === s.id
       );
       if (excluded) return acc;
       return [...acc, s];
@@ -35,48 +43,39 @@ const SurfaceSelector: FC<SurfaceSelectorProps> = ({ onSelect, excluding }) => {
 
   function onAdd() {
     if (!surface) return;
+
     const surfaceToAdd = {
       id: surface.id || getNextId(),
       surfaceTemplate: surface,
-      name: surface.name,
-      descriptor: surfaceDescriptor || '',
+      name: surfaceName,
     };
+    setSurface(undefined);
+    setSurfaceName('');
     onSelect(surfaceToAdd);
   }
 
   return (
-    <div>
+    <div style={{ display: 'flex' }}>
+      <TextInput
+        value={surfaceName}
+        onChange={setSurfaceName}
+        label={'Custom Name'}
+      />
       <Dropdown
         label="Surfaces"
         valueKey={(option) => option?.id || ''}
         labelKey={(option) => option?.name || ''}
         options={allSurfaces}
         onSelect={(s) => {
-          setSurfaceDescriptor(s?.descriptors?.[0]);
+          setSurfaceName(s?.name || '');
           setSurface(s);
         }}
         selected={surface}
         id="surfaces"
       />
-      {surface?.descriptors?.length ? (
-        <Dropdown
-          options={surface?.descriptors}
-          valueKey={(option) => option || ''}
-          labelKey={(option) => option || ''}
-          id="descriptors"
-          onSelect={setSurfaceDescriptor}
-          selected={surfaceDescriptor}
-          label={`${surface.name} type`}
-        />
-      ) : null}
-      <AddButton
-        disabled={
-          !surface || (!!surface?.descriptors?.length && !surfaceDescriptor)
-        }
-        onClick={onAdd}
-      />
+      <AddButton disabled={!surface} onClick={onAdd} />
     </div>
   );
 };
 
-export default SurfaceSelector;
+export default RoomSurfaceSelector;

@@ -73,7 +73,7 @@ export const transformOrg = {
     );
     const people = transformMap(org.people, transformPerson.fromFB);
     const tasks = transformMap(org.tasks, (t) =>
-      transformTask.fromFB(t, rooms)
+      transformTask.fromFB(t, rooms, roomTypes, surfaceTemplates)
     );
     const chores = transformMap(org.chores, (chore) =>
       transformChore.fromFB(chore, tasks, people)
@@ -132,18 +132,29 @@ export const transformTask = {
       id: task.id,
       actionId: task.action.name,
       surfaceId: task.surface?.id || '',
+      surfaceTemplateId: task.surfaceTemplate?.id || '',
       roomId: task.room?.id || '',
+      roomTypeId: task.roomType?.id || '',
     };
   },
-  fromFB(task: FBTask, rooms: Map<Room>): Task {
+  fromFB(
+    task: FBTask,
+    rooms: Map<Room>,
+    roomTypes: Map<RoomType>,
+    surfaceTemplates: Map<SurfaceTemplate>
+  ): Task {
     const action = { name: task.actionId };
-    const room = rooms[task.roomId];
-    const surface = room?.surfaces[task.surfaceId];
+    const room = task.roomId ? rooms?.[task.roomId] : undefined;
+    const surface = task.surfaceId ? room?.surfaces[task.surfaceId] : undefined;
     return {
       id: task.id,
       action,
       room,
+      roomType: task.roomTypeId ? roomTypes[task.roomTypeId] : undefined,
       surface,
+      surfaceTemplate: task.surfaceTemplateId
+        ? surfaceTemplates[task.surfaceTemplateId]
+        : undefined,
     };
   },
   dehydrate(task: Task) {
@@ -245,7 +256,6 @@ const transformSurface = {
       surfaceTemplateId: transformSurfaceTemplate.dehydrate(
         surface.surfaceTemplate
       ),
-      descriptor: surface.descriptor || '',
     };
   },
   fromFB(surface: FBSurface, surfaces: Map<SurfaceTemplate>): Surface {
@@ -256,7 +266,6 @@ const transformSurface = {
         surface.surfaceTemplateId,
         surfaces
       ),
-      descriptor: surface.descriptor || '',
     };
   },
   dehydrate(surface: Surface): string {

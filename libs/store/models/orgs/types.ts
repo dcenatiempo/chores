@@ -99,15 +99,19 @@ export interface Person {
 export interface FBTask {
   id: string;
   actionId: string;
-  roomId: string;
-  surfaceId: string;
+  roomId?: string;
+  roomTypeId?: string;
+  surfaceId?: string;
+  surfaceTemplateId?: string;
 }
 
 export interface Task {
   id: string;
   action: Action;
+  roomType?: RoomType;
   room?: Room;
   surface?: Surface;
+  surfaceTemplate?: SurfaceTemplate;
 }
 
 export interface FBChore {
@@ -115,6 +119,7 @@ export interface FBChore {
   name: string;
   taskIds: Map<string>;
   defaultPeopleIds: Map<string>;
+  roomId?: string; // might have a room with generic roomType tasks
 }
 
 export interface Chore {
@@ -122,4 +127,5 @@ export interface Chore {
   name: string;
   tasks: Map<Task>;
   defaultPeople: Map<Person>;
+  room: Room; // might have a room with generic roomType tasks
 }

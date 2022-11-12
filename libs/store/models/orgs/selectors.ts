@@ -51,6 +51,14 @@ const roomsGroupedByLevel = createSelector(roomsArray, (ra) => {
     return { ...acc };
   }, {});
 });
+const roomsGroupedByRoomType = createSelector(roomsArray, (ra) => {
+  return ra.reduce<{ [roomType: string]: Room[] }>((acc, r) => {
+    const roomTypeId = r.roomType.id;
+    if (!acc[roomTypeId]) acc[roomTypeId] = [];
+    acc[roomTypeId] = [...acc[roomTypeId], r];
+    return { ...acc };
+  }, {});
+});
 
 const customRoomTypes = createSelector(
   currentOrg,
@@ -79,4 +87,5 @@ export {
   tasksArray,
   levelsArray,
   roomsGroupedByLevel,
+  roomsGroupedByRoomType,
 };
