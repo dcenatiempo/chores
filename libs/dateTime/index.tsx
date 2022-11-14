@@ -32,6 +32,10 @@ export function timestampToISODate(timestamp: UnixTimestamp): string {
   return DateTime.fromSeconds(timestamp).toISODate();
 }
 
+export function timestampToDate(timestamp: UnixTimestamp): string {
+  return DateTime.fromSeconds(timestamp).toFormat('d');
+}
+
 /**
  *
  * @param timestamp UnixTimestamp (seconds since epoch)
@@ -62,5 +66,15 @@ export function getTimeFuture(
   fromDate?: UnixTimestamp
 ): UnixTimestamp {
   const date = fromDate ? DateTime.fromSeconds(fromDate) : DateTime.local();
-  return DateTime.local().minus(durationObject).toSeconds();
+  return date.plus(durationObject).toSeconds();
+}
+
+// DateTime.fromISO('2017-W23-3').plus({ weeks: 1, days: 2 }).toISOWeekDate(); //=>  '2017-W24-5'
+export function getLastSunday(
+  timestamp: UnixTimestamp = DateTime.local().toSeconds()
+): UnixTimestamp {
+  const date = DateTime.fromSeconds(timestamp);
+  const dayOfWeek = parseInt(date.toFormat('c'));
+  const sunday = date.minus({ days: dayOfWeek }); // if you want monday as first day - then subtract 1
+  return sunday.toSeconds();
 }

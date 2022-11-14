@@ -1,0 +1,21 @@
+.calendar {
+  display: flex;
+  flex-direction: column;
+}
+
+.calendarWeek {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+}
+
+.calendarDay {
+  height: 50px;
+  width: 50px;
+  border-width: 1px;
+  border-style: solid;
+}
+
+.calendarEvent {
+  background-color: gray;
+}

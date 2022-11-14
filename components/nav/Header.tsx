@@ -70,7 +70,7 @@ const LogInOutButton: FC = () => {
 
 const NavigationButtons: FC = () => {
   const router = useRouter();
-  const tabs = ['dashboard', 'household', 'chores', 'settings'];
+  const tabs = ['dashboard', 'household', 'chores', 'schedule', 'settings'];
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       {tabs.map((tab) => (
