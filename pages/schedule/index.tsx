@@ -1,47 +1,42 @@
 import type { NextPage } from 'next';
 
-import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
 import PageWrapper from '../../components/nav/PageWrapper';
-import AddOrEditTasksList from '../../components/tasks/AddOrEditTasksList';
-import AddOrEditChoresList from '../../components/chores/AddOrEditChoresList';
-import RoomTypeSelector from '../../components/roomTypes/RoomTypeSelector';
-import { useCallback, useMemo, useState } from 'react';
-import { RoomType } from '../../libs/store/models/roomTypes/types';
-import { mapToArray } from '../../libs/store/models/sharedTransformers';
-import { Task } from '../../libs/store/models/orgs/types';
-import { Calendar, CalendarPage } from '../../components/base';
+
+import { Calendar } from '../../components/base';
 import {
-  getLastSunday,
+  getFirstDayOfWeek,
   getTimeFuture,
-  getTimePast,
-  timestampToDate,
+  timestampToISODate,
 } from '../../libs/dateTime';
-import { Week } from '../../components/base/Calendar/CalendarWeek';
-import { Day } from '../../components/base/Calendar/CalendarDay';
+import { DateTime } from 'luxon';
+import CalendarEvent from '../../components/base/Calendar/CalendarEvent';
 
 const Schedule: NextPage = () => {
-  const firstDay = getLastSunday();
+  const eventsMap = {
+    [timestampToISODate(getTimeFuture({ days: 11 }, getFirstDayOfWeek()))]: [
+      'foo',
+      'bar',
+    ],
+    [timestampToISODate(getTimeFuture({ days: 3 }, getFirstDayOfWeek()))]: [
+      'baz',
+    ],
+  };
 
-  const calendarPage: CalendarPage = [...Array(5)].map((_, wi) => {
-    const week: Week = [...Array(7)].map((_, di) => {
-      const daysFromNow = wi * 7 + di;
-      // console.log('daysFromNow', daysFromNow);
-      const date = getTimeFuture({ days: daysFromNow }, firstDay);
-      console.log('date', timestampToDate(date));
-
-      const day: Day = {
-        date: timestampToDate(date),
-        events: ['x'],
-      };
-      return day;
-    });
-    return week;
-  });
-
-  console.log('calendarPage', calendarPage);
   return (
     <PageWrapper metaTitle="Chore Schedule">
-      <Calendar calendarPage={calendarPage} />
+      <Calendar
+        numWeeks={5}
+        date={DateTime.local().toSeconds()}
+        numDays={7}
+        renderDay={(date: number) => {
+          const key = timestampToISODate(date);
+          const events = eventsMap[key];
+          if (events)
+            return events.map((e) => <CalendarEvent key={e} description={e} />);
+          return null;
+        }}
+        type={'rigid'}
+      />
     </PageWrapper>
   );
 };
