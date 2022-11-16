@@ -7,7 +7,7 @@ import { FBRoomType, RoomType } from '../roomTypes/types';
 import { transformMap, transformTimestamp } from '../sharedTransformers';
 import { transformSurfaceTemplate } from '../surfaces/transformers';
 import { FBSurface, Surface, SurfaceTemplate } from '../surfaces/types';
-import { Map } from '../types';
+import { Map, OrgMap } from '../types';
 import {
   Chore,
   FBChore,
@@ -76,7 +76,7 @@ export const transformOrg = {
       transformTask.fromFB(t, rooms, roomTypes, surfaceTemplates)
     );
     const chores = transformMap(org.chores, (chore) =>
-      transformChore.fromFB(chore, tasks, people)
+      transformChore.fromFB(chore, tasks)
     );
     return {
       id,
@@ -106,21 +106,14 @@ export const transformChore = {
       id: chore.id,
       name: chore.name,
       taskIds: transformMap(chore.tasks, transformTask.dehydrate),
-      defaultPeopleIds: transformMap(
-        chore.defaultPeople,
-        transformPerson.dehydrate
-      ),
     };
   },
-  fromFB(chore: FBChore, tasks: Map<Task>, people: Map<Person>): Chore {
+  fromFB(chore: FBChore, tasks: Map<Task>): Chore {
     return {
       id: chore.id,
       name: chore.name,
       tasks: transformMap(chore.taskIds, (id) =>
         transformTask.hydrade(id, tasks)
-      ),
-      defaultPeople: transformMap(chore.defaultPeopleIds, (id) =>
-        transformPerson.hydrate(id, people)
       ),
     };
   },
@@ -275,3 +268,16 @@ const transformSurface = {
     return surfaces[surfaceId];
   },
 };
+
+// TODO: what if T is not an org?
+export function arrayToOrgMap<T>(array: T[], field: string = 'id'): OrgMap<T> {
+  return array.reduce<OrgMap<T>>((map, thing) => {
+    // @ts-expect-error
+    const key = thing[field];
+    map[key] = {
+      orgId: key,
+      data: thing,
+    };
+    return map;
+  }, {});
+}

@@ -1,8 +1,8 @@
 import { FC, useMemo, useState } from 'react';
-import { Person, Room, Task } from '../../libs/store/models/orgs/types';
+import { Room, Task } from '../../libs/store/models/orgs/types';
 import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
 import { RoomType } from '../../libs/store/models/roomTypes/types';
-import { Dropdown, TextInput } from '../base';
+import { TextInput } from '../base';
 import MultiselectDropdown from '../base/MultiselectDropdown';
 import RoomSelector from '../rooms/RoomSelector';
 import RoomTypeSelector from '../roomTypes/RoomTypeSelector';
@@ -10,8 +10,6 @@ import RoomTypeSelector from '../roomTypes/RoomTypeSelector';
 interface AddOrEditChoreProps {
   name: string;
   setName: (name: string) => void;
-  people: Person[];
-  setPeople: (people: Person[]) => void;
   tasks: Task[];
   setTasks: (tasks: Task[]) => void;
 }
@@ -19,8 +17,6 @@ interface AddOrEditChoreProps {
 const AddOrEditChore: FC<AddOrEditChoreProps> = ({
   name,
   setName,
-  people,
-  setPeople,
   tasks,
   setTasks,
 }) => {
@@ -67,17 +63,6 @@ const AddOrEditChore: FC<AddOrEditChoreProps> = ({
       <RoomSelector onSelect={setRoom} selected={room} />
       <RoomTypeSelector selected={roomType} onSelect={setRoomType} />
 
-      <MultiselectDropdown
-        options={peopleArray}
-        valueKey={(option) => option?.id || ''}
-        labelKey={(option) =>
-          `${option?.firstName || ''} ${option?.lastName || ''}`.trim()
-        }
-        id={'defaultPeople'}
-        onSelect={setPeople}
-        selected={people}
-        label={'Default People'}
-      />
       <MultiselectDropdown
         options={taskOptions}
         valueKey={(option) => option?.id || ''}

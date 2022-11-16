@@ -1,7 +1,7 @@
 import { doc, Timestamp } from 'firebase/firestore';
 import { UnixTimestamp } from '../../dateTime';
 import { Collection, db, FBReference, FBTimestamp } from '../../firebase';
-import { Map } from './types';
+import { Map, OrgMap } from './types';
 
 export const transformTimestamp = {
   fromFB(fbTimestamp: FBTimestamp): UnixTimestamp {

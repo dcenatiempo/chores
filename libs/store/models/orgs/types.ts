@@ -8,18 +8,11 @@ import {
   Surface,
   SurfaceTemplate,
 } from '../surfaces/types';
-import { BaseSlice, Environment, Map } from '../types';
+import { BaseSlice, Map, OrgMap } from '../types';
 
 // export interface Settings {
 //   timeZone: string;
 // }
-
-export interface OrgMap<T> {
-  [key: string]: {
-    orgId: string;
-    data: T;
-  };
-}
 
 export interface OrgsMap extends OrgMap<FBOrg> {}
 
@@ -118,7 +111,6 @@ export interface FBChore {
   id: string;
   name: string;
   taskIds: Map<string>;
-  defaultPeopleIds: Map<string>;
   roomId?: string; // TODO: is this necessary? might have a room with generic roomType tasks
 }
 
@@ -126,6 +118,5 @@ export interface Chore {
   id: string;
   name: string;
   tasks: Map<Task>;
-  defaultPeople: Map<Person>;
   room?: Room; // TODO: is this necessary? might have a room with generic roomType tasks
 }

@@ -4,7 +4,7 @@ import styles from './ListItem.module.css';
 
 export interface ListItemProps {
   children: React.ReactNode;
-  onClick?: () => {};
+  onClick?: () => void;
 }
 
 const ListItem: FC<ListItemProps> = ({ children, onClick }) => {

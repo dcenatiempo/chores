@@ -117,18 +117,20 @@ enum OrgeEntityType {
 interface Entity {
   id: string;
 }
-export async function addEntityToOrg<T, FBT extends Entity>({
+export async function addEntityToCollection<T, FBT extends Entity>({
   orgId,
+  collection,
   entity,
   transformEntity,
   entityType,
 }: {
   orgId: string;
+  collection: Collection;
   entity: T;
   transformEntity: { toFB: (entity: T) => FBT };
   entityType: OrgeEntityType;
 }) {
-  const orgDocRef = doc(db, Collection.ORGS, orgId);
+  const orgDocRef = doc(db, collection, orgId);
   const fbEntity = transformEntity.toFB(entity);
   await updateDoc(orgDocRef, {
     [`${entityType}.${fbEntity.id}`]: fbEntity,
@@ -138,11 +140,13 @@ export async function addEntityToOrg<T, FBT extends Entity>({
 
 export async function updateEntitiesFromOrg<T, FBT extends Entity>({
   entities,
+  collection,
   orgId,
   transformEntity,
   entityType,
 }: {
   entities: Map<T>;
+  collection: Collection;
   orgId: string;
   transformEntity: { toFB: (entity: T) => FBT };
   entityType: OrgeEntityType;
@@ -151,7 +155,7 @@ export async function updateEntitiesFromOrg<T, FBT extends Entity>({
     entities,
     transformEntity.toFB
   );
-  const docRef = doc(db, Collection.ORGS, orgId);
+  const docRef = doc(db, collection, orgId);
 
   await updateDoc(docRef, {
     [entityType]: firebaseEntities,
@@ -177,11 +181,12 @@ interface UpdateEntitiesParams<T> {
 
 const roomConfig = {
   transformEntity: transformRoom,
+  collection: Collection.ORGS,
   entityType: OrgeEntityType.ROOM,
 };
 
 export async function addRoomToOrg(params: AddEntityParams<Room>) {
-  return addEntityToOrg({
+  return addEntityToCollection({
     ...params,
     ...roomConfig,
   });
@@ -197,10 +202,11 @@ export async function updateRoomsFromOrg(params: UpdateEntitiesParams<Room>) {
 const taskConfig = {
   transformEntity: transformTask,
   entityType: OrgeEntityType.TASK,
+  collection: Collection.ORGS,
 };
 
 export async function addTaskToOrg(params: AddEntityParams<Task>) {
-  return addEntityToOrg({
+  return addEntityToCollection({
     ...params,
     ...taskConfig,
   });
@@ -216,10 +222,11 @@ export async function updateTasksFromOrg(params: UpdateEntitiesParams<Task>) {
 const choreConfig = {
   transformEntity: transformChore,
   entityType: OrgeEntityType.CHORE,
+  collection: Collection.ORGS,
 };
 
 export async function addChoreToOrg(params: AddEntityParams<Chore>) {
-  return addEntityToOrg({
+  return addEntityToCollection({
     ...params,
     ...choreConfig,
   });
@@ -235,10 +242,11 @@ export async function updateChoresFromOrg(params: UpdateEntitiesParams<Chore>) {
 const levelConfig = {
   transformEntity: transformLevel,
   entityType: OrgeEntityType.LEVEL,
+  collection: Collection.ORGS,
 };
 
 export async function addLevelToOrg(params: AddEntityParams<Level>) {
-  return addEntityToOrg({
+  return addEntityToCollection({
     ...params,
     ...levelConfig,
   });
@@ -254,10 +262,11 @@ export async function updateLevelsFromOrg(params: UpdateEntitiesParams<Level>) {
 const personConfig = {
   transformEntity: transformPerson,
   entityType: OrgeEntityType.PERSON,
+  collection: Collection.ORGS,
 };
 
 export async function addPersonToOrg(params: AddEntityParams<Person>) {
-  return addEntityToOrg({
+  return addEntityToCollection({
     ...params,
     ...personConfig,
   });

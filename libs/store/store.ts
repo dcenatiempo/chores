@@ -4,7 +4,7 @@ import surfaces from './models/surfaces';
 import actions from './models/actions';
 import user from './models/user';
 import choreHistory from './models/choreHistory';
-import choreFeed from './models/choreFeed';
+import scheduledChore from './models/scheduledChores';
 import orgs from './models/orgs';
 import appState from './appState';
 
@@ -14,7 +14,7 @@ const store = configureStore({
     user: user.reducer,
     orgs: orgs.reducer,
     choreHistory: choreHistory.reducer,
-    choreFeed: choreFeed.reducer,
+    scheduledChores: scheduledChore.reducer,
     roomTypes: roomTypes.reducer,
     surfaces: surfaces.reducer,
     actions: actions.reducer,

@@ -23,7 +23,6 @@ const AddOrEditChoresList: FC<AddOrEditChoresListProps> = ({
 }) => {
   const [choreId, setChoreId] = useState('');
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [people, setPeople] = useState<Person[]>([]);
   const [name, setName] = useState('');
 
   const disabled = !isFormValid();
@@ -31,13 +30,11 @@ const AddOrEditChoresList: FC<AddOrEditChoresListProps> = ({
   function setForm(chore?: Chore) {
     setChoreId(chore?.id || '');
     setTasks(mapToArray(chore?.tasks));
-    setPeople(mapToArray(chore?.defaultPeople));
     setName(chore?.name || '');
   }
 
   function clearForm() {
     setTasks([]);
-    setPeople([]);
     setName('');
     setChoreId('');
   }
@@ -52,7 +49,6 @@ const AddOrEditChoresList: FC<AddOrEditChoresListProps> = ({
     clearForm();
     callback?.({
       name,
-      defaultPeople: arrayToMap(people),
       tasks: arrayToMap(tasks),
       id: choreId,
     });
@@ -80,8 +76,6 @@ const AddOrEditChoresList: FC<AddOrEditChoresListProps> = ({
         <AddOrEditChore
           name={name}
           setName={setName}
-          people={people}
-          setPeople={setPeople}
           tasks={tasks}
           setTasks={setTasks}
         />

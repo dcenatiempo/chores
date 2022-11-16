@@ -10,8 +10,8 @@
 }
 
 .calendarDay {
-  height: 50px;
-  width: 50px;
+  min-height: 100px;
+  min-width: 100px;
   border-width: 1px;
   border-style: solid;
 }

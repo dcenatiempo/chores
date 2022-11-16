@@ -2,7 +2,8 @@ import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { listenForDocChanges } from '../../../firebase';
 import { Collection } from '../../../firebase/types';
 import * as log from '../../../logging';
-import { FBOrg, OrgMap, OrgsState } from './types';
+import { arrayToOrgMap } from './transformers';
+import { FBOrg, OrgsState } from './types';
 
 export const initialLastId = '1000';
 
@@ -66,19 +67,6 @@ const listenForOrgChanges = createAsyncThunk(
     });
   }
 );
-
-// TODO: what if T is not an org?
-function arrayToOrgMap<T>(array: T[], field: string = 'id'): OrgMap<T> {
-  return array.reduce<OrgMap<T>>((map, thing) => {
-    // @ts-expect-error
-    const key = thing[field];
-    map[key] = {
-      orgId: key,
-      data: thing,
-    };
-    return map;
-  }, {});
-}
 
 const { actions, name, getInitialState, reducer } = orgs;
 const asyncActions = { listenForOrgChanges };

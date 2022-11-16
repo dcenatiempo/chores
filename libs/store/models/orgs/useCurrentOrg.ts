@@ -161,7 +161,7 @@ export default function useCurrentOrg() {
     delete peopleCopy[id];
     updatePeopleFromOrg({
       entities: peopleCopy,
-      orgId: orgId,
+      orgId,
     });
   }
 
@@ -171,7 +171,7 @@ export default function useCurrentOrg() {
     delete roomsCopy[id];
     updateRoomsFromOrg({
       entities: roomsCopy,
-      orgId: orgId,
+      orgId,
     });
   }
 
@@ -181,7 +181,7 @@ export default function useCurrentOrg() {
     delete tasksCopy[id];
     updateTasksFromOrg({
       entities: tasksCopy,
-      orgId: orgId,
+      orgId,
     });
   }
 
@@ -191,7 +191,7 @@ export default function useCurrentOrg() {
     delete choresCopy[id];
     updateChoresFromOrg({
       entities: choresCopy,
-      orgId: orgId,
+      orgId,
     });
   }
 
@@ -201,7 +201,7 @@ export default function useCurrentOrg() {
     delete levelsCopy[id];
     updateLevelsFromOrg({
       entities: levelsCopy,
-      orgId: orgId,
+      orgId,
     });
   }
 
