@@ -1,65 +1,83 @@
+import { UnixTimestamp } from '../../../dateTime';
+import { FBTimestamp } from '../../../firebase';
 import { Chore, Person } from '../orgs/types';
-import { BaseSlice } from '../types';
+import { BaseSlice, Map } from '../types';
 
-export interface ScheduleRepeat {
-  frequency: number; // 1-365
-  duration: 'day' | 'week' | 'month' | 'year';
+/**
+ *   - startDate === dueDate - shows up on specific calendar day
+ *   - startDate === undefined, dueDate === undefined - shows up on list of things that need to be done - not on calendar. If due date is in calendar, shows up as multidate calendar item
+ *   - startDate, dueDate === undefined - if calendar in range, shows up on list of things that need to be done - not on calendar
+ *   - startDate === undefined, dueDate - if due date not past, shows up on list of things that need to be done - not on calendar.  If due date is in calendar, shows up as multidate calendar item
+ *   - startDate, dueDate - if neither date in calendar range, does not show up. if dueDate in range, shows as multi-day calendar item. if start date in range, but not due date, shows up on list of things that need to be done - not on calendar
+ *
+ *   3 visualizations of chores
+ *   A) Single Day Calendar Chores
+ *   B) Multi Day Calendar Chores (due date in range)
+ *   C) Non Calendar Chores (due date not in range, but start date is)
+ */
+export interface Schedule {
+  // dueDate - startDate gives a day range. frequency x duration must be shorter that day range
+  startDate: UnixTimestamp | undefined; // if undefined, cannot repeat weekly
+  dueDate: UnixTimestamp | undefined; // if undefined, can not repeat
+  frequency: number; // weekly 1-4, monthly 1-12
+  interval: 'week' | 'month';
   weekly?: string; // MTWHFSU
-  monthly?: 'day' | 'date' | 'end'; // 'day' = the 4th thursday of every month, 'date' = the 27th of every month, 'end' = end of the month (28, 29, 30, 31)
+  monthly?: 'day' | 'date'; // 'day' = the 4th thursday of every month, 'date' = the 27th of every month
 }
 
-export enum TimeModifier {
-  OPEN = 'OPEN', // if start it means now, if end it means when completed - can't be late
-  SOFT = 'SOFT', // if start it means midnight of that day, if end it means 23:59:59 of that day
-  HARD = 'HARD', // start or end it means that exact time
+export interface FBSchedule {
+  // dueDate - startDate gives a day range. frequency x duration must be shorter that day range
+  startDate: FBTimestamp | undefined; // if undefined, cannot repeat weekly
+  dueDate: FBTimestamp | undefined; // if undefined, can not repeat
+  frequency: number; // weekly 1-4, monthly 1-12
+  interval: 'week' | 'month';
+  weekly?: string; // MTWHFSU
+  monthly?: 'day' | 'date'; // 'day' = the 4th thursday of every month, 'date' = the 27th of every month
 }
-
-export interface OpenTimeBoundary {
-  timestamp?: number;
-  modifier: TimeModifier.OPEN;
-}
-
-export interface ClosedTimeBoundary {
-  timestamp: number;
-  modifier: TimeModifier.SOFT | TimeModifier.HARD;
-}
-
-export type TimeBoundary = OpenTimeBoundary | ClosedTimeBoundary;
 
 export interface ScheduledChore {
   id: string;
-  startTime: TimeBoundary;
-  deadline: TimeBoundary;
   orgChoreId: string;
   personId: string;
-  repeat: ScheduleRepeat;
+  schedule: Schedule;
 }
 
 export interface FBScheduledChore {
   id: string;
-  startTime: TimeBoundary;
-  deadline: TimeBoundary;
   orgChoreId: string;
   personId: string;
-  repeat: ScheduleRepeat;
+  schedule: FBSchedule;
 }
 
 export interface FeedChore {
   id: string;
-  startTime: TimeBoundary;
-  deadline: TimeBoundary;
   orgChore: Chore;
   person: Person;
+  schedule: Schedule;
 }
 
 export interface ScheduledChoreData {
-  orgId: string;
+  id: string; // orgId
   lastId: string;
-  data: FBScheduledChore[];
+  data: Map<FBScheduledChore>;
 }
 
 export interface ScheduledChoreState extends BaseSlice {
   orgsMap: {
     [key: string]: ScheduledChoreData;
+  };
+}
+
+export interface UIChoreFeedItem {
+  id: string;
+  name: string;
+  tasks: {
+    name: string;
+    id: string;
+    finished: boolean;
+  }[];
+  person: {
+    id: string;
+    name: string;
   };
 }

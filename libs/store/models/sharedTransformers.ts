@@ -4,8 +4,8 @@ import { Collection, db, FBReference, FBTimestamp } from '../../firebase';
 import { Map, OrgMap } from './types';
 
 export const transformTimestamp = {
-  fromFB(fbTimestamp: FBTimestamp): UnixTimestamp {
-    return fbTimestamp.seconds;
+  fromFB(fbTimestamp?: FBTimestamp): UnixTimestamp {
+    return fbTimestamp?.seconds || 0;
   },
   toFB(timestamp: UnixTimestamp): FBTimestamp {
     return Timestamp.fromMillis(timestamp * 1000);

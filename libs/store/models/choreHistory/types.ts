@@ -1,12 +1,10 @@
-import { TimeBoundary } from '../choreFeed/types';
-import { OrgMap } from '../orgs/types';
-import { BaseSlice } from '../types';
+import { BaseSlice, OrgMap } from '../types';
 
 export interface CompletedChore {
   id: string;
   orgPeopleIds: string[];
   completedAt: number;
-  deadline: TimeBoundary;
+  // deadline: TimeBoundary;
   orgChoreId: string;
 }
 

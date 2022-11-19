@@ -9,16 +9,22 @@ import styles from './DateSelector.module.css';
 
 interface DateSelectorProps {
   id: string;
+  label?: string;
   date?: UnixTimestamp;
   onChange: (date: UnixTimestamp) => void;
 }
 
-export function DateSelector({ id, onChange, date }: DateSelectorProps) {
+export function DateSelector({
+  id,
+  onChange,
+  date,
+  label = '',
+}: DateSelectorProps) {
   function onChangeInner(e: ChangeEvent<HTMLInputElement>) {
     onChange(ISOToTimestamp(e.target.value));
   }
   return (
-    <InputField label={'Birthday'}>
+    <InputField label={label}>
       <input
         className={styles.dateSelector}
         type="date"

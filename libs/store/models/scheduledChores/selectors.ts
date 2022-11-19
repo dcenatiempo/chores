@@ -1,8 +1,9 @@
 import { defaultMemoize, createSelector } from 'reselect';
 import { RootState } from '../../store';
 import { transformChore } from '../orgs/transformers';
+import { arrayToMap, mapToArray, transformMap } from '../sharedTransformers';
 import { initialLastId } from './reducer';
-import { transformScheduledScheduledChore } from './transformers';
+import { transformScheduledChore } from './transformers';
 
 const orgsScheduledChore = defaultMemoize(
   (state: RootState) => state.scheduledChores.orgsMap
@@ -23,10 +24,19 @@ const lastId = createSelector(
   (cur) => cur?.lastId || initialLastId
 );
 
-const scheduledChores = createSelector(
-  currentScheduledChores,
-  (cur) =>
-    cur?.data?.map((c) => transformScheduledScheduledChore.fromFB(c)) || []
+const scheduledChores = createSelector(currentScheduledChores, (cur) =>
+  transformMap(cur?.data, (x) => transformScheduledChore.fromFB(x))
 );
 
-export { currentOrgId, lastId, scheduledChores };
+const scheduledChoresArray = createSelector(scheduledChores, (map) =>
+  mapToArray(map)
+);
+
+export {
+  currentOrgId,
+  lastId,
+  scheduledChores,
+  scheduledChoresArray,
+  orgsScheduledChore,
+  currentScheduledChores,
+};

@@ -20,7 +20,7 @@ const AddOrEditChore: FC<AddOrEditChoreProps> = ({
   tasks,
   setTasks,
 }) => {
-  const { peopleArray, tasksArray } = useCurrentOrg();
+  const { tasksArray } = useCurrentOrg();
 
   const [room, setRoom] = useState<Room>();
   const [roomType, setRoomType] = useState<RoomType>();
@@ -42,7 +42,6 @@ const AddOrEditChore: FC<AddOrEditChoreProps> = ({
           t?.room?.roomType?.id === roomType?.id) ||
         // task with rooms that match room
         (t?.room?.id && room?.id && t?.room?.id === room?.id);
-      if (shouldShow) console.log(t, room, roomType);
 
       return shouldShow;
     });

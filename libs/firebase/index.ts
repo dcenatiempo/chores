@@ -97,6 +97,7 @@ function listenForDocChanges<A>({
   const map = getUnsubscribeMap();
   map?.[listenerKey]?.();
   map[listenerKey] = onSnapshot(doc(db, collectionName, docId), (doc) => {
+    const x = doc?.data?.();
     const newDoc: A = {
       id: docId,
       ...doc?.data?.(),
@@ -107,12 +108,13 @@ function listenForDocChanges<A>({
 
 export { app, auth, db, fetchDocs, fetchDoc, listenForDocChanges };
 
-enum OrgeEntityType {
+export enum OrgEntityType {
   ROOM = 'rooms',
   TASK = 'tasks',
   CHORE = 'chores',
   PERSON = 'people',
   LEVEL = 'levels',
+  SCHEDULED_CHORES = 'data',
 }
 interface Entity {
   id: string;
@@ -128,7 +130,7 @@ export async function addEntityToCollection<T, FBT extends Entity>({
   collection: Collection;
   entity: T;
   transformEntity: { toFB: (entity: T) => FBT };
-  entityType: OrgeEntityType;
+  entityType: OrgEntityType;
 }) {
   const orgDocRef = doc(db, collection, orgId);
   const fbEntity = transformEntity.toFB(entity);
@@ -149,7 +151,7 @@ export async function updateEntitiesFromOrg<T, FBT extends Entity>({
   collection: Collection;
   orgId: string;
   transformEntity: { toFB: (entity: T) => FBT };
-  entityType: OrgeEntityType;
+  entityType: OrgEntityType;
 }) {
   const firebaseEntities: Map<FBT> = transformMap(
     entities,
@@ -182,7 +184,7 @@ interface UpdateEntitiesParams<T> {
 const roomConfig = {
   transformEntity: transformRoom,
   collection: Collection.ORGS,
-  entityType: OrgeEntityType.ROOM,
+  entityType: OrgEntityType.ROOM,
 };
 
 export async function addRoomToOrg(params: AddEntityParams<Room>) {
@@ -201,7 +203,7 @@ export async function updateRoomsFromOrg(params: UpdateEntitiesParams<Room>) {
 
 const taskConfig = {
   transformEntity: transformTask,
-  entityType: OrgeEntityType.TASK,
+  entityType: OrgEntityType.TASK,
   collection: Collection.ORGS,
 };
 
@@ -221,7 +223,7 @@ export async function updateTasksFromOrg(params: UpdateEntitiesParams<Task>) {
 
 const choreConfig = {
   transformEntity: transformChore,
-  entityType: OrgeEntityType.CHORE,
+  entityType: OrgEntityType.CHORE,
   collection: Collection.ORGS,
 };
 
@@ -241,7 +243,7 @@ export async function updateChoresFromOrg(params: UpdateEntitiesParams<Chore>) {
 
 const levelConfig = {
   transformEntity: transformLevel,
-  entityType: OrgeEntityType.LEVEL,
+  entityType: OrgEntityType.LEVEL,
   collection: Collection.ORGS,
 };
 
@@ -261,7 +263,7 @@ export async function updateLevelsFromOrg(params: UpdateEntitiesParams<Level>) {
 
 const personConfig = {
   transformEntity: transformPerson,
-  entityType: OrgeEntityType.PERSON,
+  entityType: OrgEntityType.PERSON,
   collection: Collection.ORGS,
 };
 

@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
 import { useDispatch } from 'react-redux';
 import { auth } from '../../libs/firebase';
-import { organizationsStore, userStore } from '../../libs/store';
+import { scheduledChoresStore, orgsStore, userStore } from '../../libs/store';
 import useActions from '../../libs/store/models/actions/useActions';
 import useOrgs from '../../libs/store/models/orgs/useOrgs';
 import { useRoomTypes } from '../../libs/store/models/roomTypes';
+import { fetchOrgsScheduledChores } from '../../libs/store/models/scheduledChores/firebase';
 import { useSurfaces } from '../../libs/store/models/surfaces';
 import useUser from '../../libs/store/models/user/useUser';
 import store from '../../libs/store/store';
@@ -20,17 +21,25 @@ export default function Firebase() {
   useEffect(() => {
     function emptyStore() {
       dispatch(userStore.actions.clearUser());
-      dispatch(organizationsStore.actions.clearOrgs());
+      dispatch(orgsStore.actions.clearOrgs());
+      dispatch(scheduledChoresStore.actions.clearScheduledChores());
     }
 
     function hydrateStore(userId: string) {
       // Signed in
       fetchUser(userId)
         .then((user) => {
-          return fetchOrgs(user?.organizations?.map((o) => o.id) || []);
+          const orgIds = user?.organizations?.map((o) => o.id) || [];
+          return Promise.all([
+            fetchOrgsScheduledChores(orgIds),
+            fetchOrgs(orgIds),
+          ]);
         })
         .then(() => {
-          dispatch(organizationsStore.asyncActions.listenForOrgChanges());
+          dispatch(orgsStore.asyncActions.listenForOrgChanges());
+          dispatch(
+            scheduledChoresStore.asyncActions.listenForScheduledChoreChanges()
+          );
         });
       fetchRoomTypes();
       fetchSurfaceTemplates();

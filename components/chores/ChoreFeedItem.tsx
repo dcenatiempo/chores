@@ -1,22 +1,10 @@
 import { FC } from 'react';
+import { UIChoreFeedItem } from '../../libs/store/models/scheduledChores/types';
 import { ListItem } from '../base';
 import { EditButton, DeleteButton, AddButton } from '../buttons';
 
-export interface ChoreFeedItem {
-  id: string;
-  name: string;
-  tasks: {
-    name: string;
-    id: string;
-    finished: boolean;
-  }[];
-  person: {
-    id: string;
-    name: string;
-  };
-}
 interface ChoreFeedItemProps {
-  chore: ChoreFeedItem;
+  chore: UIChoreFeedItem;
   onClickChore?: (choreId: string) => void;
   onClickTask?: (choreId: string, taskId: string) => void;
 }

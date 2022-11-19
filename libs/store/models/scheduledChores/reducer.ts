@@ -1,7 +1,12 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ScheduledChoreData, ScheduledChoreState } from './types';
+import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {
+  FBScheduledChore,
+  ScheduledChoreData,
+  ScheduledChoreState,
+} from './types';
 import * as log from '../../../logging';
 import { arrayToMap } from '../sharedTransformers';
+import { Collection, listenForDocChanges } from '../../../firebase';
 
 export const initialLastId = '1000';
 
@@ -22,19 +27,44 @@ export const scheduledChoreSlice = createSlice({
       const mappedData = arrayToMap(action.payload);
       state.orgsMap = mappedData;
     },
+    updateScheduledChores: (
+      state,
+      action: PayloadAction<ScheduledChoreData>
+    ) => {
+      const orgId = action?.payload.id;
+      if (orgId) state.orgsMap[orgId] = action.payload;
+    },
+    clearScheduledChores: (state) => {
+      state.orgsMap = initialState.orgsMap;
+    },
     setLastId: (
       state,
-      action: PayloadAction<{ lastId: string; currentOrgId: string }>
+      action: PayloadAction<{ lastId: string; orgId: string }>
     ) => {
-      const currentOrgId = action.payload.currentOrgId;
-      if (!currentOrgId)
-        return log.warn('could not incrementLastId, "currentOrgId" needed');
+      const orgId = action.payload.orgId;
+      if (!orgId) return log.warn('could not incrementLastId, "orgId" needed');
       const newLastId = action.payload.lastId;
       if (!newLastId) return;
-      state.orgsMap[currentOrgId].lastId = newLastId;
+      state.orgsMap[orgId].lastId = newLastId;
     },
   },
 });
 
+const listenForScheduledChoreChanges = createAsyncThunk(
+  'someTypePrefix?',
+  async (_: undefined, thunkAPI) => {
+    // @ts-expect-error
+    const orgId: string = thunkAPI.getState().orgs.currentOrgId;
+    listenForDocChanges({
+      collectionName: Collection.ORG_SCHEDULED_CHORES,
+      docId: orgId,
+      callback: (choreData: ScheduledChoreData) => {
+        thunkAPI.dispatch(actions.updateScheduledChores(choreData));
+      },
+    });
+  }
+);
+
 const { actions, name, getInitialState, reducer } = scheduledChoreSlice;
-export { actions, name, getInitialState, reducer };
+const asyncActions = { listenForScheduledChoreChanges };
+export { asyncActions, actions, name, getInitialState, reducer };

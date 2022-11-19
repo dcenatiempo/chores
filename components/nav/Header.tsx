@@ -1,16 +1,14 @@
 import { FC } from 'react';
-import Head from 'next/head';
 import { logout, useIsAuthenticated } from '../../libs/authentication';
-import { Button, Icon, IconButton, IconColor, IconName } from '../base';
+import { Button, IconButton, IconName } from '../base';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
-import { organizationsStore } from '../../libs/store';
-import ThemeSelector from '../ThemeSelector';
+import { orgsStore } from '../../libs/store';
 
 interface Props {}
 
 const Header: FC<Props> = () => {
-  const orgName = useSelector(organizationsStore.selectors.name);
+  const orgName = useSelector(orgsStore.selectors.name);
 
   return (
     <header style={styles.container}>

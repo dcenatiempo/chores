@@ -10,7 +10,7 @@ export enum Collection {
   ROOM_TYPES = 'roomTypes',
   ACTIONS = 'actions',
   USER = 'users',
-  ORG_SCHEDULED_CHORES = 'orgChoreFeed', // TODO: change to 'orgsScheduledChores'
-  ORG_CHORES_IN_FLIGHT = 'orgsChoresInFlight',
-  ORG_CHORE_HISTORY = 'orgsChoreHistory',
+  ORG_SCHEDULED_CHORES = 'orgScheduledChores',
+  ORG_CHORES_IN_FLIGHT = 'orgChoresInFlight',
+  ORG_CHORE_HISTORY = 'orgChoreHistory',
 }

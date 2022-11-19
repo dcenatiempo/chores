@@ -1,19 +1,23 @@
 .calendar {
-  display: flex;
-  flex-direction: column;
+
 }
 
-.calendarWeek {
+.calendarWeekWrapper {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   flex-wrap: nowrap;
+}
+.calendarWeek {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
 }
 
 .calendarDay {
-  min-height: 100px;
-  min-width: 100px;
+  flex: 1;
+  flex-basis: 100px;
   border-width: 1px;
   border-style: solid;
+  min-height: 100px;
 }
 
 .calendarEvent {

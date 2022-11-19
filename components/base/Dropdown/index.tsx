@@ -8,7 +8,7 @@ interface DropdownProps<T> extends InputFieldProps {
   labelKey: (option: T | undefined) => string;
   id: string;
   onSelect: (selected: T | undefined) => void;
-  selected: T | undefined;
+  selected: T | string | undefined;
 }
 
 export default function Dropdown<T>({
@@ -31,7 +31,7 @@ export default function Dropdown<T>({
         name={id}
         id={id}
         onChange={onChange}
-        value={valueKey(selected)}
+        value={valueKey(selected) || selected}
       >
         <option key={undefined} value={undefined}>
           please select...

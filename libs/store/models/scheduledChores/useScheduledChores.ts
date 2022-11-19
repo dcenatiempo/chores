@@ -1,13 +1,20 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { incrementHex } from '../../../utils';
-import { mapToArray } from '../sharedTransformers';
 // import { Map } from '../types';
 import { actions } from './reducer';
 import * as selectors from './selectors';
 import * as firebase from './firebase';
+import { ScheduledChore } from './types';
+import {
+  addEntityToCollection,
+  Collection,
+  OrgEntityType,
+  updateEntitiesFromOrg,
+} from '../../../firebase';
+import { transformScheduledChore } from './transformers';
 
-export default function useCurrentOrg() {
+export default function useScheduledChores() {
   const dispatch = useDispatch();
 
   async function fetchOrgsScheduledChores(orgIds: string[]) {
@@ -18,12 +25,13 @@ export default function useCurrentOrg() {
       });
   }
 
-  const currentOrgId = useSelector(selectors.currentOrgId);
+  const orgId = useSelector(selectors.currentOrgId);
   const scheduledChores = useSelector(selectors.scheduledChores);
+  const scheduledChoresArray = useSelector(selectors.scheduledChoresArray);
 
   const scheduledChoresFeed = useMemo(() => {
     const feed = [];
-    scheduledChores.forEach((chore) => {
+    scheduledChoresArray.forEach((chore) => {
       // TODO
     });
     return feed;
@@ -40,42 +48,56 @@ export default function useCurrentOrg() {
     if (!lastIdRef.current) lastIdRef.current = lastId;
     const newLastId = incrementHex(lastIdRef.current);
     lastIdRef.current = newLastId;
-    dispatch(actions.setLastId({ currentOrgId, lastId: newLastId }));
+    dispatch(actions.setLastId({ orgId, lastId: newLastId }));
     return newLastId;
   }
 
-  // function addRoom(room: Room) {
-  //   if (!orgId) return;
+  const scheduledChoreConfig = {
+    transformEntity: transformScheduledChore,
+    collection: Collection.ORG_SCHEDULED_CHORES,
+    entityType: OrgEntityType.SCHEDULED_CHORES,
+  };
 
-  //   addRoomToOrg({
-  //     orgId: orgId,
-  //     entity: {
-  //       ...room,
-  //       surfaces: room.surfaces,
-  //       id: getNextId(),
-  //     },
-  //   });
-  // }
+  function addScheduledChore(chore: ScheduledChore) {
+    if (!orgId) return;
+    addEntityToCollection({
+      orgId,
+      entity: { ...chore, id: getNextId() },
+      ...scheduledChoreConfig,
+    });
+  }
 
-  // function editRoom(room: Room) {
-  //   if (!orgId) return;
-  //   const roomsCopy = { ...rooms };
-  //   roomsCopy[room.id] = room;
-  //   updateRoomsFromOrg({
-  //     entities: roomsCopy,
-  //     orgId,
-  //   });
-  // }
+  function editScheduledChore(chore: ScheduledChore) {
+    if (!orgId) return;
 
-  // function deleteRoom({ id }: Room) {
-  //   if (!orgId) return;
-  //   const roomsCopy = { ...rooms };
-  //   delete roomsCopy[id];
-  //   updateRoomsFromOrg({
-  //     entities: roomsCopy,
-  //     orgId: orgId,
-  //   });
-  // }
+    const scheduledChoresCopy = { ...scheduledChores };
+    scheduledChoresCopy[chore.id] = chore;
+    updateEntitiesFromOrg({
+      entities: scheduledChoresCopy,
+      orgId,
+      ...scheduledChoreConfig,
+    });
+  }
 
-  return { fetchOrgsScheduledChores, getNextId };
+  function deleteScheduledChore(chore: ScheduledChore) {
+    if (!orgId) return;
+
+    const scheduledChoresCopy = { ...scheduledChores };
+    delete scheduledChoresCopy[chore.id];
+    updateEntitiesFromOrg({
+      entities: scheduledChoresCopy,
+      orgId,
+      ...scheduledChoreConfig,
+    });
+  }
+
+  return {
+    scheduledChores,
+    scheduledChoresArray,
+    addScheduledChore,
+    editScheduledChore,
+    deleteScheduledChore,
+    fetchOrgsScheduledChores,
+    getNextId,
+  };
 }

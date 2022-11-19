@@ -48,11 +48,11 @@ export const orgs = createSlice({
       state = Object.assign(state, initialState);
     },
   },
-  extraReducers: (builder) => {
-    builder.addCase(listenForOrgChanges.fulfilled, () => {
-      console.log('extraReducer');
-    });
-  },
+  // extraReducers: (builder) => {
+  //   builder.addCase(listenForOrgChanges.fulfilled, () => {
+  //     console.log('extraReducer');
+  //   });
+  // },
 });
 
 const listenForOrgChanges = createAsyncThunk(
