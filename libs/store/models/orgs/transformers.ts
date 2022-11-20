@@ -172,7 +172,7 @@ export const transformPerson = {
   fromFB(person: FBPerson): Person {
     return {
       ...person,
-      id: person.id || person.firstName, // todo: remove once data is clean
+      id: person.id || person.firstName,
       birthday: person.birthday
         ? transformTimestamp.fromFB(person.birthday)
         : undefined,
@@ -280,4 +280,11 @@ export function arrayToOrgMap<T>(array: T[], field: string = 'id'): OrgMap<T> {
     };
     return map;
   }, {});
+}
+
+///////// HELPERS /////////
+export function getTaskName(t: Task) {
+  return `${t.action.name} ${t.room?.name || t.roomType?.name} ${
+    t.surface?.name || t.surfaceTemplate?.name
+  }`;
 }

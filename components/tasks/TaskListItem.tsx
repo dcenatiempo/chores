@@ -1,4 +1,5 @@
 import { FC } from 'react';
+import { getTaskName } from '../../libs/store/models/orgs/transformers';
 import { Task } from '../../libs/store/models/orgs/types';
 import { ListItem } from '../base';
 import { EditButton, DeleteButton, AddButton } from '../buttons';
@@ -23,8 +24,7 @@ const TaskListItem: FC<TaskListItemProps> = ({
 
   return (
     <ListItem>
-      {task.action.name} {task.room?.name || task.roomType?.name}{' '}
-      {task.surface?.name || task.surfaceTemplate?.name}
+      {getTaskName(task)}
       <div
         style={{
           display: 'flex',

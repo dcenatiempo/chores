@@ -3,79 +3,33 @@ import type { NextPage } from 'next';
 import PageWrapper from '../../components/nav/PageWrapper';
 
 import { Calendar } from '../../components/base';
-import {
-  getFirstDayOfWeek,
-  getTimeFuture,
-  timestampToISODate,
-  UnixTimestamp,
-} from '../../libs/dateTime';
+import { timestampToISODate, UnixTimestamp } from '../../libs/dateTime';
 import { DateTime } from 'luxon';
 import ChoreFeedItem from '../../components/chores/ChoreFeedItem';
 import React, { useMemo, useState } from 'react';
 import AddOrEditScheduledChoresList from '../../components/chores/AddOrEditScheduledChoresList';
 import useScheduledChores from '../../libs/store/models/scheduledChores/useScheduledChores';
 import { Map } from '../../libs/store/models/types';
-import {
-  FeedChore,
-  UIChoreFeedItem,
-} from '../../libs/store/models/scheduledChores/types';
-import dynamic from 'next/dynamic';
+import { UIChoreFeedItem } from '../../libs/store/models/scheduledChores/types';
+import { getUIChoreFeedItem } from '../../libs/store/models/scheduledChores/transformers';
 
 const nextWeek = DateTime.local().plus({ weeks: 1 });
 
 const Schedule: NextPage = () => {
-  const { addScheduledChore, editScheduledChore, scheduledChoresArray } =
-    useScheduledChores();
+  const {
+    addScheduledChore,
+    editScheduledChore,
+    scheduledChoresArray,
+    feedChoresArray,
+  } = useScheduledChores();
 
   const [calendarStartDate, setCalendarStartDate] = useState(0);
   const [calendarEndDate, setCalendarEndDate] = useState(0);
-  const dailyStuff: Map<UIChoreFeedItem[]> = {
-    [timestampToISODate(getTimeFuture({ days: 11 }, getFirstDayOfWeek()))]: [
-      item1,
-      item2,
-    ],
-    [timestampToISODate(getTimeFuture({ days: 3 }, getFirstDayOfWeek()))]: [
-      item3,
-    ],
-  };
-
-  const multiDayStuff: {
-    startDate: UnixTimestamp;
-    endDate: UnixTimestamp;
-    item: UIChoreFeedItem;
-  }[] = [
-    {
-      startDate: nextWeek.plus({ days: 2 }).toSeconds(),
-      endDate: nextWeek.plus({ days: 4 }).toSeconds(),
-      item: item1,
-    },
-    {
-      startDate: nextWeek.minus({ days: 2 }).toSeconds(),
-      endDate: nextWeek.plus({ days: 3 }).toSeconds(),
-      item: item2,
-    },
-    {
-      startDate: nextWeek.minus({ days: 100 }).toSeconds(),
-      endDate: nextWeek.minus({ days: 18 }).toSeconds(),
-      item: item3,
-    },
-  ];
-
-  const offCalendarStuff: {
-    dueDate: UnixTimestamp;
-    item: UIChoreFeedItem;
-  }[] = [
-    // {
-    //   startDate: nextWeek.plus({ days: 2 }).toSeconds(),
-    //   endDate: nextWeek.plus({ months: 4 }).toSeconds(),
-    //   item: item1,
-    // },
-  ];
 
   const choresFeed = useMemo(() => {
     const feed: {
       offCalendar: {
-        dueDate: UnixTimestamp;
+        dueDate?: UnixTimestamp;
         item: UIChoreFeedItem;
       }[];
       multiDay: {
@@ -89,12 +43,70 @@ const Schedule: NextPage = () => {
       multiDay: [],
       daily: {},
     };
-    // TODO: build feed
-    feed.daily = dailyStuff;
-    feed.multiDay = multiDayStuff;
-    feed.offCalendar = offCalendarStuff;
+
+    feedChoresArray.forEach((c) => {
+      const luxonStart = c.schedule.startDate
+        ? DateTime.fromSeconds(c.schedule.startDate)
+        : undefined;
+
+      const luxonDue = c.schedule.dueDate
+        ? DateTime.fromSeconds(c.schedule.dueDate)
+        : undefined;
+
+      const calendarEnd = DateTime.fromSeconds(calendarEndDate);
+
+      const calendarStart = DateTime.fromSeconds(calendarStartDate);
+
+      const isDaily =
+        luxonStart &&
+        luxonDue &&
+        luxonStart.toISODate() === luxonDue.toISODate();
+      if (isDaily) {
+        const key = luxonStart.toISODate();
+        if (!feed.daily[key]) feed.daily[key] = [];
+        return feed.daily[key].push(getUIChoreFeedItem(c));
+      }
+
+      const startDiff = luxonStart?.diff(calendarStart, 'days').days ?? -1;
+      const endDiff = luxonDue?.diff(calendarEnd, 'days').days ?? 1;
+      const startBeforeEnd = luxonStart?.diff(calendarEnd, 'days').days ?? -1;
+      const dueAfterStart = luxonDue?.diff(calendarStart, 'days').days ?? 1;
+
+      const startWithinRange = startDiff >= 0 && startBeforeEnd <= 0;
+      const endWithinRange = endDiff <= 0 && dueAfterStart >= 0;
+      const startBeforeRange = startDiff < 0;
+      const endAfterRange = endDiff > 0;
+
+      if (startWithinRange && endWithinRange) {
+        return feed.multiDay.push({
+          startDate: c.schedule.startDate || calendarStartDate,
+          endDate: c.schedule.dueDate || calendarEndDate,
+          item: getUIChoreFeedItem(c),
+        });
+      }
+      if (startWithinRange && endAfterRange) {
+        return feed.offCalendar.push({
+          dueDate: calendarEndDate,
+          item: getUIChoreFeedItem(c),
+        });
+      }
+      if (startBeforeRange && endWithinRange) {
+        return feed.multiDay.push({
+          startDate: calendarStartDate,
+          endDate: c.schedule.dueDate || calendarEndDate,
+          item: getUIChoreFeedItem(c),
+        });
+      }
+      if (startBeforeRange && endAfterRange) {
+        return feed.offCalendar.push({
+          dueDate: calendarEndDate,
+          item: getUIChoreFeedItem(c),
+        });
+      }
+      // else its not in calendar range at all
+    });
     return feed;
-  }, [scheduledChoresArray, calendarStartDate, calendarEndDate]);
+  }, [calendarStartDate, calendarEndDate, feedChoresArray]);
 
   function _onClickDailyTask(date: string, choreId: string, taskId: string) {
     const chore = choresFeed.daily[date].find((c) => c?.id === choreId);
@@ -121,7 +133,7 @@ const Schedule: NextPage = () => {
         chores={scheduledChoresArray}
       />
       <Calendar
-        numWeeks={5}
+        numWeeks={1}
         date={nextWeek.toSeconds()}
         numDays={7}
         renderWeek={(
@@ -129,21 +141,17 @@ const Schedule: NextPage = () => {
           endDate: UnixTimestamp,
           numCells: number
         ) => {
-          const calendarStart = DateTime.fromSeconds(calendarStartDate);
           const calendarEnd = DateTime.fromSeconds(calendarEndDate);
           const weekStart = DateTime.fromSeconds(startDate);
           const weekEnd = DateTime.fromSeconds(endDate);
+
           const thisWeeksChores = choresFeed.multiDay.reduce<React.ReactNode[]>(
             (acc, item) => {
-              // TODO: is the item in range?
               const itemStart = DateTime.fromSeconds(item.startDate);
               const itemEnd = DateTime.fromSeconds(item.endDate);
               const calendarEndDiff = calendarEnd.diff(itemEnd, 'days').days;
 
               if (calendarEndDiff < 0) {
-                console.log(calendarEndDiff);
-                console.log(timestampToISODate(calendarEndDate));
-                console.log(timestampToISODate(item.endDate));
                 return acc;
               }
 
@@ -212,84 +220,3 @@ const Schedule: NextPage = () => {
 };
 
 export default Schedule;
-
-const item1 = {
-  id: '123',
-  name: 'Clean your room',
-  tasks: [
-    {
-      name: 'make bed',
-      id: '234',
-      finished: false,
-    },
-    {
-      name: 'put away clothes',
-      id: '345',
-      finished: false,
-    },
-    {
-      name: 'tidy room',
-      id: '346',
-      finished: false,
-    },
-  ],
-  // room?: Room;
-  person: {
-    name: 'Creed',
-    id: '123',
-  },
-};
-
-const item2 = {
-  id: '1234',
-  name: 'Clean your room',
-  tasks: [
-    {
-      name: 'make bed',
-      id: '234',
-      finished: false,
-    },
-    {
-      name: 'put away clothes',
-      id: '2345',
-      finished: false,
-    },
-    {
-      name: 'tidy room',
-      id: '346',
-      finished: false,
-    },
-  ],
-  // room?: Room;
-  person: {
-    name: 'Will',
-    id: '234',
-  },
-};
-
-const item3 = {
-  id: '1235',
-  name: 'Clean your room',
-  tasks: [
-    {
-      name: 'make bed',
-      id: '234',
-      finished: false,
-    },
-    {
-      name: 'put away clothes',
-      id: '234',
-      finished: false,
-    },
-    {
-      name: 'tidy room',
-      id: '346',
-      finished: false,
-    },
-  ],
-  // room?: Room;
-  person: {
-    name: 'Creed',
-    id: '123',
-  },
-};

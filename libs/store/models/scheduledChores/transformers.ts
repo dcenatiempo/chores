@@ -1,4 +1,6 @@
+import ScheduledChoreListItem from '../../../../components/chores/ScheduledChoreListItem';
 import { cleanFromObject } from '../../../utils';
+import { getTaskName } from '../orgs/transformers';
 import { Chore, Person } from '../orgs/types';
 import { transformTimestamp } from '../sharedTransformers';
 import { Map } from '../types';
@@ -8,6 +10,7 @@ import {
   FeedChore,
   Schedule,
   ScheduledChore,
+  UIChoreFeedItem,
 } from './types';
 
 export const transformScheduledChore = {
@@ -63,3 +66,19 @@ export const transformScheduledChore = {
     };
   },
 };
+
+export function getUIChoreFeedItem(chore: FeedChore): UIChoreFeedItem {
+  return {
+    id: chore.id,
+    name: chore.orgChore.name,
+    tasks: Object.values(chore.orgChore.tasks).map((t) => ({
+      name: getTaskName(t),
+      id: t.id,
+      finished: false,
+    })),
+    person: {
+      id: chore.person.id,
+      name: chore.person.firstName,
+    },
+  };
+}

@@ -16,11 +16,11 @@ export interface UserState extends BaseSlice {
 
 export interface FBUserInput {
   authId: string;
-  birthday?: FBTimestamp; // TODO
+  birthday?: FBTimestamp;
   email?: string;
   firstName?: string;
   lastName?: string;
-  organizations?: string[]; // TODO
+  organizations?: string[];
 }
 
 export interface FBUser {
@@ -29,5 +29,5 @@ export interface FBUser {
   email?: string;
   firstName?: string;
   lastName?: string;
-  organizations?: FBReference[]; // array of references
+  organizations?: FBReference[];
 }

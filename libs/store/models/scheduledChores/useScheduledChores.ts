@@ -28,14 +28,8 @@ export default function useScheduledChores() {
   const orgId = useSelector(selectors.currentOrgId);
   const scheduledChores = useSelector(selectors.scheduledChores);
   const scheduledChoresArray = useSelector(selectors.scheduledChoresArray);
-
-  const scheduledChoresFeed = useMemo(() => {
-    const feed = [];
-    scheduledChoresArray.forEach((chore) => {
-      // TODO
-    });
-    return feed;
-  }, [scheduledChores]);
+  const feedChores = useSelector(selectors.feedChores);
+  const feedChoresArray = useSelector(selectors.feedChoresArray);
 
   const lastId = useSelector(selectors.lastId);
   const lastIdRef = useRef(lastId);
@@ -92,6 +86,8 @@ export default function useScheduledChores() {
   }
 
   return {
+    feedChores,
+    feedChoresArray,
     scheduledChores,
     scheduledChoresArray,
     addScheduledChore,

@@ -1,6 +1,10 @@
 import { DateTime } from 'luxon';
 import { FC, useMemo, useState } from 'react';
-import { UnixTimestamp } from '../../libs/dateTime';
+import {
+  timestampToDate,
+  timestampToISODate,
+  UnixTimestamp,
+} from '../../libs/dateTime';
 import { Dropdown, Switch } from '../base';
 import { DateSelector } from '../base/DateSelector';
 import MultiselectDropdown from '../base/MultiselectDropdown';
@@ -190,7 +194,10 @@ const ScheduledSelector: FC<ScheduledSelectorProps> = ({
       .filter((o) => o >= minFrequency);
   }, [minFrequency, interval]);
 
-  const [isSimple, setIsSimple] = useState(true);
+  const [isSimple, setIsSimple] = useState(
+    timestampToISODate(dueDate) === timestampToISODate(startDate)
+  );
+
   const showStartDate = !isSimple;
   const showInterval = !!dueDate;
   const showFrequency = !!dueDate && !!interval;

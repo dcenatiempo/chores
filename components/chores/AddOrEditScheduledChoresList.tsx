@@ -61,8 +61,6 @@ const AddOrEditScheduledChoresList: FC<AddOrEditScheduledChoresListProps> = ({
   function isFormValid() {
     if (!choreId) return false;
     if (!personId) return false;
-    if (!startDate) return false;
-    if (!dueDate) return false;
     if (!frequency) return false;
     if (!interval) return false;
     if (!weekly && !monthly) return false;

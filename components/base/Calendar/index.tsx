@@ -53,7 +53,7 @@ const Calendar: FC<CalendarProps> = ({
       type
     );
     const endDate = getTimeFuture(
-      { days: actualNumWeeks * actualNumDays },
+      { days: actualNumWeeks * actualNumDays - 1 },
       startDate
     );
     calendarState.setCalendarStartDate(startDate);
