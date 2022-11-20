@@ -32,3 +32,41 @@ You can check out [the Next.js GitHub repository](https://github.com/vercel/next
 The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
 
 Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+
+# TODO - MVP Functionality
+
+1. add room to schedule chores
+1. show recurring chores in chore feed
+1. add chores in flight
+1. marking a chore task will change the scheduled task to a chore in flight
+1. merge chores in flight into chore feed
+1. filter out scheduled chores that have a chore in flight
+1. add chore history
+1. merge chore history into chore feed
+1. safe deleting (prevent deletes, or recursive deletes)
+
+# TODO - Tech Debt
+
+- testing
+- better organization of files/code
+
+# TODO - Post MVP Features
+
+- parent approval of task/chore completion
+- rewards tied to chores / points tied to chores
+- custom actions, surfaces, room types
+- account creation
+- reports (chore history)
+
+# TODO - UI/UX
+
+- hover states
+- better filtering
+- persistent cache
+- better dropdowns
+- better multiselect
+- calendar controls (change range of calendar)
+- editing stuff on the fly
+- mobile friendly
+- improved calendar
+- animations

@@ -41,7 +41,6 @@ export const transformUser = {
         transformReference.toFB(Collection.USER, id)
       ),
     };
-    // @ts-expect-error
     firebaseUser = cleanFromObject(firebaseUser, [undefined, null, '']);
     return firebaseUser as FBUser;
   },
