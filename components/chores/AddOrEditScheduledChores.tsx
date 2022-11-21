@@ -1,9 +1,14 @@
-import { FC } from 'react';
-import { Chore, Person } from '../../libs/store/models/orgs/types';
+import { FC, useMemo } from 'react';
+import {
+  getChoreName,
+  getChoreRoomTypes,
+} from '../../libs/store/models/orgs/transformers';
+import { Chore, Person, Room } from '../../libs/store/models/orgs/types';
 import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
 
 import { Dropdown } from '../base';
 import Card from '../base/Card';
+import RoomSelector from '../rooms/RoomSelector';
 import ScheduleSelector, { ScheduledSelectorProps } from './ScheduleSelector';
 
 export interface AddOrEditScheduledChoreProps extends ScheduledSelectorProps {
@@ -11,6 +16,8 @@ export interface AddOrEditScheduledChoreProps extends ScheduledSelectorProps {
   setPersonId: (personId?: string) => void;
   choreId?: string;
   setChoreId: (choreId?: string) => void;
+  room?: Room;
+  setRoom: (room?: Room) => void;
 }
 
 const AddOrEditScheduledChore: FC<AddOrEditScheduledChoreProps> = ({
@@ -18,9 +25,11 @@ const AddOrEditScheduledChore: FC<AddOrEditScheduledChoreProps> = ({
   setPersonId,
   choreId,
   setChoreId,
+  room,
+  setRoom,
   ...scheduleSelectorProps
 }) => {
-  const { peopleArray, choresArray } = useCurrentOrg();
+  const { peopleArray, choresArray, roomsArray, chores } = useCurrentOrg();
 
   function _setPersonId(person?: Person) {
     setPersonId(person?.id || '');
@@ -29,6 +38,14 @@ const AddOrEditScheduledChore: FC<AddOrEditScheduledChoreProps> = ({
   function _setChoreId(chore?: Chore) {
     setChoreId(chore?.id || '');
   }
+
+  const roomOptions = useMemo(() => {
+    const chore = choreId ? chores[choreId] : undefined;
+    const roomTypes = getChoreRoomTypes(chore);
+    return roomsArray.filter((r) => {
+      return !!roomTypes[r.roomType.id];
+    });
+  }, [choreId, chores, roomsArray]);
 
   return (
     <Card>
@@ -44,12 +61,13 @@ const AddOrEditScheduledChore: FC<AddOrEditScheduledChoreProps> = ({
       <Dropdown
         options={choresArray}
         valueKey={(c) => `${c?.id || c}`}
-        labelKey={(c) => c?.name || ''}
+        labelKey={(c) => getChoreName(c)}
         id={'choose-chore'}
         onSelect={_setChoreId}
         selected={choreId}
         label={'Chore'}
       />
+      <RoomSelector onSelect={setRoom} selected={room} rooms={roomOptions} />
       <ScheduleSelector {...scheduleSelectorProps} />
     </Card>
   );

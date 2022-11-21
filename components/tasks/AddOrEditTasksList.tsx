@@ -1,6 +1,6 @@
 import { FC, useCallback, useMemo, useState } from 'react';
 import { Action } from '../../libs/store/models/actions/types';
-import { Room, Task } from '../../libs/store/models/orgs/types';
+import { Level, Room, Task } from '../../libs/store/models/orgs/types';
 import { RoomType } from '../../libs/store/models/roomTypes/types';
 import {
   arrayToMap,
@@ -28,18 +28,19 @@ const AddOrEditTasksList: FC<AddOrEditTasksListProps> = ({
   editTask,
 }) => {
   const [taskId, setTaskId] = useState('');
-  const [room, setRoom] = useState<Room | undefined>();
-  const [surface, setSurface] = useState<Surface | undefined>();
-  const [roomType, setRoomType] = useState<RoomType | undefined>();
-  const [surfaceTemplate, setSurfaceTemplate] = useState<
-    SurfaceTemplate | undefined
-  >();
-  const [action, setAction] = useState<Action | undefined>();
+  const [level, setLevel] = useState<Level>();
+  const [room, setRoom] = useState<Room>();
+  const [surface, setSurface] = useState<Surface>();
+  const [roomType, setRoomType] = useState<RoomType>();
+  const [surfaceTemplate, setSurfaceTemplate] = useState<SurfaceTemplate>();
+  const [action, setAction] = useState<Action>();
 
   const [generic, setGeneric] = useState(true);
 
   function setForm(task?: Task) {
+    setGeneric(!task?.room);
     setTaskId(task?.id || '');
+    setLevel(task?.level);
     setRoom(task?.room);
     setSurface(task?.surface);
     setRoomType(task?.roomType);
@@ -49,6 +50,7 @@ const AddOrEditTasksList: FC<AddOrEditTasksListProps> = ({
 
   function clearForm() {
     setTaskId('');
+    setLevel(undefined);
     setRoom(undefined);
     setSurface(undefined);
     setRoomType(undefined);

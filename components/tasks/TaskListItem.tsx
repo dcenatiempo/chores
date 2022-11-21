@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { getTaskName } from '../../libs/store/models/orgs/transformers';
-import { Task } from '../../libs/store/models/orgs/types';
+import { Chore, Task } from '../../libs/store/models/orgs/types';
 import { ListItem } from '../base';
 import { EditButton, DeleteButton, AddButton } from '../buttons';
 

@@ -12,6 +12,10 @@ interface AddOrEditChoreProps {
   setName: (name: string) => void;
   tasks: Task[];
   setTasks: (tasks: Task[]) => void;
+  room?: Room;
+  setRoom: (room?: Room) => void;
+  roomType?: RoomType;
+  setRoomType: (roomType?: RoomType) => void;
 }
 
 const AddOrEditChore: FC<AddOrEditChoreProps> = ({
@@ -19,11 +23,12 @@ const AddOrEditChore: FC<AddOrEditChoreProps> = ({
   setName,
   tasks,
   setTasks,
+  room,
+  setRoom,
+  roomType,
+  setRoomType,
 }) => {
-  const { tasksArray } = useCurrentOrg();
-
-  const [room, setRoom] = useState<Room>();
-  const [roomType, setRoomType] = useState<RoomType>();
+  const { tasksArray, roomsArray } = useCurrentOrg();
 
   // TODO: clean this up - filter by room, or roomType
   const taskOptions = useMemo(() => {
@@ -47,6 +52,12 @@ const AddOrEditChore: FC<AddOrEditChoreProps> = ({
     });
   }, [room, roomType, tasksArray]);
 
+  const roomsOptions = useMemo(() => {
+    return roomsArray.filter((r) => {
+      return r.roomType.id === roomType?.id;
+    });
+  }, [roomsArray, roomType]);
+
   return (
     <div
       style={{
@@ -59,8 +70,8 @@ const AddOrEditChore: FC<AddOrEditChoreProps> = ({
       }}
     >
       <TextInput value={name} onChange={setName} label="Name" />
-      <RoomSelector onSelect={setRoom} selected={room} />
       <RoomTypeSelector selected={roomType} onSelect={setRoomType} />
+      <RoomSelector onSelect={setRoom} selected={room} rooms={roomsOptions} />
 
       <MultiselectDropdown
         options={taskOptions}

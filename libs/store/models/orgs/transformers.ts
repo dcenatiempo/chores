@@ -4,7 +4,11 @@ import { Collection, FBReference } from '../../../firebase/types';
 import { transformAction } from '../actions/transformers';
 import { transformRoomType } from '../roomTypes/transformers';
 import { FBRoomType, RoomType } from '../roomTypes/types';
-import { transformMap, transformTimestamp } from '../sharedTransformers';
+import {
+  mapToArray,
+  transformMap,
+  transformTimestamp,
+} from '../sharedTransformers';
 import { transformSurfaceTemplate } from '../surfaces/transformers';
 import { FBSurface, Surface, SurfaceTemplate } from '../surfaces/types';
 import { Map, OrgMap } from '../types';
@@ -73,7 +77,7 @@ export const transformOrg = {
     );
     const people = transformMap(org.people, transformPerson.fromFB);
     const tasks = transformMap(org.tasks, (t) =>
-      transformTask.fromFB(t, rooms, roomTypes, surfaceTemplates)
+      transformTask.fromFB(t, rooms, roomTypes, surfaceTemplates, levels)
     );
     const chores = transformMap(org.chores, (chore) =>
       transformChore.fromFB(chore, tasks)
@@ -128,17 +132,20 @@ export const transformTask = {
       surfaceTemplateId: task.surfaceTemplate?.id || '',
       roomId: task.room?.id || '',
       roomTypeId: task.roomType?.id || '',
+      levelId: task.roomType?.id || '',
     };
   },
   fromFB(
     task: FBTask,
     rooms: Map<Room>,
     roomTypes: Map<RoomType>,
-    surfaceTemplates: Map<SurfaceTemplate>
+    surfaceTemplates: Map<SurfaceTemplate>,
+    levels: Map<Level>
   ): Task {
     const action = { name: task.actionId };
     const room = task.roomId ? rooms?.[task.roomId] : undefined;
     const surface = task.surfaceId ? room?.surfaces[task.surfaceId] : undefined;
+    const level = task.levelId ? levels[task.levelId] : undefined;
     return {
       id: task.id,
       action,
@@ -148,6 +155,7 @@ export const transformTask = {
       surfaceTemplate: task.surfaceTemplateId
         ? surfaceTemplates[task.surfaceTemplateId]
         : undefined,
+      level,
     };
   },
   dehydrate(task: Task) {
@@ -283,8 +291,49 @@ export function arrayToOrgMap<T>(array: T[], field: string = 'id'): OrgMap<T> {
 }
 
 ///////// HELPERS /////////
-export function getTaskName(t: Task) {
-  return `${t.action.name} ${t.room?.name || t.roomType?.name} ${
-    t.surface?.name || t.surfaceTemplate?.name
-  }`;
+export function getTaskName(t: Task, c?: Chore) {
+  const taskRoom = getTaskRoom(t, c) || t.roomType;
+  const roomName = taskRoom?.name || '';
+  const roomNameWithSpace = roomName ? `${roomName} ` : '';
+  const surfaceName = t.surface?.name || t.surfaceTemplate?.name || '';
+  return `${t.action.name} ${roomNameWithSpace}${surfaceName}`.trim();
+}
+
+export function getTaskRoom(t: Task, c?: Chore) {
+  return t.room || c?.room;
+}
+
+export function getChoreRooms(c?: Chore): Map<Room> {
+  if (!c) return {};
+  const rooms: Map<Room> = {};
+  if (c.room) rooms[c.room.id] = c.room;
+  Object.values(c.tasks).forEach((t) => {
+    if (t.room) rooms[t.room.id] = t.room;
+  });
+  return rooms;
+}
+
+export function getChoreRoomTypes(c?: Chore): Map<RoomType> {
+  if (!c) return {};
+  const roomTypes: Map<RoomType> = {};
+  if (c.room) roomTypes[c.room.roomType.id] = c.room.roomType;
+  Object.values(c.tasks).forEach((t) => {
+    if (t.room) roomTypes[t.room.roomType.id] = t.room.roomType;
+    if (t.roomType) roomTypes[t.roomType.id] = t.roomType;
+  });
+  return roomTypes;
+}
+
+export function getChoreName(c?: Chore): string {
+  if (!c) return '';
+  const rooms = mapToArray(getChoreRooms(c));
+  const room = rooms?.[0];
+  const roomCount = rooms?.length || 0;
+  const roomDescription = (() => {
+    if (roomCount > 1) return `${roomCount} rooms`;
+    if (roomCount === 1) return room.name;
+    return 'not assigned to room yet';
+  })();
+
+  return `${c.name} (${roomDescription})`;
 }

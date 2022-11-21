@@ -92,6 +92,7 @@ export interface Person {
 export interface FBTask {
   id: string;
   actionId: string;
+  levelId: string;
   roomId?: string;
   roomTypeId?: string;
   surfaceId?: string;
@@ -101,6 +102,7 @@ export interface FBTask {
 export interface Task {
   id: string;
   action: Action;
+  level?: Level;
   roomType?: RoomType;
   room?: Room;
   surface?: Surface;

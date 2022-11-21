@@ -67,12 +67,15 @@ export const transformScheduledChore = {
   },
 };
 
-export function getUIChoreFeedItem(chore: FeedChore): UIChoreFeedItem {
+export function getUIChoreFeedItem(
+  chore: FeedChore,
+  chores: Map<Chore>
+): UIChoreFeedItem {
   return {
     id: chore.id,
     name: chore.orgChore.name,
     tasks: Object.values(chore.orgChore.tasks).map((t) => ({
-      name: getTaskName(t),
+      name: getTaskName(t, chores[chore.id]),
       id: t.id,
       finished: false,
     })),

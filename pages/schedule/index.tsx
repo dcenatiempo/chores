@@ -12,6 +12,7 @@ import useScheduledChores from '../../libs/store/models/scheduledChores/useSched
 import { Map } from '../../libs/store/models/types';
 import { UIChoreFeedItem } from '../../libs/store/models/scheduledChores/types';
 import { getUIChoreFeedItem } from '../../libs/store/models/scheduledChores/transformers';
+import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
 
 const nextWeek = DateTime.local().plus({ weeks: 1 });
 
@@ -22,6 +23,8 @@ const Schedule: NextPage = () => {
     scheduledChoresArray,
     feedChoresArray,
   } = useScheduledChores();
+
+  const { chores } = useCurrentOrg();
 
   const [calendarStartDate, setCalendarStartDate] = useState(0);
   const [calendarEndDate, setCalendarEndDate] = useState(0);
@@ -64,7 +67,7 @@ const Schedule: NextPage = () => {
       if (isDaily) {
         const key = luxonStart.toISODate();
         if (!feed.daily[key]) feed.daily[key] = [];
-        return feed.daily[key].push(getUIChoreFeedItem(c));
+        return feed.daily[key].push(getUIChoreFeedItem(c, chores));
       }
 
       const startDiff = luxonStart?.diff(calendarStart, 'days').days ?? -1;
@@ -81,26 +84,26 @@ const Schedule: NextPage = () => {
         return feed.multiDay.push({
           startDate: c.schedule.startDate || calendarStartDate,
           endDate: c.schedule.dueDate || calendarEndDate,
-          item: getUIChoreFeedItem(c),
+          item: getUIChoreFeedItem(c, chores),
         });
       }
       if (startWithinRange && endAfterRange) {
         return feed.offCalendar.push({
           dueDate: calendarEndDate,
-          item: getUIChoreFeedItem(c),
+          item: getUIChoreFeedItem(c, chores),
         });
       }
       if (startBeforeRange && endWithinRange) {
         return feed.multiDay.push({
           startDate: calendarStartDate,
           endDate: c.schedule.dueDate || calendarEndDate,
-          item: getUIChoreFeedItem(c),
+          item: getUIChoreFeedItem(c, chores),
         });
       }
       if (startBeforeRange && endAfterRange) {
         return feed.offCalendar.push({
           dueDate: calendarEndDate,
-          item: getUIChoreFeedItem(c),
+          item: getUIChoreFeedItem(c, chores),
         });
       }
       // else its not in calendar range at all

@@ -35,7 +35,9 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 # TODO - MVP Functionality
 
-1. add room to schedule chores
+1. add rooms to task/chore/scheduledChore
+1. add roomTypes to task/chore/scheduledChore
+1. add levels to task/chore/scheduledChore
 1. show recurring chores in chore feed
 1. add chores in flight
 1. marking a chore task will change the scheduled task to a chore in flight
@@ -49,6 +51,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 - testing
 - better organization of files/code
+- dates/times
 
 # TODO - Post MVP Features
 
@@ -57,6 +60,8 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - custom actions, surfaces, room types
 - account creation
 - reports (chore history)
+- time zones
+- multi orgs
 
 # TODO - UI/UX
 
@@ -70,3 +75,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - mobile friendly
 - improved calendar
 - animations
+
+task - levels, roomTypes, rooms (actions properly filtered)
+chore - levels, roomTypes, rooms (task properly filtered)
+schduledChore - (levels, roomTypes, rooms properly filtered)

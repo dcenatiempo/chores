@@ -1,5 +1,7 @@
 import { FC, useState } from 'react';
-import { Chore, Person, Task } from '../../libs/store/models/orgs/types';
+import { getChoreRoomTypes } from '../../libs/store/models/orgs/transformers';
+import { Chore, Person, Room, Task } from '../../libs/store/models/orgs/types';
+import { RoomType } from '../../libs/store/models/roomTypes/types';
 import {
   arrayToMap,
   mapToArray,
@@ -25,18 +27,27 @@ const AddOrEditChoresList: FC<AddOrEditChoresListProps> = ({
   const [tasks, setTasks] = useState<Task[]>([]);
   const [name, setName] = useState('');
 
+  const [room, setRoom] = useState<Room>();
+  const [roomType, setRoomType] = useState<RoomType>();
+
   const disabled = !isFormValid();
 
   function setForm(chore?: Chore) {
+    const roomTypes = mapToArray(getChoreRoomTypes(chore));
+    const rt = roomTypes.length === 1 ? roomTypes[0] : undefined;
     setChoreId(chore?.id || '');
     setTasks(mapToArray(chore?.tasks));
     setName(chore?.name || '');
+    setRoom(chore?.room);
+    setRoomType(rt);
   }
 
   function clearForm() {
     setTasks([]);
     setName('');
     setChoreId('');
+    setRoom(undefined);
+    setRoomType(undefined);
   }
   function isFormValid() {
     if (!tasks.length) return false;
@@ -78,6 +89,10 @@ const AddOrEditChoresList: FC<AddOrEditChoresListProps> = ({
           setName={setName}
           tasks={tasks}
           setTasks={setTasks}
+          room={room}
+          setRoom={setRoom}
+          roomType={roomType}
+          setRoomType={setRoomType}
         />
       }
       setResourceToEdit={setForm}
