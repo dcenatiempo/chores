@@ -6,9 +6,14 @@ import Dropdown from '../base/Dropdown';
 export interface ActionsSelectorProps {
   onSelect: (roomType: Action | undefined) => void;
   selected: Action | undefined;
+  actions?: Action[];
 }
 
-const ActionsSelector: FC<ActionsSelectorProps> = ({ onSelect, selected }) => {
+const ActionsSelector: FC<ActionsSelectorProps> = ({
+  onSelect,
+  selected,
+  actions,
+}) => {
   const { actionsArray } = useActions();
   return (
     <div>
@@ -16,7 +21,7 @@ const ActionsSelector: FC<ActionsSelectorProps> = ({ onSelect, selected }) => {
         label="Actions"
         valueKey={(option) => option?.name || ''}
         labelKey={(option) => option?.name || ''}
-        options={actionsArray}
+        options={actions || actionsArray}
         onSelect={onSelect}
         selected={selected}
         id="actions"

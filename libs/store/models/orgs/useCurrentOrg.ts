@@ -1,23 +1,23 @@
 import { useEffect, useMemo, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import {
-  addChoreToOrg,
+  addChoreTemplateToOrg,
   addLevelToOrg,
   addPersonToOrg,
   addRoomToOrg,
-  addTaskToOrg,
-  updateChoresFromOrg,
+  addTaskTemplateToOrg,
+  updateChoreTemplatesFromOrg,
   updateLevelsFromOrg,
   updatePeopleFromOrg,
   updateRoomsFromOrg,
-  updateTasksFromOrg,
+  updateTaskTemplatesFromOrg,
 } from '../../../firebase';
 import { incrementHex } from '../../../utils';
 import { mapToArray } from '../sharedTransformers';
 // import { Map } from '../types';
 import { actions } from './reducer';
 import * as selectors from './selectors';
-import { Chore, Level, Person, Room, Task } from './types';
+import { ChoreTemplate, Level, Person, Room, TaskTemplate } from './types';
 
 export default function useCurrentOrg() {
   const dispatch = useDispatch();
@@ -37,6 +37,10 @@ export default function useCurrentOrg() {
   const levelsArray = useSelector(selectors.levelsArray);
   const roomsGroupedByLevel = useSelector(selectors.roomsGroupedByLevel);
   const roomsGroupedByRoomType = useSelector(selectors.roomsGroupedByRoomType);
+  const roomTypesGroupedByLevel = useSelector(
+    selectors.roomTypesGroupedByLevel
+  );
+
   const customRoomTypesArray = useMemo(
     () => mapToArray(customRoomTypes),
     [customRoomTypes]
@@ -81,17 +85,17 @@ export default function useCurrentOrg() {
     });
   }
 
-  function addTask(task: Task) {
+  function addTaskTemplate(task: TaskTemplate) {
     if (!orgId) return;
-    addTaskToOrg({
+    addTaskTemplateToOrg({
       orgId: orgId,
       entity: { ...task, id: getNextId() },
     });
   }
 
-  function addChore(chore: Chore) {
+  function addChoreTemplate(chore: ChoreTemplate) {
     if (!orgId) return;
-    addChoreToOrg({
+    addChoreTemplateToOrg({
       orgId: orgId,
       entity: { ...chore, id: getNextId() },
     });
@@ -115,21 +119,21 @@ export default function useCurrentOrg() {
     });
   }
 
-  function editTask(task: Task) {
+  function editTaskTemplate(task: TaskTemplate) {
     if (!orgId) return;
     const tasksCopy = { ...tasks };
     tasksCopy[task.id] = task;
-    updateTasksFromOrg({
+    updateTaskTemplatesFromOrg({
       entities: tasksCopy,
       orgId,
     });
   }
 
-  function editChore(chore: Chore) {
+  function editChoreTemplate(chore: ChoreTemplate) {
     if (!orgId) return;
     const choresCopy = { ...chores };
     choresCopy[chore.id] = chore;
-    updateChoresFromOrg({
+    updateChoreTemplatesFromOrg({
       entities: choresCopy,
       orgId,
     });
@@ -175,21 +179,21 @@ export default function useCurrentOrg() {
     });
   }
 
-  function deleteTask({ id }: Task) {
+  function deleteTaskTemplate({ id }: TaskTemplate) {
     if (!orgId) return;
     const tasksCopy = { ...tasks };
     delete tasksCopy[id];
-    updateTasksFromOrg({
+    updateTaskTemplatesFromOrg({
       entities: tasksCopy,
       orgId,
     });
   }
 
-  function deleteChore({ id }: Chore) {
+  function deleteChoreTemplate({ id }: ChoreTemplate) {
     if (!orgId) return;
     const choresCopy = { ...chores };
     delete choresCopy[id];
-    updateChoresFromOrg({
+    updateChoreTemplatesFromOrg({
       entities: choresCopy,
       orgId,
     });
@@ -204,6 +208,10 @@ export default function useCurrentOrg() {
       orgId,
     });
   }
+
+  const levelsInUse = useSelector(selectors.levelsInUse);
+  const surfacesInUse = useSelector(selectors.surfacesInUse);
+  const roomTypesInUse = useSelector(selectors.roomTypesInUse);
 
   return {
     peopleArray,
@@ -232,13 +240,17 @@ export default function useCurrentOrg() {
     addLevel,
     editLevel,
     deleteLevel,
-    addTask,
-    deleteTask,
-    editTask,
-    addChore,
-    deleteChore,
-    editChore,
+    addTaskTemplate,
+    deleteTaskTemplate,
+    editTaskTemplate,
+    addChoreTemplate,
+    deleteChoreTemplate,
+    editChoreTemplate,
     roomsGroupedByLevel,
     roomsGroupedByRoomType,
+    roomTypesGroupedByLevel,
+    levelsInUse,
+    roomTypesInUse,
+    surfacesInUse,
   };
 }

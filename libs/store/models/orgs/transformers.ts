@@ -4,6 +4,7 @@ import { Collection, FBReference } from '../../../firebase/types';
 import { transformAction } from '../actions/transformers';
 import { transformRoomType } from '../roomTypes/transformers';
 import { FBRoomType, RoomType } from '../roomTypes/types';
+import { Task } from '../scheduledChores/types';
 import {
   mapToArray,
   transformMap,
@@ -13,18 +14,18 @@ import { transformSurfaceTemplate } from '../surfaces/transformers';
 import { FBSurface, Surface, SurfaceTemplate } from '../surfaces/types';
 import { Map, OrgMap } from '../types';
 import {
-  Chore,
-  FBChore,
+  ChoreTemplate,
+  FBChoreTemplate,
   FBLevel,
   FBOrg,
   FBPerson,
   FBRoom,
-  FBTask,
+  FBTaskTemplate,
   Level,
   Org,
   Person,
   Room,
-  Task,
+  TaskTemplate,
 } from './types';
 
 export const transformOrgs = {
@@ -77,7 +78,7 @@ export const transformOrg = {
     );
     const people = transformMap(org.people, transformPerson.fromFB);
     const tasks = transformMap(org.tasks, (t) =>
-      transformTask.fromFB(t, rooms, roomTypes, surfaceTemplates, levels)
+      transformTask.fromFB(t, surfaceTemplates)
     );
     const chores = transformMap(org.chores, (chore) =>
       transformChore.fromFB(chore, tasks)
@@ -105,18 +106,21 @@ export const transformOrg = {
 };
 
 export const transformChore = {
-  toFB(chore: Chore): FBChore {
+  toFB(chore: ChoreTemplate): FBChoreTemplate {
     return {
       id: chore.id,
       name: chore.name,
-      taskIds: transformMap(chore.tasks, transformTask.dehydrate),
+      taskTemplateIds: transformMap(
+        chore.taskTemplates,
+        transformTask.dehydrate
+      ),
     };
   },
-  fromFB(chore: FBChore, tasks: Map<Task>): Chore {
+  fromFB(chore: FBChoreTemplate, tasks: Map<TaskTemplate>): ChoreTemplate {
     return {
       id: chore.id,
       name: chore.name,
-      tasks: transformMap(chore.taskIds, (id) =>
+      taskTemplates: transformMap(chore.taskTemplateIds, (id) =>
         transformTask.hydrade(id, tasks)
       ),
     };
@@ -124,44 +128,28 @@ export const transformChore = {
 };
 
 export const transformTask = {
-  toFB(task: Task): FBTask {
+  toFB(task: TaskTemplate): FBTaskTemplate {
     return {
       id: task.id,
       actionId: task.action.name,
-      surfaceId: task.surface?.id || '',
       surfaceTemplateId: task.surfaceTemplate?.id || '',
-      roomId: task.room?.id || '',
-      roomTypeId: task.roomType?.id || '',
-      levelId: task.roomType?.id || '',
     };
   },
   fromFB(
-    task: FBTask,
-    rooms: Map<Room>,
-    roomTypes: Map<RoomType>,
-    surfaceTemplates: Map<SurfaceTemplate>,
-    levels: Map<Level>
-  ): Task {
+    task: FBTaskTemplate,
+    surfaceTemplates: Map<SurfaceTemplate>
+  ): TaskTemplate {
     const action = { name: task.actionId };
-    const room = task.roomId ? rooms?.[task.roomId] : undefined;
-    const surface = task.surfaceId ? room?.surfaces[task.surfaceId] : undefined;
-    const level = task.levelId ? levels[task.levelId] : undefined;
     return {
       id: task.id,
       action,
-      room,
-      roomType: task.roomTypeId ? roomTypes[task.roomTypeId] : undefined,
-      surface,
-      surfaceTemplate: task.surfaceTemplateId
-        ? surfaceTemplates[task.surfaceTemplateId]
-        : undefined,
-      level,
+      surfaceTemplate: surfaceTemplates[task.surfaceTemplateId],
     };
   },
-  dehydrate(task: Task) {
+  dehydrate(task: TaskTemplate) {
     return task.id;
   },
-  hydrade(taskId: string, tasks: Map<Task>) {
+  hydrade(taskId: string, tasks: Map<TaskTemplate>) {
     return tasks[taskId];
   },
 };
@@ -291,49 +279,86 @@ export function arrayToOrgMap<T>(array: T[], field: string = 'id'): OrgMap<T> {
 }
 
 ///////// HELPERS /////////
-export function getTaskName(t: Task, c?: Chore) {
-  const taskRoom = getTaskRoom(t, c) || t.roomType;
-  const roomName = taskRoom?.name || '';
-  const roomNameWithSpace = roomName ? `${roomName} ` : '';
-  const surfaceName = t.surface?.name || t.surfaceTemplate?.name || '';
-  return `${t.action.name} ${roomNameWithSpace}${surfaceName}`.trim();
+export function getTaskName(t: Task | TaskTemplate) {
+  // TODO Make this name better
+  // const rooms = t.rooms;
+  // const levels = t.levels;
+  // const roomTypes = t.roomTypes;
+  // const roomName = rooms?.name || '';
+  // const roomNameWithSpace = roomName ? `${roomName} ` : '';
+  // @ts-expect-error
+  const tt: TaskTemplate = t.taskTemplate || t;
+  const action = tt.action.name;
+  const surface = tt.surfaceTemplate.name;
+  return `${action} ${surface}`.trim();
 }
 
-export function getTaskRoom(t: Task, c?: Chore) {
-  return t.room || c?.room;
-}
-
-export function getChoreRooms(c?: Chore): Map<Room> {
-  if (!c) return {};
+export function getChoreRooms(c: ChoreTemplate, allRooms: Room[]): Map<Room> {
   const rooms: Map<Room> = {};
-  if (c.room) rooms[c.room.id] = c.room;
-  Object.values(c.tasks).forEach((t) => {
-    if (t.room) rooms[t.room.id] = t.room;
+  Object.values(c.taskTemplates).forEach((t) => {
+    const surfaceId = t.surfaceTemplate.id;
+    allRooms.forEach((r) => {
+      if (
+        Object.values(r.surfaces).find(
+          (s) => s.surfaceTemplate.id === surfaceId
+        )
+      )
+        rooms[r.id] === r;
+    });
   });
   return rooms;
 }
 
-export function getChoreRoomTypes(c?: Chore): Map<RoomType> {
-  if (!c) return {};
+export function getChoreRoomTypes(
+  c: ChoreTemplate,
+  allRooms: Room[]
+): Map<RoomType> {
+  const rooms = getChoreRooms(c, allRooms);
   const roomTypes: Map<RoomType> = {};
-  if (c.room) roomTypes[c.room.roomType.id] = c.room.roomType;
-  Object.values(c.tasks).forEach((t) => {
-    if (t.room) roomTypes[t.room.roomType.id] = t.room.roomType;
-    if (t.roomType) roomTypes[t.roomType.id] = t.roomType;
+  Object.values(rooms).forEach((r) => {
+    roomTypes[r.roomType.id] = r.roomType;
   });
   return roomTypes;
 }
 
-export function getChoreName(c?: Chore): string {
-  if (!c) return '';
-  const rooms = mapToArray(getChoreRooms(c));
-  const room = rooms?.[0];
-  const roomCount = rooms?.length || 0;
-  const roomDescription = (() => {
-    if (roomCount > 1) return `${roomCount} rooms`;
-    if (roomCount === 1) return room.name;
-    return 'not assigned to room yet';
-  })();
+export function getChoreLevels(c: ChoreTemplate, allRooms: Room[]): Map<Level> {
+  const rooms = getChoreRooms(c, allRooms);
+  const levels: Map<Level> = {};
+  Object.values(rooms).forEach((r) => {
+    levels[r.level.id] = r.level;
+  });
+  return levels;
+}
 
-  return `${c.name} (${roomDescription})`;
+export function getTaskRooms(t: TaskTemplate, allRooms: Room[]): Map<Room> {
+  const rooms: Map<Room> = {};
+  const surfaceId = t.surfaceTemplate.id;
+  allRooms.forEach((r) => {
+    if (
+      Object.values(r.surfaces).find((s) => s.surfaceTemplate.id === surfaceId)
+    )
+      rooms[r.id] = r;
+  });
+  return rooms;
+}
+
+export function getTaskRoomTypes(
+  t: TaskTemplate,
+  allRooms: Room[]
+): Map<RoomType> {
+  const rooms = getTaskRooms(t, allRooms);
+  const roomTypes: Map<RoomType> = {};
+  Object.values(rooms).forEach((r) => {
+    roomTypes[r.roomType.id] = r.roomType;
+  });
+  return roomTypes;
+}
+
+export function getTaskLevels(t: TaskTemplate, allRooms: Room[]): Map<Level> {
+  const rooms = getTaskRooms(t, allRooms);
+  const levels: Map<Level> = {};
+  Object.values(rooms).forEach((r) => {
+    levels[r.level.id] = r.level;
+  });
+  return levels;
 }

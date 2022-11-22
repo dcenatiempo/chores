@@ -1,123 +1,94 @@
-import { FC, useCallback, useMemo, useState } from 'react';
+import { FC, useCallback, useState } from 'react';
 import { Action } from '../../libs/store/models/actions/types';
-import { Level, Room, Task } from '../../libs/store/models/orgs/types';
+import { Level, Room, TaskTemplate } from '../../libs/store/models/orgs/types';
 import { RoomType } from '../../libs/store/models/roomTypes/types';
-import {
-  arrayToMap,
-  mapToArray,
-} from '../../libs/store/models/sharedTransformers';
-import {
-  Surface,
-  SurfaceTemplate,
-} from '../../libs/store/models/surfaces/types';
+import { SurfaceTemplate } from '../../libs/store/models/surfaces/types';
 import AddOrEditList from '../base/AddOrEditList';
 import AddOrEditTask from './AddOrEditTask';
 import TaskListItem from './TaskListItem';
 
 interface AddOrEditTasksListProps {
-  tasks: Task[] | undefined;
-  addTask?: (task: Task) => void;
-  deleteTask?: (task: Task) => void;
-  editTask?: (task: Task) => void;
+  taskTemplates: TaskTemplate[] | undefined;
+  addTaskTemplate?: (taskTemplate: TaskTemplate) => void;
+  deleteTaskTemplate?: (taskTemplate: TaskTemplate) => void;
+  editTaskTemplate?: (taskTemplate: TaskTemplate) => void;
+  initialLevel?: Level;
+  initialRoom?: Room;
+  initialRoomType?: RoomType;
 }
 
 const AddOrEditTasksList: FC<AddOrEditTasksListProps> = ({
-  tasks = [],
-  addTask,
-  deleteTask,
-  editTask,
+  taskTemplates = [],
+  addTaskTemplate,
+  deleteTaskTemplate,
+  editTaskTemplate,
+  initialLevel,
+  initialRoom,
+  initialRoomType,
 }) => {
-  const [taskId, setTaskId] = useState('');
-  const [level, setLevel] = useState<Level>();
-  const [room, setRoom] = useState<Room>();
-  const [surface, setSurface] = useState<Surface>();
-  const [roomType, setRoomType] = useState<RoomType>();
+  const [taskTemplateId, setTaskTemplateId] = useState('');
   const [surfaceTemplate, setSurfaceTemplate] = useState<SurfaceTemplate>();
   const [action, setAction] = useState<Action>();
 
-  const [generic, setGeneric] = useState(true);
-
-  function setForm(task?: Task) {
-    setGeneric(!task?.room);
-    setTaskId(task?.id || '');
-    setLevel(task?.level);
-    setRoom(task?.room);
-    setSurface(task?.surface);
-    setRoomType(task?.roomType);
-    setSurfaceTemplate(task?.surfaceTemplate);
-    setAction(task?.action);
+  function setForm(taskTemplate?: TaskTemplate) {
+    setTaskTemplateId(taskTemplate?.id || '');
+    setSurfaceTemplate(taskTemplate?.surfaceTemplate);
+    setAction(taskTemplate?.action);
   }
 
   function clearForm() {
-    setTaskId('');
-    setLevel(undefined);
-    setRoom(undefined);
-    setSurface(undefined);
-    setRoomType(undefined);
+    setTaskTemplateId('');
     setSurfaceTemplate(undefined);
     setAction(undefined);
   }
 
   const isFormValid = useCallback(() => {
-    if (generic) {
-      if (!roomType) return false;
-    } else {
-      if (!room) return false;
-    }
-
     if (!action) return false;
+    if (!surfaceTemplate) return false;
     return true;
-  }, [generic, roomType, room, action]);
+  }, [surfaceTemplate, action]);
 
-  function onClickAddOrSave(callback?: (task: Task) => void) {
+  function onClickAddOrSave(callback?: (task: TaskTemplate) => void) {
     if (!isFormValid()) return;
     clearForm();
     callback?.({
-      id: taskId,
+      id: taskTemplateId,
       action,
-      room,
-      surface,
-      roomType,
       surfaceTemplate,
-    } as Task);
+    } as TaskTemplate);
   }
 
   function _onClickAdd() {
-    onClickAddOrSave(addTask);
+    onClickAddOrSave(addTaskTemplate);
   }
   function _onClickEdit() {
-    onClickAddOrSave(editTask);
+    onClickAddOrSave(editTaskTemplate);
   }
-  function _onClickDelete(task: Task) {
-    deleteTask?.(task);
+  function _onClickDelete(taskTemplate: TaskTemplate) {
+    deleteTaskTemplate?.(taskTemplate);
   }
 
   const disabled = !isFormValid();
 
   return (
     <AddOrEditList
-      resources={tasks}
-      onClickAdd={addTask ? _onClickAdd : undefined}
-      onClickSave={editTask ? _onClickEdit : undefined}
-      onClickDelete={deleteTask ? _onClickDelete : undefined}
+      resources={taskTemplates}
+      onClickAdd={addTaskTemplate ? _onClickAdd : undefined}
+      onClickSave={editTaskTemplate ? _onClickEdit : undefined}
+      onClickDelete={deleteTaskTemplate ? _onClickDelete : undefined}
       resourceName={'Task'}
       renderResource={(item) => <TaskListItem task={item} />}
       keyExtractor={(resource) => `${resource.id}`}
       disabled={disabled}
       addOrEditResource={
         <AddOrEditTask
-          room={room}
-          roomType={roomType}
-          setRoomType={setRoomType}
           surfaceTemplate={surfaceTemplate}
           setSurfaceTemplate={setSurfaceTemplate}
-          setRoom={setRoom}
-          surface={surface}
-          setSurface={setSurface}
           action={action}
           setAction={setAction}
-          generic={generic}
-          setGeneric={setGeneric}
+          initialLevel={initialLevel}
+          initialRoom={initialRoom}
+          initialRoomType={initialRoomType}
         />
       }
       setResourceToEdit={setForm}

@@ -1,12 +1,12 @@
 import { FC } from 'react';
-import { Chore } from '../../libs/store/models/orgs/types';
+import { ChoreTemplate } from '../../libs/store/models/orgs/types';
 import { ListItem } from '../base';
-import { EditButton, DeleteButton, AddButton } from '../buttons';
+import { EditButton, DeleteButton } from '../buttons';
 
 interface ChoreListItemProps {
-  chore: Chore;
-  onClickDelete?: (chore: Chore) => void;
-  onClickEdit?: (chore: Chore) => void;
+  chore: ChoreTemplate;
+  onClickDelete?: (chore: ChoreTemplate) => void;
+  onClickEdit?: (chore: ChoreTemplate) => void;
 }
 const ChoreListItem: FC<ChoreListItemProps> = ({
   chore,

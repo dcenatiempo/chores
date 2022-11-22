@@ -1,6 +1,13 @@
 import { UnixTimestamp } from '../../../dateTime';
 import { FBTimestamp } from '../../../firebase';
-import { Chore, Person } from '../orgs/types';
+import {
+  ChoreTemplate,
+  Level,
+  Person,
+  Room,
+  TaskTemplate,
+} from '../orgs/types';
+import { RoomType } from '../roomTypes/types';
 import { BaseSlice, Map } from '../types';
 
 /**
@@ -35,25 +42,88 @@ export interface FBSchedule {
   monthly?: 'day' | 'date'; // 'day' = the 4th thursday of every month, 'date' = the 27th of every month
 }
 
+export interface FBTask {
+  id: string;
+  taskTemplateId: string;
+  // in whole organiztion OR
+
+  // in these specific levels
+  levelIds?: string[];
+  // in these types of rooms
+  roomTypeIds?: string[];
+
+  // AND in these specific rooms
+  roomIds?: string[];
+}
+
+export interface Task {
+  id: string;
+  taskTemplate: TaskTemplate;
+  // in whole organiztion OR
+
+  // in these specific levels
+  levels?: Level[];
+  // in these types of rooms
+  roomTypes?: RoomType[];
+
+  // AND in these specific rooms
+  rooms?: Room[];
+
+  completed?: boolean;
+}
+
 export interface ScheduledChore {
   id: string;
-  orgChoreId: string;
+  name: string;
+  tasks: FBTask[];
   personId: string;
   schedule: Schedule;
+
+  // in whole organiztion OR
+
+  // in these specific levels
+  levelIds?: string[];
+  // in these types of rooms
+  roomTypeIds?: string[];
+
+  // AND in these specific rooms
+  roomIds?: string[];
 }
 
 export interface FBScheduledChore {
   id: string;
-  orgChoreId: string;
+  name: string;
+  tasks: FBTask[];
   personId: string;
   schedule: FBSchedule;
+
+  // in whole organiztion OR
+
+  // in these specific levels
+  levelIds?: string[];
+  // in these types of rooms
+  roomTypeIds?: string[];
+
+  // AND in these specific rooms
+  roomIds?: string[];
 }
 
 export interface FeedChore {
   id: string;
-  orgChore: Chore;
+  name: string;
+  tasks: Task[];
   person: Person;
   schedule: Schedule;
+
+  // in whole organiztion OR
+
+  // in these specific levels
+  levels?: Level[];
+  // in these types of rooms
+  roomTypes?: RoomType[];
+
+  // AND in these specific rooms
+  rooms?: Room[];
 }
 
 export interface ScheduledChoreData {
@@ -74,7 +144,7 @@ export interface UIChoreFeedItem {
   tasks: {
     name: string;
     id: string;
-    finished: boolean;
+    completed: boolean;
   }[];
   person: {
     id: string;

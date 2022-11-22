@@ -1,31 +1,31 @@
 import { FC } from 'react';
 import { Level } from '../../libs/store/models/orgs/types';
 import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
-import Dropdown from '../base/Dropdown';
+import MultiselectDropdown from '../base/MultiselectDropdown';
 
-export interface LevelSelectorProps {
-  onSelect: (level: Level | undefined) => void;
-  selected: Level | undefined;
+export interface LevelsSelectorProps {
+  onSelect: (levels: Level[]) => void;
+  selected: Level[];
   levels?: Level[];
 }
 
-const LevelSelector: FC<LevelSelectorProps> = ({
+const LevelsSelector: FC<LevelsSelectorProps> = ({
   onSelect,
   selected,
   levels,
 }) => {
   const { levelsArray } = useCurrentOrg();
   return (
-    <Dropdown
-      label="Level"
+    <MultiselectDropdown
+      label="Levels"
       valueKey={(level) => level?.id || ''}
       labelKey={(level) => level?.name || ''}
       options={levels || levelsArray}
       onSelect={onSelect}
       selected={selected}
-      id="levels-selector"
+      id="levels-multiselect"
     />
   );
 };
 
-export default LevelSelector;
+export default LevelsSelector;

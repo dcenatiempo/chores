@@ -1,8 +1,12 @@
 import { FC, useState } from 'react';
 import { UnixTimestamp } from '../../libs/dateTime';
-import { Chore, Person } from '../../libs/store/models/orgs/types';
+import { Room, Level } from '../../libs/store/models/orgs/types';
 import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
+import { RoomType } from '../../libs/store/models/roomTypes/types';
 import { ScheduledChore } from '../../libs/store/models/scheduledChores/types';
+import useScheduledChores from '../../libs/store/models/scheduledChores/useScheduledChores';
+import { mapToArray } from '../../libs/store/models/sharedTransformers';
+import { cleanFromObject } from '../../libs/utils';
 import AddOrEditList from '../base/AddOrEditList';
 import AddOrEditScheduledChore from './AddOrEditScheduledChores';
 import ScheduledChoreListItem from './ScheduledChoreListItem';
@@ -21,8 +25,9 @@ const AddOrEditScheduledChoresList: FC<AddOrEditScheduledChoresListProps> = ({
   editChore,
 }) => {
   const [scheduledChoreId, setScheduledChoreId] = useState('');
+  const [scheduledChoreName, setScheduledChoreName] = useState('');
   const [personId, setPersonId] = useState<string>();
-  const [choreId, setChoreId] = useState<string>();
+  const [choreTemplateId, setChoreTemplateId] = useState<string>();
   const [startDate, setStartDate] = useState<UnixTimestamp>(0);
   const [dueDate, setDueDate] = useState<UnixTimestamp>(0);
   const [frequency, setFrequency] = useState<number | undefined>(1);
@@ -32,12 +37,24 @@ const AddOrEditScheduledChoresList: FC<AddOrEditScheduledChoresListProps> = ({
   const [weekly, setWeekly] = useState<string>();
   const [monthly, setMonthly] = useState<'day' | 'date'>();
 
+  const [taskIds, setTaskIds] = useState<string[]>([]);
+  const [rooms, setRooms] = useState<Room[]>([]);
+  const [levels, setLevels] = useState<Level[]>([]);
+  const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
+
+  const { chores: choresMap } = useCurrentOrg();
+  const { getNextId } = useScheduledChores();
+
   const disabled = !isFormValid();
 
   function setForm(scheduledChore?: ScheduledChore) {
+    const choreName = scheduledChore?.name || '';
+    const taskIds = scheduledChore?.tasks.map((t) => t.taskTemplateId) || [];
+
     setScheduledChoreId(scheduledChore?.id || '');
+    setScheduledChoreName(choreName);
+    setTaskIds(taskIds);
     setPersonId(scheduledChore?.personId || '');
-    setChoreId(scheduledChore?.orgChoreId || '');
     setStartDate(scheduledChore?.schedule?.startDate || 0);
     setDueDate(scheduledChore?.schedule?.dueDate || 0);
     setFrequency(scheduledChore?.schedule?.frequency);
@@ -49,7 +66,7 @@ const AddOrEditScheduledChoresList: FC<AddOrEditScheduledChoresListProps> = ({
   function clearForm() {
     setScheduledChoreId('');
     setPersonId('');
-    setChoreId('');
+    setChoreTemplateId('');
     setStartDate(0);
     setDueDate(0);
     setFrequency(undefined);
@@ -59,7 +76,7 @@ const AddOrEditScheduledChoresList: FC<AddOrEditScheduledChoresListProps> = ({
   }
 
   function isFormValid() {
-    if (!choreId) return false;
+    // if (!choreTemplateId) return false;
     if (!personId) return false;
     if (!frequency) return false;
     if (!interval) return false;
@@ -70,19 +87,34 @@ const AddOrEditScheduledChoresList: FC<AddOrEditScheduledChoresListProps> = ({
   function onClickAddOrSave(callback?: (chore: ScheduledChore) => void) {
     if (!isFormValid()) return;
     clearForm();
-    callback?.({
-      id: scheduledChoreId,
-      orgChoreId: choreId,
-      personId: personId,
-      schedule: {
-        startDate,
-        dueDate,
-        frequency,
-        interval,
-        weekly,
-        monthly,
-      },
-    } as ScheduledChore);
+    const tasks = taskIds.map((id) => ({
+      id: getNextId(),
+      taskTemplateId: id,
+    }));
+    callback?.(
+      cleanFromObject(
+        {
+          id: scheduledChoreId,
+          name: scheduledChoreName,
+          tasks,
+          personId: personId,
+          schedule: {
+            startDate,
+            dueDate,
+            frequency,
+            interval,
+            weekly,
+            monthly,
+          },
+          levelIds: !levels.length ? undefined : levels.map((l) => l.id),
+          roomTypeIds: !roomTypes.length
+            ? undefined
+            : roomTypes.map((r) => r.id),
+          roomIds: !rooms.length ? undefined : rooms.map((r) => r.id),
+        },
+        [undefined]
+      ) as ScheduledChore
+    );
   }
 
   function _onClickAdd() {
@@ -94,6 +126,15 @@ const AddOrEditScheduledChoresList: FC<AddOrEditScheduledChoresListProps> = ({
   function _onClickDelete(chore: ScheduledChore) {
     deleteChore?.(chore);
   }
+  function _setChoreTemplateId(id?: string) {
+    setChoreTemplateId(id);
+    if (!id) return setTaskIds([]);
+
+    const choreTemplate = choresMap[id];
+    setScheduledChoreName(choreTemplate.name);
+    setTaskIds(mapToArray(choreTemplate?.taskTemplates)?.map((t) => t.id));
+  }
+
   return (
     <AddOrEditList
       resources={chores}
@@ -108,8 +149,8 @@ const AddOrEditScheduledChoresList: FC<AddOrEditScheduledChoresListProps> = ({
         <AddOrEditScheduledChore
           personId={personId}
           setPersonId={setPersonId}
-          choreId={choreId}
-          setChoreId={setChoreId}
+          choreTemplateId={choreTemplateId}
+          setChoreTemplateId={_setChoreTemplateId}
           startDate={startDate}
           setStartDate={setStartDate}
           dueDate={dueDate}
@@ -122,6 +163,15 @@ const AddOrEditScheduledChoresList: FC<AddOrEditScheduledChoresListProps> = ({
           setWeekly={setWeekly}
           monthly={monthly}
           setMonthly={setMonthly}
+          setRooms={setRooms}
+          levels={levels}
+          rooms={rooms}
+          roomTypes={roomTypes}
+          setLevels={setLevels}
+          setRoomTypes={setRoomTypes}
+          taskTemplateIds={taskIds}
+          choreName={scheduledChoreName}
+          setChoreName={setScheduledChoreName}
         />
       }
       setResourceToEdit={setForm}

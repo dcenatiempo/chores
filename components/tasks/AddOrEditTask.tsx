@@ -1,75 +1,58 @@
-import { FC, useMemo } from 'react';
+import { FC, useMemo, useState } from 'react';
 import { Action } from '../../libs/store/models/actions/types';
-import { Room } from '../../libs/store/models/orgs/types';
+import { Level, Room } from '../../libs/store/models/orgs/types';
 import { RoomType } from '../../libs/store/models/roomTypes/types';
-import { mapToArray } from '../../libs/store/models/sharedTransformers';
-import { useSurfaces } from '../../libs/store/models/surfaces';
-import {
-  Surface,
-  SurfaceTemplate,
-} from '../../libs/store/models/surfaces/types';
+import { SurfaceTemplate } from '../../libs/store/models/surfaces/types';
 import ActionsSelector from '../actions/ActionsSelector';
-import { Dropdown, Switch } from '../base';
-import RoomSelector from '../rooms/RoomSelector';
-import RoomTypeSelector from '../roomTypes/RoomTypeSelector';
-import SurfaceTemplateSelector from '../surfaces/SurfaceTemplateSelector';
+import { Dropdown } from '../base';
+import FilterRooms from '../filters/FilterRooms';
+import { surfacesFromRooms } from '../filters/utils';
 
 interface AddOrEditTaskProps {
-  roomType?: RoomType;
-  setRoomType: (roomType?: RoomType) => void;
   surfaceTemplate?: SurfaceTemplate;
   setSurfaceTemplate: (surfaceTemplate?: SurfaceTemplate) => void;
-  room?: Room;
-  setRoom: (room?: Room) => void;
-  surface?: Surface;
-  setSurface: (surface?: Surface) => void;
   action?: Action;
   setAction: (action?: Action) => void;
-  generic: boolean;
-  setGeneric: (generic: boolean) => void;
+  initialLevel?: Level;
+  initialRoom?: Room;
+  initialRoomType?: RoomType;
 }
 
 const AddOrEditTask: FC<AddOrEditTaskProps> = ({
-  roomType,
-  setRoomType,
-  room,
-  setRoom,
-  surface,
-  setSurface,
   surfaceTemplate,
   setSurfaceTemplate,
   action,
   setAction,
-  generic,
-  setGeneric,
+  initialLevel,
+  initialRoom,
+  initialRoomType,
 }) => {
-  const roomSurfaces = useMemo(
-    () => mapToArray(room?.surfaces),
-    [room?.surfaces]
-  );
+  const [rooms, setRooms] = useState<Room[]>([]);
 
-  const { surfaceTemplatesArray } = useSurfaces();
+  const surfaceOptions = useMemo(() => surfacesFromRooms(rooms), [rooms]);
 
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'end',
-        columnGap: 10,
-        paddingLeft: 10,
-        paddingRight: 10,
-      }}
-    >
-      <Switch value={generic} onChange={setGeneric} />
-      {generic ? (
-        <RoomTypeSelector selected={roomType} onSelect={setRoomType} />
-      ) : (
-        <RoomSelector selected={room} onSelect={setRoom} />
-      )}
-      {generic ? (
+    <>
+      <FilterRooms
+        initialLevel={initialLevel}
+        initialRoom={initialRoom}
+        initialRoomType={initialRoomType}
+        onRoomsChange={setRooms}
+      />
+
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'row',
+          alignItems: 'end',
+          columnGap: 10,
+          paddingLeft: 10,
+          paddingRight: 10,
+        }}
+      >
+        <ActionsSelector selected={action} onSelect={setAction} />
         <Dropdown
-          options={surfaceTemplatesArray}
+          options={surfaceOptions}
           valueKey={(option) => option?.id || ''}
           labelKey={(option) => option?.name || ''}
           id={'surface'}
@@ -77,19 +60,9 @@ const AddOrEditTask: FC<AddOrEditTaskProps> = ({
           selected={surfaceTemplate}
           label={'Surface'}
         />
-      ) : (
-        <Dropdown
-          options={roomSurfaces}
-          valueKey={(option) => option?.id || ''}
-          labelKey={(option) => option?.name || ''}
-          id={'surface'}
-          onSelect={setSurface}
-          selected={surface}
-          label={'Surface'}
-        />
-      )}
-      <ActionsSelector selected={action} onSelect={setAction} />
-    </div>
+      </div>
+      <br />
+    </>
   );
 };
 

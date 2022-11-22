@@ -21,16 +21,11 @@ import {
   transformTask,
 } from '../store/models/orgs/transformers';
 import {
-  Chore,
-  FBChore,
-  FBLevel,
-  FBPerson,
-  FBRoom,
-  FBTask,
+  ChoreTemplate,
   Level,
   Person,
   Room,
-  Task,
+  TaskTemplate,
 } from '../store/models/orgs/types';
 import { transformMap } from '../store/models/sharedTransformers';
 import { Map } from '../store/models/types';
@@ -206,14 +201,18 @@ const taskConfig = {
   collection: Collection.ORGS,
 };
 
-export async function addTaskToOrg(params: AddEntityParams<Task>) {
+export async function addTaskTemplateToOrg(
+  params: AddEntityParams<TaskTemplate>
+) {
   return addEntityToCollection({
     ...params,
     ...taskConfig,
   });
 }
 
-export async function updateTasksFromOrg(params: UpdateEntitiesParams<Task>) {
+export async function updateTaskTemplatesFromOrg(
+  params: UpdateEntitiesParams<TaskTemplate>
+) {
   return updateEntitiesFromOrg({
     ...params,
     ...taskConfig,
@@ -226,14 +225,18 @@ const choreConfig = {
   collection: Collection.ORGS,
 };
 
-export async function addChoreToOrg(params: AddEntityParams<Chore>) {
+export async function addChoreTemplateToOrg(
+  params: AddEntityParams<ChoreTemplate>
+) {
   return addEntityToCollection({
     ...params,
     ...choreConfig,
   });
 }
 
-export async function updateChoresFromOrg(params: UpdateEntitiesParams<Chore>) {
+export async function updateChoreTemplatesFromOrg(
+  params: UpdateEntitiesParams<ChoreTemplate>
+) {
   return updateEntitiesFromOrg({
     ...params,
     ...choreConfig,

@@ -1,6 +1,10 @@
 import { FC, useState } from 'react';
-import { getChoreRoomTypes } from '../../libs/store/models/orgs/transformers';
-import { Chore, Person, Room, Task } from '../../libs/store/models/orgs/types';
+import {
+  ChoreTemplate,
+  Level,
+  Room,
+  TaskTemplate,
+} from '../../libs/store/models/orgs/types';
 import { RoomType } from '../../libs/store/models/roomTypes/types';
 import {
   arrayToMap,
@@ -11,43 +15,40 @@ import AddOrEditChore from './AddOrEditChore';
 import ChoreListItem from './ChoreListItem';
 
 interface AddOrEditChoresListProps {
-  chores: Chore[] | undefined;
-  addChore?: (chore: Chore) => void;
-  editChore?: (chore: Chore) => void;
-  deleteChore?: (chore: Chore) => void;
+  choreTemplates: ChoreTemplate[] | undefined;
+  addChoreTemplate?: (chore: ChoreTemplate) => void;
+  editChoreTemplate?: (chore: ChoreTemplate) => void;
+  deleteChoreTemplate?: (chore: ChoreTemplate) => void;
+  initialLevel?: Level;
+  initialRoom?: Room;
+  initialRoomType?: RoomType;
 }
 
 const AddOrEditChoresList: FC<AddOrEditChoresListProps> = ({
-  chores = [],
-  addChore,
-  editChore,
-  deleteChore,
+  choreTemplates = [],
+  addChoreTemplate,
+  editChoreTemplate,
+  deleteChoreTemplate,
+  initialLevel,
+  initialRoom,
+  initialRoomType,
 }) => {
   const [choreId, setChoreId] = useState('');
-  const [tasks, setTasks] = useState<Task[]>([]);
+  const [tasks, setTasks] = useState<TaskTemplate[]>([]);
   const [name, setName] = useState('');
-
-  const [room, setRoom] = useState<Room>();
-  const [roomType, setRoomType] = useState<RoomType>();
 
   const disabled = !isFormValid();
 
-  function setForm(chore?: Chore) {
-    const roomTypes = mapToArray(getChoreRoomTypes(chore));
-    const rt = roomTypes.length === 1 ? roomTypes[0] : undefined;
+  function setForm(chore?: ChoreTemplate) {
     setChoreId(chore?.id || '');
-    setTasks(mapToArray(chore?.tasks));
+    setTasks(mapToArray(chore?.taskTemplates));
     setName(chore?.name || '');
-    setRoom(chore?.room);
-    setRoomType(rt);
   }
 
   function clearForm() {
     setTasks([]);
     setName('');
     setChoreId('');
-    setRoom(undefined);
-    setRoomType(undefined);
   }
   function isFormValid() {
     if (!tasks.length) return false;
@@ -55,31 +56,31 @@ const AddOrEditChoresList: FC<AddOrEditChoresListProps> = ({
     return true;
   }
 
-  function onClickAddOrSave(callback?: (chore: Chore) => void) {
+  function onClickAddOrSave(callback?: (chore: ChoreTemplate) => void) {
     if (!isFormValid()) return;
     clearForm();
     callback?.({
       name,
-      tasks: arrayToMap(tasks),
+      taskTemplates: arrayToMap(tasks),
       id: choreId,
     });
   }
   function _onClickAdd() {
-    onClickAddOrSave(addChore);
+    onClickAddOrSave(addChoreTemplate);
   }
   function _onClickEdit() {
-    onClickAddOrSave(editChore);
+    onClickAddOrSave(editChoreTemplate);
   }
-  function _onClickDelete(chore: Chore) {
-    deleteChore?.(chore);
+  function _onClickDelete(chore: ChoreTemplate) {
+    deleteChoreTemplate?.(chore);
   }
 
   return (
     <AddOrEditList
-      resources={chores}
-      onClickAdd={addChore ? _onClickAdd : undefined}
-      onClickSave={editChore ? _onClickEdit : undefined}
-      onClickDelete={deleteChore ? _onClickDelete : undefined}
+      resources={choreTemplates}
+      onClickAdd={addChoreTemplate ? _onClickAdd : undefined}
+      onClickSave={editChoreTemplate ? _onClickEdit : undefined}
+      onClickDelete={deleteChoreTemplate ? _onClickDelete : undefined}
       resourceName={'Chore'}
       renderResource={(item) => <ChoreListItem chore={item} />}
       keyExtractor={(resource) => `${resource.id}`}
@@ -89,10 +90,9 @@ const AddOrEditChoresList: FC<AddOrEditChoresListProps> = ({
           setName={setName}
           tasks={tasks}
           setTasks={setTasks}
-          room={room}
-          setRoom={setRoom}
-          roomType={roomType}
-          setRoomType={setRoomType}
+          initialLevel={initialLevel}
+          initialRoom={initialRoom}
+          initialRoomType={initialRoomType}
         />
       }
       setResourceToEdit={setForm}

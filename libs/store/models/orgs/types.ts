@@ -27,8 +27,8 @@ export interface FBOrg {
   levels: Map<FBLevel>;
   rooms: Map<FBRoom>;
   people: Map<FBPerson>;
-  chores: Map<FBChore>;
-  tasks: Map<FBTask>;
+  chores: Map<FBChoreTemplate>;
+  tasks: Map<FBTaskTemplate>;
   customSurfaces?: Map<FBSurfaceTemplate>;
   customActions?: Map<FBAction>;
   customRoomTypes?: Map<FBRoomType>;
@@ -41,8 +41,8 @@ export interface Org {
   levels: Map<Level>;
   rooms: Map<Room>;
   people: Map<Person>;
-  chores: Map<Chore>;
-  tasks: Map<Task>;
+  chores: Map<ChoreTemplate>;
+  tasks: Map<TaskTemplate>;
   customSurfaces?: Map<SurfaceTemplate>;
   customActions?: Map<Action>;
   customRoomTypes?: Map<RoomType>;
@@ -89,36 +89,26 @@ export interface Person {
   birthday?: UnixTimestamp;
 }
 
-export interface FBTask {
+export interface FBTaskTemplate {
   id: string;
   actionId: string;
-  levelId: string;
-  roomId?: string;
-  roomTypeId?: string;
-  surfaceId?: string;
-  surfaceTemplateId?: string;
+  surfaceTemplateId: string;
 }
 
-export interface Task {
+export interface TaskTemplate {
   id: string;
   action: Action;
-  level?: Level;
-  roomType?: RoomType;
-  room?: Room;
-  surface?: Surface;
-  surfaceTemplate?: SurfaceTemplate;
+  surfaceTemplate: SurfaceTemplate;
 }
 
-export interface FBChore {
+export interface FBChoreTemplate {
   id: string;
   name: string;
-  taskIds: Map<string>;
-  roomId?: string; // TODO: is this necessary? might have a room with generic roomType tasks
+  taskTemplateIds: Map<string>;
 }
 
-export interface Chore {
+export interface ChoreTemplate {
   id: string;
   name: string;
-  tasks: Map<Task>;
-  room?: Room; // TODO: is this necessary? might have a room with generic roomType tasks
+  taskTemplates: Map<TaskTemplate>;
 }

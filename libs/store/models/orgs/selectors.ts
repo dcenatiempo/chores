@@ -1,11 +1,15 @@
 import { defaultMemoize, createSelector } from 'reselect';
 import { RootState } from '../../store';
 import { roomTypes } from '../roomTypes/selectors';
-import { surfaceTemplates } from '../surfaces/selectors';
+import { surfaceTemplates, surfaceTemplatesArray } from '../surfaces/selectors';
+import { SurfaceTemplate } from '../../models/surfaces/types';
 import { mapToArray, transformMap } from '../sharedTransformers';
 import { transformOrg } from './transformers';
 import { initialLastId } from './reducer';
-import { Room } from './types';
+import { Level, Room } from './types';
+import { Map } from '../types';
+import { actions } from '../actions/selectors';
+import { RoomType } from '../roomTypes/types';
 
 const fbOrgsMap = defaultMemoize((state: RootState) => state.orgs.orgsMap);
 
@@ -60,6 +64,19 @@ const roomsGroupedByRoomType = createSelector(roomsArray, (ra) => {
   }, {});
 });
 
+const roomTypesGroupedByLevel = createSelector(roomsArray, (ra) => {
+  return ra.reduce<{ [level: string]: RoomType[] }>((acc, r) => {
+    const roomTypeId = r.roomType.id;
+    const levelId = r.level.id;
+
+    if (!acc[levelId]) acc[levelId] = [];
+    if (!acc[levelId].find((rt) => rt.id === roomTypeId)) {
+      acc[levelId].push(r.roomType);
+    }
+    return { ...acc };
+  }, {});
+});
+
 const customRoomTypes = createSelector(
   currentOrg,
   (org) => org?.customRoomTypes || {}
@@ -68,6 +85,35 @@ const customSurfaces = createSelector(
   currentOrg,
   (org) => org?.customSurfaces || {}
 );
+
+const levelsInUse = createSelector(levels, roomsArray, (la, ra) => {
+  const liu: Level[] = [];
+  Object.values(la).forEach((l) => {
+    const inUse = ra.some((r) => r.level.id === l.id);
+    if (inUse) liu.push(l);
+  });
+  return liu;
+});
+
+const surfacesInUse = createSelector(surfaceTemplates, roomsArray, (st, ra) => {
+  const siuMap: Map<SurfaceTemplate> = {};
+  ra.forEach((r) => {
+    Object.values(r.surfaces).forEach((s) => {
+      const key = s.surfaceTemplate.id;
+      if (!siuMap[key] && st[key]) siuMap[key] = st[key];
+    });
+  });
+  return mapToArray(siuMap);
+});
+
+const roomTypesInUse = createSelector(roomTypes, roomsArray, (rt, ra) => {
+  const rtiuMap: Map<RoomType> = {};
+  ra.forEach((r) => {
+    const key = r.roomType.id;
+    if (!rtiuMap[key] && rt[key]) rtiuMap[key] = rt[key];
+  });
+  return mapToArray(rtiuMap);
+});
 
 export {
   currentOrg,
@@ -88,4 +134,9 @@ export {
   levelsArray,
   roomsGroupedByLevel,
   roomsGroupedByRoomType,
+  roomTypesGroupedByLevel,
+  surfacesInUse,
+  // actionsInUse,
+  roomTypesInUse,
+  levelsInUse,
 };

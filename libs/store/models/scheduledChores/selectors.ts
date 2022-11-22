@@ -3,7 +3,13 @@ import { RootState } from '../../store';
 import { mapToArray, transformMap } from '../sharedTransformers';
 import { initialLastId } from './reducer';
 import { transformScheduledChore } from './transformers';
-import { people as peopleMap, chores as choresMap } from './../orgs/selectors';
+import {
+  people as peopleMap,
+  levels as levelsMap,
+  rooms as roomsMap,
+  tasks as taskTemplateMap,
+} from './../orgs/selectors';
+import { roomTypes as roomTypesMap } from '../roomTypes/selectors';
 
 const orgsScheduledChore = defaultMemoize(
   (state: RootState) => state.scheduledChores.orgsMap
@@ -33,14 +39,20 @@ const scheduledChoresArray = createSelector(scheduledChores, (map) =>
 
 const feedChores = createSelector(
   currentScheduledChores,
-  choresMap,
   peopleMap,
-  (cur, chores, people) =>
+  taskTemplateMap,
+  levelsMap,
+  roomTypesMap,
+  roomsMap,
+  (cur, people, taskTemplates, levels, roomTypes, rooms) =>
     transformMap(cur?.data, (x) =>
       transformScheduledChore.hydrate(
         transformScheduledChore.fromFB(x),
-        chores,
-        people
+        people,
+        taskTemplates,
+        levels,
+        roomTypes,
+        rooms
       )
     )
 );

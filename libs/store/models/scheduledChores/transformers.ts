@@ -1,15 +1,24 @@
 import ScheduledChoreListItem from '../../../../components/chores/ScheduledChoreListItem';
 import { cleanFromObject } from '../../../utils';
 import { getTaskName } from '../orgs/transformers';
-import { Chore, Person } from '../orgs/types';
-import { transformTimestamp } from '../sharedTransformers';
+import {
+  ChoreTemplate,
+  Level,
+  Person,
+  Room,
+  TaskTemplate,
+} from '../orgs/types';
+import { RoomType } from '../roomTypes/types';
+import { transformMap, transformTimestamp } from '../sharedTransformers';
 import { Map } from '../types';
 import {
   FBSchedule,
   FBScheduledChore,
+  FBTask,
   FeedChore,
   Schedule,
   ScheduledChore,
+  Task,
   UIChoreFeedItem,
 } from './types';
 
@@ -53,31 +62,63 @@ export const transformScheduledChore = {
       schedule,
     };
   },
-  hydrate(
-    scheduledChore: ScheduledChore,
-    Chores: Map<Chore>,
-    People: Map<Person>
-  ): FeedChore {
-    return {
-      id: scheduledChore.id,
-      schedule: scheduledChore.schedule,
-      orgChore: Chores[scheduledChore.orgChoreId],
-      person: People[scheduledChore.personId],
-    };
-  },
+  hydrate: hydrateScheduledChore,
 };
 
-export function getUIChoreFeedItem(
-  chore: FeedChore,
-  chores: Map<Chore>
-): UIChoreFeedItem {
+export function hydrateScheduledChore(
+  scheduledChore: ScheduledChore,
+  people: Map<Person>,
+  taskTemplates: Map<TaskTemplate>,
+  levels: Map<Level>,
+  roomTypes: Map<RoomType>,
+  rooms: Map<Room>
+): FeedChore {
+  return cleanFromObject(
+    {
+      id: scheduledChore.id,
+      name: scheduledChore.name,
+      schedule: scheduledChore.schedule,
+      tasks: scheduledChore.tasks.map((t) =>
+        hydrateScheduledChoreTask(t, taskTemplates, levels, roomTypes, rooms)
+      ),
+      person: people[scheduledChore.personId],
+      levels: scheduledChore.levelIds?.map((id) => levels[id]),
+      roomTypes: scheduledChore.roomTypeIds?.map((id) => roomTypes[id]),
+      rooms: scheduledChore.roomIds?.map((id) => rooms[id]),
+    },
+    [undefined]
+  );
+}
+export function hydrateScheduledChoreTask(
+  task: FBTask,
+  taskTemplates: Map<TaskTemplate>,
+  levels: Map<Level>,
+  roomTypes: Map<RoomType>,
+  rooms: Map<Room>
+): Task {
+  const taskTemplate = taskTemplates[task.taskTemplateId];
+  const _levels = task.levelIds?.map((lid) => levels[lid]);
+  const _roomTypes = task.roomTypeIds?.map((rtid) => roomTypes[rtid]);
+  const _rooms = task.roomIds?.map((rid) => rooms[rid]);
+  const _completed = false; // choreTask in flight will have this property
+  return {
+    id: task.id,
+    taskTemplate,
+    levels: _levels,
+    roomTypes: _roomTypes,
+    rooms: _rooms,
+    completed: _completed,
+  };
+}
+
+export function getUIChoreFeedItem(chore: FeedChore): UIChoreFeedItem {
   return {
     id: chore.id,
-    name: chore.orgChore.name,
-    tasks: Object.values(chore.orgChore.tasks).map((t) => ({
-      name: getTaskName(t, chores[chore.id]),
+    name: chore.name,
+    tasks: Object.values(chore.tasks).map((t) => ({
+      name: getTaskName(t),
       id: t.id,
-      finished: false,
+      completed: !!t.completed,
     })),
     person: {
       id: chore.person.id,

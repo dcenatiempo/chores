@@ -1,13 +1,13 @@
 import { FC } from 'react';
 import { getTaskName } from '../../libs/store/models/orgs/transformers';
-import { Chore, Task } from '../../libs/store/models/orgs/types';
+import { TaskTemplate } from '../../libs/store/models/orgs/types';
 import { ListItem } from '../base';
-import { EditButton, DeleteButton, AddButton } from '../buttons';
+import { EditButton, DeleteButton } from '../buttons';
 
 interface TaskListItemProps {
-  task: Task;
-  onClickDelete?: (task: Task) => void;
-  onClickEdit?: (task: Task) => void;
+  task: TaskTemplate;
+  onClickDelete?: (task: TaskTemplate) => void;
+  onClickEdit?: (task: TaskTemplate) => void;
 }
 const TaskListItem: FC<TaskListItemProps> = ({
   task,
