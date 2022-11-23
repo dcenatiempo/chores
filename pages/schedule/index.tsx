@@ -272,7 +272,6 @@ function getOccurances(
     // repeats on days of the week
     return getWeeklyOccurances(c, startDate, endDate);
   } else if (schedule.interval === 'month') {
-    debugger;
     if (schedule.monthly === 'day') {
       // repeats on day of week
       return getMonthlyDayOccurances(c, startDate, endDate);
@@ -360,7 +359,6 @@ function getNextWeeklyDate(
   frequency: number,
   weekly: string | undefined
 ): number {
-  debugger;
   const luxonDate = DateTime.fromSeconds(date);
   const dayOfWeek = +luxonDate.toFormat('c'); // (Monday is 1, Sunday is 7)
   const effectiveWeekly = weekly
@@ -397,7 +395,6 @@ function getMonthlyDateOccurances(
   endDate: UnixTimestamp,
   occurances: FeedChore[] = []
 ): FeedChore[] {
-  debugger;
   // bad data return
   if (!c.schedule.dueDate) return occurances;
 
