@@ -15,6 +15,7 @@ interface DropdownProps<T> extends InputFieldProps {
   id: string;
   onSelect: (selected: T | undefined) => void;
   selected: T | string | undefined;
+  requireSelected?: boolean;
 }
 
 function Dropdown<T>({
@@ -57,15 +58,6 @@ function Dropdown<T>({
   );
 }
 
-interface DropdownProps<T> extends InputFieldProps {
-  options: T[];
-  valueKey: (option: T | undefined) => string;
-  labelKey: (option: T | undefined) => string;
-  id: string;
-  onSelect: (selected: T | undefined) => void;
-  selected: T | string | undefined;
-}
-
 export default function Dropdown2<T>({
   id,
   options,
@@ -74,20 +66,24 @@ export default function Dropdown2<T>({
   valueKey,
   labelKey,
   label,
+  requireSelected = false,
 }: DropdownProps<T>) {
   const [textIsFocused, setTextIsFocused] = useState<boolean>(false);
   const [itemIsFocused, setItemIsFocused] = useState<boolean | null>(null);
   const [show, setShow] = useState(false);
   const [text, setText] = useState(labelKey(selected));
+
   const filteredOptions = useMemo(() => {
-    return options.filter((o) =>
-      labelKey(o).toLowerCase().includes(text.toLowerCase())
-    );
-  }, [labelKey, options, text]);
+    return options.filter((o) => {
+      if (!show) return true;
+      return labelKey(o).toLowerCase().includes(text.toLowerCase());
+    });
+  }, [labelKey, options, show, text]);
 
   useEffect(() => {
     if (!selected) setText('');
   }, [selected]);
+
   useInterval(
     () => {
       setShow(false);
@@ -123,7 +119,7 @@ export default function Dropdown2<T>({
 
   return (
     <InputField label={label}>
-      {selected ? (
+      {selected && !requireSelected ? (
         <div style={{ position: 'absolute', right: 0, top: 0 }}>
           <IconButton
             type="sentance"
@@ -187,9 +183,12 @@ export default function Dropdown2<T>({
                     backgroundColor: isSelected ? 'grey' : undefined,
                   }}
                   type="invisible"
-                  onClick={() =>
-                    isSelected ? deselectItem(option) : selectItem(option)
-                  }
+                  onClick={() => {
+                    if (requireSelected && isSelected) return;
+                    return isSelected
+                      ? deselectItem(option)
+                      : selectItem(option);
+                  }}
                   onFocus={() => setItemIsFocused(true)}
                   onBlur={() => setItemIsFocused(false)}
                   label={l}

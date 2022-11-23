@@ -12,14 +12,12 @@ import useScheduledChores from '../../libs/store/models/scheduledChores/useSched
 import { Map } from '../../libs/store/models/types';
 import {
   FeedChore,
-  Schedule,
-  ScheduledChore,
   UIChoreFeedItem,
 } from '../../libs/store/models/scheduledChores/types';
 import { getUIChoreFeedItem } from '../../libs/store/models/scheduledChores/transformers';
-import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
+import { CalendarType } from '../../components/base/Calendar/CalendarDay';
 
-const nextWeek = DateTime.local().plus({ days: 3 });
+const todaySeconds = DateTime.local().toSeconds();
 
 const SchedulePage: NextPage = () => {
   const {
@@ -32,6 +30,10 @@ const SchedulePage: NextPage = () => {
 
   const [calendarStartDate, setCalendarStartDate] = useState(0);
   const [calendarEndDate, setCalendarEndDate] = useState(0);
+  const [calendarType, setCalendarType] = useState<CalendarType>('rigid');
+  const [calendarDays, setCalendarDays] = useState(7);
+  const [calendarWeeks, setCalendarWeeks] = useState(5);
+  const [today, setToday] = useState(todaySeconds);
 
   const extrapolatedFeedChoresArray = useMemo(() => {
     let extrapolated: FeedChore[] = [];
@@ -154,9 +156,9 @@ const SchedulePage: NextPage = () => {
         chores={scheduledChoresArray}
       />
       <Calendar
-        numWeeks={1}
-        date={nextWeek.toSeconds()}
-        numDays={4}
+        numWeeks={calendarWeeks}
+        date={today}
+        numDays={calendarDays}
         renderWeek={(
           startDate: UnixTimestamp,
           endDate: UnixTimestamp,
@@ -229,7 +231,7 @@ const SchedulePage: NextPage = () => {
             );
           return null;
         }}
-        type={'rigid'}
+        type={calendarType}
         calendarState={{
           calendarStartDate,
           setCalendarStartDate,

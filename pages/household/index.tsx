@@ -8,9 +8,7 @@ import AddOrEditLevelsList from '../../components/levels/AddOrEditLevelsList';
 import LevelSelector from '../../components/levels/LevelSelector';
 import { Level } from '../../libs/store/models/orgs/types';
 import { useMemo, useState } from 'react';
-import { Dropdown } from '../../components/base';
 import { RoomType } from '../../libs/store/models/roomTypes/types';
-import RoomSelector from '../../components/rooms/RoomSelector';
 import RoomTypeSelector from '../../components/roomTypes/RoomTypeSelector';
 
 const Household: NextPage = () => {
@@ -34,18 +32,10 @@ const Household: NextPage = () => {
   const showRooms = !!levelsArray.length;
   const [level, setLevel] = useState<Level>();
   const [roomType, setRoomType] = useState<RoomType>();
+
   const uniqueRoomTypes = useMemo(() => {
     if (!level) return roomTypesInUse;
     return roomTypesGroupedByLevel[level.id];
-    // const obj = roomsArray.reduce<{ [roomType: string]: RoomType }>(
-    //   (acc, r) => {
-    //     const roomTypeId = r.roomType.id;
-    //     if (!acc[roomTypeId]) acc[roomTypeId] = r.roomType;
-    //     return { ...acc };
-    //   },
-    //   {}
-    // );
-    // return Object.values(obj).filter(r => r.);
   }, [roomTypesGroupedByLevel, level, roomTypesInUse]);
 
   const uniqueLevels = useMemo(() => {

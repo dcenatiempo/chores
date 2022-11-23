@@ -34,7 +34,30 @@ export function timestampToISODate(timestamp: UnixTimestamp): string {
 }
 
 export function timestampToDate(timestamp: UnixTimestamp): string {
-  return DateTime.fromSeconds(timestamp).toFormat('d');
+  return DateTime.fromSeconds(timestamp).toFormat(fmt.DATE);
+}
+
+export function timestampToMonth(timestamp: UnixTimestamp): string {
+  return DateTime.fromSeconds(timestamp).toFormat(fmt.MONTH_L);
+}
+
+export function timestampToString(
+  timestamp: UnixTimestamp,
+  format: string
+): string {
+  return DateTime.fromSeconds(timestamp).toFormat(format);
+}
+
+export enum fmt {
+  DATE = 'd',
+  MONTH_L = 'LLLL',
+  MONTH_S = 'LLL',
+  MONTH_N = 'L',
+  DAY_L = 'cccc',
+  DAY_S = 'ccc',
+  DAY_N = 'c',
+  YEAR_L = 'yyyy',
+  YEAR_S = 'yy',
 }
 
 /**

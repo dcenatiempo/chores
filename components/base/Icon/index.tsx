@@ -71,6 +71,8 @@ export enum IconName {
   STAR_HALF = 'STAR_HALF',
   LOGIN = 'LOGIN',
   LOGOUT = 'LOGOUT',
+  RIGHT_CHEVRON = 'RIGHT_CHEVRON',
+  LEFT_CHEVRON = 'LEFT_CHEVRON',
 }
 
 const IconMap = {
@@ -100,4 +102,8 @@ const IconMap = {
   LOGIN_LINE: ri.RiLoginBoxLine,
   LOGOUT_FILL: ri.RiLogoutBoxRFill,
   LOGOUT_LINE: ri.RiLogoutBoxRLine,
+  LEFT_CHEVRON_LINE: ri.RiArrowLeftSLine,
+  LEFT_CHEVRON_FILL: ri.RiArrowLeftSFill,
+  RIGHT_CHEVRON_LINE: ri.RiArrowRightSLine,
+  RIGHT_CHEVRON_FILL: ri.RiArrowRightSFill,
 };
