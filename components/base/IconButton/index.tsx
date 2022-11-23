@@ -11,6 +11,8 @@ export interface IconButtonProps {
   onClick: () => void;
   disabled?: boolean;
   type?: ButtonType;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
 const IconButton: FC<IconButtonProps> = ({
@@ -21,9 +23,16 @@ const IconButton: FC<IconButtonProps> = ({
   onClick,
   disabled = false,
   type = 'fill',
+  ...rest
 }) => {
   return (
-    <Button onClick={onClick} type={type} color={color} disabled={disabled}>
+    <Button
+      onClick={onClick}
+      type={type}
+      color={color}
+      disabled={disabled}
+      {...rest}
+    >
       <Icon name={iconName} size={size} outlined={outlined} />
     </Button>
   );

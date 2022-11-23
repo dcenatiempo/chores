@@ -27,22 +27,26 @@ const Household: NextPage = () => {
     addLevel,
     deleteLevel,
     editLevel,
+    roomTypesGroupedByLevel,
+    roomTypesInUse,
   } = useCurrentOrg();
 
   const showRooms = !!levelsArray.length;
   const [level, setLevel] = useState<Level>();
   const [roomType, setRoomType] = useState<RoomType>();
   const uniqueRoomTypes = useMemo(() => {
-    const obj = roomsArray.reduce<{ [roomType: string]: RoomType }>(
-      (acc, r) => {
-        const roomTypeId = r.roomType.id;
-        if (!acc[roomTypeId]) acc[roomTypeId] = r.roomType;
-        return { ...acc };
-      },
-      {}
-    );
-    return Object.values(obj);
-  }, [roomsArray]);
+    if (!level) return roomTypesInUse;
+    return roomTypesGroupedByLevel[level.id];
+    // const obj = roomsArray.reduce<{ [roomType: string]: RoomType }>(
+    //   (acc, r) => {
+    //     const roomTypeId = r.roomType.id;
+    //     if (!acc[roomTypeId]) acc[roomTypeId] = r.roomType;
+    //     return { ...acc };
+    //   },
+    //   {}
+    // );
+    // return Object.values(obj).filter(r => r.);
+  }, [roomTypesGroupedByLevel, level, roomTypesInUse]);
 
   const uniqueLevels = useMemo(() => {
     const obj = roomsArray.reduce<{ [roomType: string]: Level }>((acc, r) => {

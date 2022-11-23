@@ -22,7 +22,13 @@ const InputField: FC<InputFieldProps> = ({
     <div className={`${styles.IiputField} ${inline ? styles.inline : ''}`}>
       <InputLabel id={derivedId}>{label}</InputLabel>
 
-      <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          position: 'relative',
+        }}
+      >
         {children}
         <span className={styles.errorMessage}>{errorMessage}</span>
       </div>

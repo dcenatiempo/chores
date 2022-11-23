@@ -49,7 +49,13 @@ const SurfaceTemplateSelector: FC<SurfaceTemplateSelectorProps> = ({
   }
 
   return (
-    <div style={{ display: 'flex' }}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'end',
+        justifyContent: 'space-between',
+      }}
+    >
       <TextInput
         value={surfaceName}
         onChange={setSurfaceName}
@@ -67,6 +73,7 @@ const SurfaceTemplateSelector: FC<SurfaceTemplateSelectorProps> = ({
         selected={surface}
         id="surfaces"
       />
+      xxx
       <AddButton disabled={!surface} onClick={onAdd} />
     </div>
   );

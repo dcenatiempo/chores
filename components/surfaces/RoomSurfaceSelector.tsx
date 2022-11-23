@@ -54,8 +54,15 @@ const RoomSurfaceSelector: FC<RoomSurfaceSelectorProps> = ({
     onSelect(surfaceToAdd);
   }
 
+  console.log('selected', surface);
   return (
-    <div style={{ display: 'flex' }}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'end',
+        justifyContent: 'space-between',
+      }}
+    >
       <TextInput
         value={surfaceName}
         onChange={setSurfaceName}

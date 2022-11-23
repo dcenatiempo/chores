@@ -5,12 +5,15 @@ import styles from './Button.module.css';
 export type ButtonType = 'fill' | 'outline' | 'sentance' | 'invisible';
 
 export interface ButtonProps {
+  style?: object;
   disabled?: boolean;
   label?: string;
   onClick: () => void;
   children?: React.ReactNode;
   type?: ButtonType;
   color?: IconColor;
+  onFocus?: () => void;
+  onBlur?: () => void;
 }
 
 const Button: FC<ButtonProps> = ({
@@ -20,6 +23,7 @@ const Button: FC<ButtonProps> = ({
   children,
   label,
   onClick = () => {},
+  ...rest
 }) => {
   const style = useMemo(() => {
     const globalColorStyle = `${color}-color`;
@@ -37,7 +41,7 @@ const Button: FC<ButtonProps> = ({
   }, [type, disabled, color]);
 
   return (
-    <button className={style} onClick={onClick} disabled={disabled}>
+    <button className={style} onClick={onClick} disabled={disabled} {...rest}>
       {label}
       {/* todo: no children, just icon? */}
       <div style={{ paddingLeft: label ? 10 : 0 }}>{children}</div>
