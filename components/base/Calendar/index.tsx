@@ -55,12 +55,13 @@ const Calendar: FC<CalendarProps> = ({
     { label: 'Day', value: 'd', days: 1, weeks: 1 },
   ];
   const [calendarView, setCalendarView] = useState(calendarViewOptions[0]);
-  function onSelectCalendarView(view: {
+  function onSelectCalendarView(view?: {
     label: string;
     value: string;
     days: number;
     weeks: number;
   }) {
+    if (!view) return;
     setCalendarDays(view.days);
     setCalendarWeeks(view.weeks);
     setCalendarView(view);
@@ -112,8 +113,8 @@ const Calendar: FC<CalendarProps> = ({
       <Dropdown
         requireSelected
         options={calendarViewOptions}
-        valueKey={(o) => o.value}
-        labelKey={(o) => o.label}
+        valueKey={(o) => o?.value || ''}
+        labelKey={(o) => o?.label || ''}
         id={'calendar-view'}
         onSelect={onSelectCalendarView}
         selected={calendarView}

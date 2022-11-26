@@ -110,6 +110,7 @@ export interface FBScheduledChore {
 
 export interface FeedChore {
   id: string;
+  idType: 'ScheduledChore' | 'ChoreInFlight' | 'ChoreHistory';
   name: string;
   tasks: Task[];
   person: Person;
@@ -119,10 +120,10 @@ export interface FeedChore {
 
   // in these specific levels
   levels?: Level[];
-  // in these types of rooms
+  // AND in these types of rooms
   roomTypes?: RoomType[];
 
-  // AND in these specific rooms
+  // OR in these specific rooms
   rooms?: Room[];
 }
 
@@ -139,7 +140,8 @@ export interface ScheduledChoreState extends BaseSlice {
 }
 
 export interface UIChoreFeedItem {
-  id: string;
+  id: string; // scheduledChore.id
+  idType: 'ScheduledChore' | 'ChoreInFlight' | 'ChoreHistory';
   name: string;
   tasks: {
     name: string;

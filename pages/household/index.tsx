@@ -11,7 +11,7 @@ import { useMemo, useState } from 'react';
 import { RoomType } from '../../libs/store/models/roomTypes/types';
 import RoomTypeSelector from '../../components/roomTypes/RoomTypeSelector';
 
-const Household: NextPage = () => {
+const HouseholdPage: NextPage = () => {
   const {
     peopleArray,
     roomsArray,
@@ -90,4 +90,4 @@ const Household: NextPage = () => {
   );
 };
 
-export default Household;
+export default HouseholdPage;

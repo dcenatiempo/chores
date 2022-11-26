@@ -1,7 +1,6 @@
 import { FC } from 'react';
 import { UIChoreFeedItem } from '../../libs/store/models/scheduledChores/types';
 import { ListItem } from '../base';
-import { EditButton, DeleteButton, AddButton } from '../buttons';
 
 interface ChoreFeedItemProps {
   chore: UIChoreFeedItem;

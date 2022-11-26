@@ -54,7 +54,6 @@ const RoomSurfaceSelector: FC<RoomSurfaceSelectorProps> = ({
     onSelect(surfaceToAdd);
   }
 
-  console.log('selected', surface);
   return (
     <div
       style={{

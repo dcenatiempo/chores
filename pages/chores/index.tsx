@@ -5,16 +5,13 @@ import PageWrapper from '../../components/nav/PageWrapper';
 import AddOrEditTasksList from '../../components/tasks/AddOrEditTasksList';
 import AddOrEditChoresList from '../../components/chores/AddOrEditChoresList';
 import { useMemo, useState } from 'react';
-import {
-  arrayToMap,
-  mapToArray,
-} from '../../libs/store/models/sharedTransformers';
+import { arrayToMap } from '../../libs/store/models/sharedTransformers';
 import { Level, Room } from '../../libs/store/models/orgs/types';
 import FilterRooms from '../../components/filters/FilterRooms';
 import { surfacesFromRooms } from '../../components/filters/utils';
 import { RoomType } from '../../libs/store/models/roomTypes/types';
 
-const Household: NextPage = () => {
+const ChoresPage: NextPage = () => {
   const {
     peopleArray,
     roomsArray,
@@ -54,8 +51,9 @@ const Household: NextPage = () => {
   const [initialLevel, setLevel] = useState<Level>();
   const [initialRoom, setRoom] = useState<Room>();
   const [initialRoomType, setRoomType] = useState<RoomType>();
+
   return (
-    <PageWrapper metaTitle="Chore Household">
+    <PageWrapper metaTitle="Chores & Tasks">
       <FilterRooms
         onRoomsChange={setRoomOptions}
         setLevel={setLevel}
@@ -88,4 +86,4 @@ const Household: NextPage = () => {
   );
 };
 
-export default Household;
+export default ChoresPage;

@@ -1,13 +1,36 @@
-import { BaseSlice, OrgMap } from '../types';
+import { FBTimestamp } from '../../../firebase';
+import { BaseSlice, Map } from '../types';
 
-export interface CompletedChore {
+export interface HistoryChore {
   id: string;
-  orgPeopleIds: string[];
-  completedAt: number;
-  // deadline: TimeBoundary;
-  orgChoreId: string;
+  orgId: string;
+  personId: string;
+  scheduledChoreId: string;
+  startDate: FBTimestamp;
+  dueDate: FBTimestamp;
+  taskIdsCompleted: string[];
+  // taskIdsApproved: string[];
+}
+
+export interface FBHistoryChore {
+  id: string;
+  orgId: string;
+  personId: string;
+  scheduledChoreId: string;
+  startDate: FBTimestamp;
+  dueDate: FBTimestamp;
+  taskIdsCompleted: string[];
+  // taskIdsApproved: string[];
+}
+
+export interface ChoreHistoryData {
+  id: string; // orgId
+  lastId: string;
+  data: Map<FBHistoryChore>;
 }
 
 export interface ChoreHistoryState extends BaseSlice {
-  orgsMap: OrgMap<CompletedChore[]>;
+  orgsMap: {
+    [key: string]: ChoreHistoryData;
+  };
 }

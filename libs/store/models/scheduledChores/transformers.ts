@@ -114,6 +114,7 @@ export function hydrateScheduledChoreTask(
 export function getUIChoreFeedItem(chore: FeedChore): UIChoreFeedItem {
   return {
     id: chore.id,
+    idType: 'ScheduledChore',
     name: chore.name,
     tasks: Object.values(chore.tasks).map((t) => ({
       name: getTaskName(t),

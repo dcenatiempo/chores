@@ -38,7 +38,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 1. ~~add rooms/roomTypes/levels to scheduledChore~~
 1. add rooms/roomTypes/levels to scheduledTask
 1. ~~show recurring chores in chore feed~~
-1. add chores in flight
+1. ~~add chores in flight~~
 1. marking a chore task will change the scheduled task to a chore in flight
 1. merge chores in flight into chore feed
 1. filter out scheduled chores that have a chore in flight
@@ -67,9 +67,9 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 - hover states
 - better filtering
 - persistent cache
-- better dropdowns
+- ~~better dropdowns~~
 - better multiselect
-- calendar controls (change range of calendar)
+- ~~calendar controls (change range of calendar)~~
 - editing stuff on the fly
 - mobile friendly
 - improved calendar

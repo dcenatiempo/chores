@@ -11,6 +11,5 @@ export enum Collection {
   ACTIONS = 'actions',
   USER = 'users',
   ORG_SCHEDULED_CHORES = 'orgScheduledChores',
-  ORG_CHORES_IN_FLIGHT = 'orgChoresInFlight',
-  ORG_CHORE_HISTORY = 'orgChoreHistory',
+  CHORE_HISTORY = 'choreHistory',
 }

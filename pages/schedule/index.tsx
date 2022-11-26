@@ -249,7 +249,7 @@ function getOccurances(
   startDate: UnixTimestamp,
   endDate: UnixTimestamp
 ): FeedChore[] {
-  console.log(c.schedule.monthly);
+  if (!startDate || !endDate) return [];
   const schedule = c.schedule;
   if (!schedule.dueDate && !schedule.startDate) {
     // if no startDate or dueDate, does MUST NOT repeat, and MUST always be on schedule

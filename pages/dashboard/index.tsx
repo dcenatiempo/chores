@@ -3,7 +3,7 @@ import type { NextPage } from 'next';
 import { Card } from '../../components/base';
 import PageWrapper from '../../components/nav/PageWrapper';
 
-const Dashboard: NextPage = () => {
+const DashboardPage: NextPage = () => {
   return (
     <PageWrapper metaTitle="Chore Dashboard">
       <Card>hello</Card>
@@ -11,4 +11,4 @@ const Dashboard: NextPage = () => {
   );
 };
 
-export default Dashboard;
+export default DashboardPage;

@@ -1,11 +1,9 @@
-import { ChangeEvent, useEffect, useMemo, useState } from 'react';
+import { KeyboardEvent, useEffect, useMemo, useState } from 'react';
 import { useInterval } from '../../../libs/hooks';
-import { Map } from '../../../libs/store/models/types';
 import Button from '../Button';
 import { IconName } from '../Icon';
 import IconButton from '../IconButton';
 import InputField, { InputFieldProps } from '../InputField';
-import TextInput from '../TextInput';
 import styles from './Dropdown.module.css';
 
 interface DropdownProps<T> extends InputFieldProps {
@@ -18,46 +16,6 @@ interface DropdownProps<T> extends InputFieldProps {
   requireSelected?: boolean;
 }
 
-function Dropdown<T>({
-  id,
-  options,
-  selected,
-  onSelect,
-  valueKey,
-  labelKey,
-  label,
-}: DropdownProps<T>) {
-  function onChange(e: ChangeEvent<HTMLSelectElement>) {
-    const s = options.find((option) => e.target.value === valueKey(option));
-    onSelect(s);
-  }
-  return (
-    <InputField label={label}>
-      <select
-        className={styles.select}
-        name={id}
-        id={id}
-        onChange={onChange}
-        value={valueKey(selected) || selected}
-      >
-        <option key={undefined} value={undefined}>
-          please select...
-        </option>
-        {options.map((option) => {
-          const v = valueKey(option);
-          const l = labelKey(option);
-          if (!v || !l) return null;
-          return (
-            <option key={v} value={v}>
-              {l}
-            </option>
-          );
-        })}
-      </select>
-    </InputField>
-  );
-}
-
 export default function Dropdown2<T>({
   id,
   options,
@@ -68,10 +26,16 @@ export default function Dropdown2<T>({
   label,
   requireSelected = false,
 }: DropdownProps<T>) {
+  // this is because selected might just be the valueKey already
+  const _selected = useMemo(
+    // @ts-expect-error
+    () => options.find((o) => valueKey(o) === valueKey(selected)),
+    [options, selected, valueKey]
+  );
   const [textIsFocused, setTextIsFocused] = useState<boolean>(false);
   const [itemIsFocused, setItemIsFocused] = useState<boolean | null>(null);
   const [show, setShow] = useState(false);
-  const [text, setText] = useState(labelKey(selected));
+  const [text, setText] = useState(labelKey(_selected));
 
   const filteredOptions = useMemo(() => {
     return options.filter((o) => {
@@ -81,20 +45,22 @@ export default function Dropdown2<T>({
   }, [labelKey, options, show, text]);
 
   useEffect(() => {
-    if (!selected) setText('');
-  }, [selected]);
+    if (!_selected) setText('');
+  }, [_selected]);
 
   useInterval(
     () => {
       setShow(false);
       setTextIsFocused(false);
       setItemIsFocused(null);
-      setText(labelKey(selected));
+      setText(
+        labelKey(options.find((o) => valueKey(o) === valueKey(_selected)))
+      );
     },
     show && !textIsFocused && !itemIsFocused ? 20 : null
   );
 
-  const selectedValue = valueKey(selected);
+  const selectedValue = valueKey(_selected);
 
   function selectItem(item: T) {
     setItemIsFocused(false);
@@ -106,8 +72,7 @@ export default function Dropdown2<T>({
     onSelect(undefined);
   }
 
-  function onKeypress(e: KeyboardEvent) {
-    //it triggers by pressing the enter key
+  function onKeypress(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
       if (filteredOptions.length === 1) {
         selectItem(filteredOptions[0]);
@@ -119,7 +84,7 @@ export default function Dropdown2<T>({
 
   return (
     <InputField label={label}>
-      {selected && !requireSelected ? (
+      {_selected && !requireSelected ? (
         <div style={{ position: 'absolute', right: 0, top: 0 }}>
           <IconButton
             type="sentance"

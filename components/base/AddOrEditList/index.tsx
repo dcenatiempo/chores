@@ -49,12 +49,12 @@ function AddOrEditResourceList<T>({
     onClickSave?.();
   }
 
-  function _onClickEdit(resource: T) {
+  function _onClickEdit(resource: T & CanDelete) {
     setResourceToEdit?.(resource);
     setShowModal('edit');
   }
 
-  function _onClickDelete(resource: T) {
+  function _onClickDelete(resource: T & CanDelete) {
     onClickDelete?.(resource);
   }
 

@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { Level, Room } from '../../libs/store/models/orgs/types';
 import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
 import { RoomType } from '../../libs/store/models/roomTypes/types';
@@ -46,18 +46,17 @@ export default function FilterRooms({
     __setRoom(r);
     setRoom?.(r);
   }
+
   function _setLevel(l?: Level) {
     __setLevel(l);
     setLevel?.(l);
     if (!l) return;
-
     if (roomType) {
       if (!roomTypesGroupedByLevel[l.id].find((rt) => rt.id === roomType.id)) {
         __setRoomType(undefined);
         setRoomType?.(undefined);
       }
     }
-
     if (room) {
       if (!roomsGroupedByLevel[l.id].find((r) => r.id === room.id)) {
         __setRoom(undefined);
@@ -76,9 +75,12 @@ export default function FilterRooms({
       const isInRoomType = !!roomType ? r.roomType.id === roomType.id : true;
       return isInLevel && isInRoomType;
     });
-    onRoomsChange(newOptions);
     return newOptions;
-  }, [roomsArray, onRoomsChange, level, roomType]);
+  }, [roomsArray, level, roomType]);
+
+  useEffect(() => {
+    onRoomsChange(roomOptions);
+  }, [onRoomsChange, roomOptions]);
 
   return (
     <div>

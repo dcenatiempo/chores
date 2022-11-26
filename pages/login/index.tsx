@@ -11,7 +11,7 @@ interface FormErrors {
   confirmPassword?: string;
 }
 
-const Login: NextPage = () => {
+const LoginPage: NextPage = () => {
   const [isRegister, setisRegister] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -121,7 +121,7 @@ const Login: NextPage = () => {
   );
 };
 
-export default Login;
+export default LoginPage;
 
 const ErrorMessage: FC<{ message?: string }> = ({ message }) => {
   return message ? <span style={{ color: 'red' }}>{message}</span> : <span />;
