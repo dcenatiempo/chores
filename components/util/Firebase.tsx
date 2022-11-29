@@ -3,6 +3,7 @@ import { useDispatch } from 'react-redux';
 import { auth } from '../../libs/firebase';
 import { scheduledChoresStore, orgsStore, userStore } from '../../libs/store';
 import useActions from '../../libs/store/models/actions/useActions';
+import useChoreHistory from '../../libs/store/models/choreHistory/useChoreHistory';
 import useOrgs from '../../libs/store/models/orgs/useOrgs';
 import { useRoomTypes } from '../../libs/store/models/roomTypes';
 import { fetchOrgsScheduledChores } from '../../libs/store/models/scheduledChores/firebase';
@@ -17,6 +18,7 @@ export default function Firebase() {
   const { fetchActions } = useActions();
   const { fetchUser } = useUser();
   const { fetchOrgs } = useOrgs();
+  const { fetchOrgsChoreHistory } = useChoreHistory();
 
   useEffect(() => {
     function emptyStore() {
@@ -33,6 +35,7 @@ export default function Firebase() {
           return Promise.all([
             fetchOrgsScheduledChores(orgIds),
             fetchOrgs(orgIds),
+            fetchOrgsChoreHistory(orgIds),
           ]);
         })
         .then(() => {

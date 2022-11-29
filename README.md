@@ -38,12 +38,10 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 1. ~~add rooms/roomTypes/levels to scheduledChore~~
 1. add rooms/roomTypes/levels to scheduledTask
 1. ~~show recurring chores in chore feed~~
-1. ~~add chores in flight~~
+1. ~~add history chores~~
 1. marking a chore task will change the scheduled task to a chore in flight
-1. merge chores in flight into chore feed
-1. filter out scheduled chores that have a chore in flight
-1. add chore history
-1. merge chore history into chore feed
+1. ~~merge history chores into chore feed~~
+1. ~~filter out scheduled chores that have a history chore~~
 1. safe deleting (prevent deletes, or recursive deletes)
 
 # TODO - Tech Debt

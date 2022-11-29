@@ -25,12 +25,14 @@ const currentChoreHistory = createSelector(
   (orgsChoreInFlight, currentOrgId) => orgsChoreInFlight?.[currentOrgId]
 );
 
-const choreHistory = createSelector(currentChoreHistory, (cur) =>
-  transformMap(cur?.data, (x) => transformHistoryChore.fromFB(x))
+const choreHistory = createSelector(
+  currentChoreHistory,
+  (cur) => transformMap(cur?.data, (x) => transformHistoryChore.fromFB(x)) || {}
 );
 
-const choreHistoryArray = createSelector(choreHistory, (map) =>
-  mapToArray(map)
+const choreHistoryArray = createSelector(
+  choreHistory,
+  (map) => mapToArray(map) || []
 );
 
 const feedChores = createSelector(
@@ -42,8 +44,8 @@ const feedChores = createSelector(
   roomTypesMap,
   roomsMap,
   (cur, scheduledChores, people, taskTemplates, levels, roomTypes, rooms) =>
-    transformMap(cur?.data, (x) =>
-      transformHistoryChore.hydrate(
+    transformMap(cur?.data || {}, (x) => {
+      const y = transformHistoryChore.hydrate(
         transformHistoryChore.fromFB(x),
         scheduledChores,
         people,
@@ -51,8 +53,10 @@ const feedChores = createSelector(
         levels,
         roomTypes,
         rooms
-      )
-    )
+      );
+
+      return y;
+    })
 );
 
 const feedChoresArray = createSelector(feedChores, (map) => mapToArray(map));
@@ -61,6 +65,6 @@ export {
   currentOrgId,
   choreHistory,
   choreHistoryArray,
-  feedChores,
-  feedChoresArray,
+  feedChores as historyFeedChores,
+  feedChoresArray as historyFeedChoresArray,
 };

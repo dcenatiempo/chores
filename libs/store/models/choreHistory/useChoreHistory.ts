@@ -15,8 +15,8 @@ import { transformHistoryChore } from './transformers';
 export default function useChoreHistory() {
   const dispatch = useDispatch();
 
-  async function fetchOrgsChoreHistory(orgId: string) {
-    return firebase.fetchOrgsChoreHistory(orgId).then((orgChoreHistory) => {
+  async function fetchOrgsChoreHistory(orgIds: string[]) {
+    return firebase.fetchOrgsChoreHistory(orgIds).then((orgChoreHistory) => {
       dispatch(actions.setOrgChoreHistory(orgChoreHistory));
     });
   }
@@ -24,8 +24,8 @@ export default function useChoreHistory() {
   const orgId = useSelector(selectors.currentOrgId);
   const choreHistory = useSelector(selectors.choreHistory);
   const choreHistoryArray = useSelector(selectors.choreHistoryArray);
-  const feedChores = useSelector(selectors.feedChores);
-  const feedChoresArray = useSelector(selectors.feedChoresArray);
+  const historyFeedChores = useSelector(selectors.historyFeedChores);
+  const historyFeedChoresArray = useSelector(selectors.historyFeedChoresArray);
 
   const scheduledChoreConfig = {
     transformEntity: transformHistoryChore,
@@ -67,8 +67,8 @@ export default function useChoreHistory() {
   }
 
   return {
-    feedChores,
-    feedChoresArray,
+    historyFeedChores,
+    historyFeedChoresArray,
     choreHistory,
     choreHistoryArray,
     addHistoryChore,

@@ -110,7 +110,8 @@ export interface FBScheduledChore {
 
 export interface FeedChore {
   id: string;
-  idType: 'ScheduledChore' | 'ChoreInFlight' | 'ChoreHistory';
+  idType: 'ScheduledChore' | 'ChoreHistory';
+  scheduledChoreId: string;
   name: string;
   tasks: Task[];
   person: Person;

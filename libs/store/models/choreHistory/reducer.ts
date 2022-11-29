@@ -1,5 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { ChoreHistoryData, ChoreHistoryState } from './types';
+import { ChoreHistoryData, ChoreHistoryState, FBHistoryChore } from './types';
 import { arrayToMap } from '../sharedTransformers';
 import { Collection, listenForDocChanges } from '../../../firebase';
 
@@ -13,13 +13,18 @@ export const ChoreHistorySlice = createSlice({
   name: 'ChoreHistory',
   initialState,
   reducers: {
-    setOrgChoreHistory: (state, action: PayloadAction<ChoreHistoryData[]>) => {
-      const mappedData = arrayToMap(action.payload);
+    setOrgChoreHistory: (state, action: PayloadAction<FBHistoryChore[]>) => {
+      let mappedData: { [key: string]: ChoreHistoryData } = {};
+      action.payload.forEach((c) => {
+        if (!mappedData.orgId) mappedData[c.orgId] = { id: c.orgId, data: {} };
+        mappedData[c.orgId].data[c.id] = c;
+      });
       state.orgsMap = mappedData;
     },
-    updateChoreHistory: (state, action: PayloadAction<ChoreHistoryData>) => {
+    updateHistoryChore: (state, action: PayloadAction<FBHistoryChore>) => {
       const orgId = action?.payload.id;
-      if (orgId) state.orgsMap[orgId] = action.payload;
+      const chore = action?.payload;
+      if (orgId) state.orgsMap[orgId].data[chore.id] = chore;
     },
     clearChoreHistory: (state) => {
       state.orgsMap = initialState.orgsMap;
@@ -36,8 +41,8 @@ const listenForChoreHistoryChanges = createAsyncThunk(
     listenForDocChanges({
       collectionName: Collection.CHORE_HISTORY,
       docId: orgId,
-      callback: (choreData: ChoreHistoryData) => {
-        thunkAPI.dispatch(actions.updateChoreHistory(choreData));
+      callback: (chores: FBHistoryChore[]) => {
+        thunkAPI.dispatch(actions.setOrgChoreHistory(chores));
       },
     });
   }

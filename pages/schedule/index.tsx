@@ -16,6 +16,9 @@ import {
 } from '../../libs/store/models/scheduledChores/types';
 import { getUIChoreFeedItem } from '../../libs/store/models/scheduledChores/transformers';
 import { CalendarType } from '../../components/base/Calendar/CalendarDay';
+import useChoreHistory from '../../libs/store/models/choreHistory/useChoreHistory';
+import PeopleSelector from '../../components/people/PeopleSelector';
+import { Person } from '../../libs/store/models/orgs/types';
 
 const todaySeconds = DateTime.local().toSeconds();
 
@@ -27,6 +30,8 @@ const SchedulePage: NextPage = () => {
     scheduledChoresArray,
     feedChoresArray,
   } = useScheduledChores();
+
+  const { historyFeedChoresArray } = useChoreHistory();
 
   const [calendarStartDate, setCalendarStartDate] = useState(0);
   const [calendarEndDate, setCalendarEndDate] = useState(0);
@@ -67,6 +72,13 @@ const SchedulePage: NextPage = () => {
     };
 
     extrapolatedFeedChoresArray.forEach((c) => {
+      const choreHistory = historyFeedChoresArray.find(
+        (ch) =>
+          ch?.scheduledChoreId === c.id &&
+          ch.schedule.dueDate === c.schedule.dueDate
+      );
+      const choreToShow = choreHistory || c;
+
       const luxonStart = c.schedule.startDate
         ? DateTime.fromSeconds(c.schedule.startDate)
         : undefined;
@@ -86,7 +98,7 @@ const SchedulePage: NextPage = () => {
       if (isDaily) {
         const key = luxonStart.toISODate();
         if (!feed.daily[key]) feed.daily[key] = [];
-        return feed.daily[key].push(getUIChoreFeedItem(c));
+        return feed.daily[key].push(getUIChoreFeedItem(choreToShow));
       }
 
       const startDiff = luxonStart?.diff(calendarStart, 'days').days ?? -1;
@@ -103,32 +115,37 @@ const SchedulePage: NextPage = () => {
         return feed.multiDay.push({
           startDate: c.schedule.startDate || calendarStartDate,
           endDate: c.schedule.dueDate || calendarEndDate,
-          item: getUIChoreFeedItem(c),
+          item: getUIChoreFeedItem(choreToShow),
         });
       }
       if (startWithinRange && endAfterRange) {
         return feed.offCalendar.push({
           dueDate: calendarEndDate,
-          item: getUIChoreFeedItem(c),
+          item: getUIChoreFeedItem(choreToShow),
         });
       }
       if (startBeforeRange && endWithinRange) {
         return feed.multiDay.push({
           startDate: calendarStartDate,
           endDate: c.schedule.dueDate || calendarEndDate,
-          item: getUIChoreFeedItem(c),
+          item: getUIChoreFeedItem(choreToShow),
         });
       }
       if (startBeforeRange && endAfterRange) {
         return feed.offCalendar.push({
           dueDate: calendarEndDate,
-          item: getUIChoreFeedItem(c),
+          item: getUIChoreFeedItem(choreToShow),
         });
       }
       // else its not in calendar range at all
     });
     return feed;
-  }, [calendarStartDate, calendarEndDate, extrapolatedFeedChoresArray]);
+  }, [
+    extrapolatedFeedChoresArray,
+    historyFeedChoresArray,
+    calendarEndDate,
+    calendarStartDate,
+  ]);
 
   function _onClickDailyTask(date: string, choreId: string, taskId: string) {
     const chore = choresFeed.daily[date].find((c) => c?.id === choreId);
@@ -147,8 +164,11 @@ const SchedulePage: NextPage = () => {
     // setEventsMap({ ...eventsMap });
   }
 
+  const [people, setPeople] = React.useState<Person[]>([]);
+
   return (
     <PageWrapper metaTitle="Chore Schedule">
+      <PeopleSelector selected={people} onSelect={setPeople} />
       <AddOrEditScheduledChoresList
         addChore={addScheduledChore}
         editChore={editScheduledChore}
@@ -173,8 +193,10 @@ const SchedulePage: NextPage = () => {
               const itemStart = DateTime.fromSeconds(item.startDate);
               const itemEnd = DateTime.fromSeconds(item.endDate);
               const calendarEndDiff = calendarEnd.diff(itemEnd, 'days').days;
-
-              if (calendarEndDiff < 0) {
+              if (
+                calendarEndDiff < 0 ||
+                !people.find((p) => p.id === item.item.person.id)
+              ) {
                 return acc;
               }
 
@@ -219,16 +241,17 @@ const SchedulePage: NextPage = () => {
           const key = timestampToISODate(date);
           const todaysChores = choresFeed.daily[key];
           if (todaysChores)
-            return todaysChores.map((c) =>
-              c ? (
-                <ChoreFeedItem
-                  key={c.id}
-                  chore={c}
-                  onClickTask={(cid, tid) => _onClickDailyTask(key, cid, tid)}
-                  onClickChore={(cid) => _onClickDailyChore(key, cid)}
-                />
-              ) : null
-            );
+            return todaysChores.map((c) => {
+              if (!people.length || people.find((p) => p.id === c.person.id))
+                return c ? (
+                  <ChoreFeedItem
+                    key={c.id}
+                    chore={c}
+                    onClickTask={(cid, tid) => _onClickDailyTask(key, cid, tid)}
+                    onClickChore={(cid) => _onClickDailyChore(key, cid)}
+                  />
+                ) : null;
+            });
           return null;
         }}
         type={calendarType}

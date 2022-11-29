@@ -25,7 +25,6 @@ export interface FBHistoryChore {
 
 export interface ChoreHistoryData {
   id: string; // orgId
-  lastId: string;
   data: Map<FBHistoryChore>;
 }
 

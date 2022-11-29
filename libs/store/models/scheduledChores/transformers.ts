@@ -76,6 +76,8 @@ export function hydrateScheduledChore(
   return cleanFromObject(
     {
       id: scheduledChore.id,
+      idType: 'ScheduledChore',
+      scheduledChoreId: scheduledChore.id,
       name: scheduledChore.name,
       schedule: scheduledChore.schedule,
       tasks: scheduledChore.tasks.map((t) =>

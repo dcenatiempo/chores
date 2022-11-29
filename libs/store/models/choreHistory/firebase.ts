@@ -3,19 +3,19 @@ import { DateTime } from 'luxon';
 import { UnixTimestamp } from '../../../dateTime';
 import { Collection, fetchDocs } from '../../../firebase';
 import { transformTimestamp } from '../sharedTransformers';
-import { ChoreHistoryData } from './types';
+import { FBHistoryChore } from './types';
 
 export async function fetchOrgsChoreHistory(
-  orgId: string
-): Promise<ChoreHistoryData[]> {
-  if (!orgId.length) return [];
-  return fetchDocs(Collection.CHORE_HISTORY, where('orgId', '==', orgId));
+  orgIds: string[]
+): Promise<FBHistoryChore[]> {
+  if (!orgIds.length) return [];
+  return fetchDocs(Collection.CHORE_HISTORY, where('orgId', 'in', orgIds));
 }
 
 export async function fetchOrgsChoreHistoryWithQuery(
   orgId: string,
   { range }: { range?: [UnixTimestamp, UnixTimestamp]; personId?: string }
-): Promise<ChoreHistoryData[]> {
+): Promise<FBHistoryChore[]> {
   if (!orgId.length) return [];
   const orgQuery = where(documentId(), '==', orgId);
 

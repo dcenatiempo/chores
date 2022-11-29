@@ -7,6 +7,7 @@ import {
   ScheduledChore,
   Task,
 } from '../scheduledChores/types';
+import { transformTimestamp } from '../sharedTransformers';
 import { Map } from '../types';
 import { HistoryChore, FBHistoryChore } from './types';
 
@@ -28,18 +29,20 @@ export function hydrateHistoryChore(
   levels: Map<Level>,
   roomTypes: Map<RoomType>,
   rooms: Map<Room>
-): FeedChore {
-  const scheduledChore = scheduledChores[historyChore.id];
+): FeedChore | null {
+  const scheduledChore = scheduledChores[historyChore.scheduledChoreId];
+  if (!scheduledChore) return null;
   const schedule = {
     ...scheduledChore.schedule,
-    startDate: historyChore.startDate,
-    dueDate: historyChore.dueDate,
+    startDate: transformTimestamp.fromFB(historyChore.startDate),
+    dueDate: transformTimestamp.fromFB(historyChore.dueDate),
   };
   return cleanFromObject(
     {
       id: historyChore.id,
       idType: 'HistoryChore',
-      name: scheduledChore.name,
+      scheduledChoreId: scheduledChore.id,
+      name: 'history' + scheduledChore.name,
       schedule,
       tasks: scheduledChore.tasks.map((t) =>
         hydrateHistoryChoreTask(
