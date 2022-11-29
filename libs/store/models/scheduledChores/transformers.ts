@@ -1,15 +1,8 @@
-import ScheduledChoreListItem from '../../../../components/chores/ScheduledChoreListItem';
 import { cleanFromObject } from '../../../utils';
 import { getTaskName } from '../orgs/transformers';
-import {
-  ChoreTemplate,
-  Level,
-  Person,
-  Room,
-  TaskTemplate,
-} from '../orgs/types';
+import { Level, Person, Room, TaskTemplate } from '../orgs/types';
 import { RoomType } from '../roomTypes/types';
-import { transformMap, transformTimestamp } from '../sharedTransformers';
+import { transformTimestamp } from '../sharedTransformers';
 import { Map } from '../types';
 import {
   FBSchedule,
@@ -116,7 +109,7 @@ export function hydrateScheduledChoreTask(
 export function getUIChoreFeedItem(chore: FeedChore): UIChoreFeedItem {
   return {
     id: chore.id,
-    idType: 'ScheduledChore',
+    idType: chore.idType,
     name: chore.name,
     tasks: Object.values(chore.tasks).map((t) => ({
       name: getTaskName(t),

@@ -1,4 +1,5 @@
 import { cleanFromObject } from '../../../utils';
+import * as Logger from '../../../logging';
 import { Level, Person, Room, TaskTemplate } from '../orgs/types';
 import { RoomType } from '../roomTypes/types';
 import {
@@ -6,10 +7,12 @@ import {
   FeedChore,
   ScheduledChore,
   Task,
+  UIChoreFeedItem,
 } from '../scheduledChores/types';
 import { transformTimestamp } from '../sharedTransformers';
 import { Map } from '../types';
 import { HistoryChore, FBHistoryChore } from './types';
+import { DateTime } from 'luxon';
 
 export const transformHistoryChore = {
   toFB(historyChore: HistoryChore): FBHistoryChore {
@@ -40,7 +43,7 @@ export function hydrateHistoryChore(
   return cleanFromObject(
     {
       id: historyChore.id,
-      idType: 'HistoryChore',
+      idType: 'ChoreHistory',
       scheduledChoreId: scheduledChore.id,
       name: 'history' + scheduledChore.name,
       schedule,

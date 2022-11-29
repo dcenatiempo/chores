@@ -14,9 +14,11 @@ export const ChoreHistorySlice = createSlice({
   initialState,
   reducers: {
     setOrgChoreHistory: (state, action: PayloadAction<FBHistoryChore[]>) => {
-      let mappedData: { [key: string]: ChoreHistoryData } = {};
+      const mappedData: { [key: string]: ChoreHistoryData } = {};
       action.payload.forEach((c) => {
-        if (!mappedData.orgId) mappedData[c.orgId] = { id: c.orgId, data: {} };
+        if (!mappedData[c.orgId]) {
+          mappedData[c.orgId] = { id: c.orgId, data: {} };
+        }
         mappedData[c.orgId].data[c.id] = c;
       });
       state.orgsMap = mappedData;

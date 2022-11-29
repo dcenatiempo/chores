@@ -142,7 +142,7 @@ export interface ScheduledChoreState extends BaseSlice {
 
 export interface UIChoreFeedItem {
   id: string; // scheduledChore.id
-  idType: 'ScheduledChore' | 'ChoreInFlight' | 'ChoreHistory';
+  idType: 'ScheduledChore' | 'ChoreHistory';
   name: string;
   tasks: {
     name: string;

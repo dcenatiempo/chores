@@ -3,7 +3,7 @@ import { initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import {
   getFirestore,
-  collection,
+  collection as FBCollection,
   getDocs,
   getDoc,
   doc,
@@ -12,6 +12,9 @@ import {
   updateDoc,
   onSnapshot,
   QueryConstraint,
+  deleteDoc,
+  addDoc,
+  collection,
 } from 'firebase/firestore';
 import {
   transformChore,
@@ -31,7 +34,7 @@ import { transformMap } from '../store/models/sharedTransformers';
 import { Map } from '../store/models/types';
 import { transformUser } from '../store/models/user/transformers';
 import { FBUser, User } from '../store/models/user/types';
-import { Collection } from './types';
+import { Collection, OrgCollection } from './types';
 export * from './types';
 
 // https://firebase.google.com/docs/web/setup#available-libraries
@@ -52,10 +55,10 @@ const auth = getAuth(app);
 const db = getFirestore(app);
 
 async function fetchDocs<T>(
-  collectionName: Collection,
+  collectionName: Collection | OrgCollection,
   ...queryConstraints: QueryConstraint[]
 ): Promise<T[]> {
-  const q = query(collection(db, collectionName), ...queryConstraints);
+  const q = query(FBCollection(db, collectionName), ...queryConstraints);
   const querySnapshot = await getDocs(q);
   return querySnapshot.docs.map((doc) => ({
     id: doc.id,
@@ -64,7 +67,7 @@ async function fetchDocs<T>(
 }
 
 async function fetchDoc<T>(
-  collectionName: Collection,
+  collectionName: Collection | OrgCollection,
   ...pathSegments: string[]
 ): Promise<T | null> {
   const docRef = doc(db, collectionName, ...pathSegments);
@@ -83,7 +86,7 @@ function listenForDocChanges<A>({
   docId,
   callback,
 }: {
-  collectionName: Collection;
+  collectionName: Collection | OrgCollection;
   docId: string;
   callback: (entity: A) => void;
 }) {
@@ -91,13 +94,39 @@ function listenForDocChanges<A>({
   const map = getUnsubscribeMap();
   map?.[listenerKey]?.();
   map[listenerKey] = onSnapshot(doc(db, collectionName, docId), (doc) => {
-    const x = doc?.data?.();
     const newDoc: A = {
       id: docId,
       ...doc?.data?.(),
     } as A;
     callback(newDoc);
   });
+}
+
+export function listenForDocsChanges<A>({
+  collectionName,
+  queries,
+  callback,
+}: {
+  collectionName: Collection | OrgCollection;
+  queries: QueryConstraint[];
+  callback: (entities: A[]) => void;
+}) {
+  const q = query(collection(db, collectionName), ...queries);
+
+  const unsubscribe = onSnapshot(q, (querySnapshot) => {
+    const docs: A[] = [];
+    querySnapshot.forEach((doc) => {
+      const newDoc = {
+        id: doc?.id,
+        ...doc?.data?.(),
+      } as A;
+      docs.push(newDoc);
+    });
+
+    callback(docs);
+  });
+
+  return unsubscribe;
 }
 
 export { app, auth, db, fetchDocs, fetchDoc, listenForDocChanges };
@@ -110,10 +139,13 @@ export enum OrgEntityType {
   LEVEL = 'levels',
   SCHEDULED_CHORES = 'data',
 }
+
 interface Entity {
   id: string;
+  [x: string]: any;
 }
-export async function addEntityToCollection<T, FBT extends Entity>({
+
+export async function addEntityToOrgCollection<T, FBT extends Entity>({
   orgId,
   collection,
   entity,
@@ -121,7 +153,7 @@ export async function addEntityToCollection<T, FBT extends Entity>({
   entityType,
 }: {
   orgId: string;
-  collection: Collection;
+  collection: OrgCollection;
   entity: T;
   transformEntity: { toFB: (entity: T) => FBT };
   entityType: OrgEntityType;
@@ -134,6 +166,42 @@ export async function addEntityToCollection<T, FBT extends Entity>({
   });
 }
 
+export async function addEntityToCollection<T extends { [x: string]: any }>({
+  collection,
+  entity,
+}: {
+  orgId: string;
+  collection: Collection;
+  entity: T;
+}) {
+  const collectionRef = FBCollection(db, collection);
+  await addDoc(collectionRef, entity);
+}
+
+export async function updateEntityFromCollection<
+  T extends { [x: string]: any },
+  FBT extends Entity
+>({
+  collection,
+  entity,
+  transformEntity,
+}: {
+  collection: Collection;
+  entity: T;
+  transformEntity: { toFB: (entity: T) => FBT };
+}) {
+  const firebaseEntity = transformEntity.toFB(entity);
+  const orgDocRef = doc(db, collection, firebaseEntity.id);
+  await updateDoc(orgDocRef, firebaseEntity);
+}
+
+export async function deleteEntityFromCollection<
+  T extends { [x: string]: any }
+>({ collection, entity }: { collection: Collection; entity: T }) {
+  const orgDocRef = doc(db, collection, entity.id);
+  await deleteDoc(orgDocRef);
+}
+
 export async function updateEntitiesFromOrg<T, FBT extends Entity>({
   entities,
   collection,
@@ -142,7 +210,7 @@ export async function updateEntitiesFromOrg<T, FBT extends Entity>({
   entityType,
 }: {
   entities: Map<T>;
-  collection: Collection;
+  collection: OrgCollection;
   orgId: string;
   transformEntity: { toFB: (entity: T) => FBT };
   entityType: OrgEntityType;
@@ -177,12 +245,12 @@ interface UpdateEntitiesParams<T> {
 
 const roomConfig = {
   transformEntity: transformRoom,
-  collection: Collection.ORGS,
+  collection: OrgCollection.ORGS,
   entityType: OrgEntityType.ROOM,
 };
 
 export async function addRoomToOrg(params: AddEntityParams<Room>) {
-  return addEntityToCollection({
+  return addEntityToOrgCollection({
     ...params,
     ...roomConfig,
   });
@@ -198,13 +266,13 @@ export async function updateRoomsFromOrg(params: UpdateEntitiesParams<Room>) {
 const taskConfig = {
   transformEntity: transformTask,
   entityType: OrgEntityType.TASK,
-  collection: Collection.ORGS,
+  collection: OrgCollection.ORGS,
 };
 
 export async function addTaskTemplateToOrg(
   params: AddEntityParams<TaskTemplate>
 ) {
-  return addEntityToCollection({
+  return addEntityToOrgCollection({
     ...params,
     ...taskConfig,
   });
@@ -222,13 +290,13 @@ export async function updateTaskTemplatesFromOrg(
 const choreConfig = {
   transformEntity: transformChore,
   entityType: OrgEntityType.CHORE,
-  collection: Collection.ORGS,
+  collection: OrgCollection.ORGS,
 };
 
 export async function addChoreTemplateToOrg(
   params: AddEntityParams<ChoreTemplate>
 ) {
-  return addEntityToCollection({
+  return addEntityToOrgCollection({
     ...params,
     ...choreConfig,
   });
@@ -246,11 +314,11 @@ export async function updateChoreTemplatesFromOrg(
 const levelConfig = {
   transformEntity: transformLevel,
   entityType: OrgEntityType.LEVEL,
-  collection: Collection.ORGS,
+  collection: OrgCollection.ORGS,
 };
 
 export async function addLevelToOrg(params: AddEntityParams<Level>) {
-  return addEntityToCollection({
+  return addEntityToOrgCollection({
     ...params,
     ...levelConfig,
   });
@@ -266,11 +334,11 @@ export async function updateLevelsFromOrg(params: UpdateEntitiesParams<Level>) {
 const personConfig = {
   transformEntity: transformPerson,
   entityType: OrgEntityType.PERSON,
-  collection: Collection.ORGS,
+  collection: OrgCollection.ORGS,
 };
 
 export async function addPersonToOrg(params: AddEntityParams<Person>) {
-  return addEntityToCollection({
+  return addEntityToOrgCollection({
     ...params,
     ...personConfig,
   });

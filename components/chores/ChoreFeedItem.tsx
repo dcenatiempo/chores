@@ -24,7 +24,7 @@ const ChoreFeedItem: FC<ChoreFeedItemProps> = ({
     <ListItem>
       <div style={{ fontSize: 12 }} onClick={_onClickChore}>
         {chore.name} ({chore.person.name})
-        {/* {chore.tasks.every((t) => t.completed) ? 'x' : 'o'} */}
+        {chore.tasks.every((t) => t.completed) ? 'x' : 'o'}
       </div>
       <div
         style={{
@@ -34,13 +34,13 @@ const ChoreFeedItem: FC<ChoreFeedItemProps> = ({
           columnGap: 10,
         }}
       >
-        {/* <ul>
+        <ul>
           {chore.tasks.map((t) => (
             <li key={t.id} onClick={() => _onClickTask(t.id)}>
               {t.name} {t.completed ? 'x' : 'o'}
             </li>
           ))}
-        </ul> */}
+        </ul>
       </div>
     </ListItem>
   );

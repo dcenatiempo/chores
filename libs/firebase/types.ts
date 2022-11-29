@@ -4,12 +4,15 @@ export interface FBTimestamp extends Timestamp {}
 
 export interface FBReference extends DocumentReference {}
 
-export enum Collection {
+export enum OrgCollection {
   ORGS = 'orgs',
+  ORG_SCHEDULED_CHORES = 'orgScheduledChores',
+}
+
+export enum Collection {
   SURFACES = 'surfaces',
   ROOM_TYPES = 'roomTypes',
   ACTIONS = 'actions',
   USER = 'users',
-  ORG_SCHEDULED_CHORES = 'orgScheduledChores',
   CHORE_HISTORY = 'choreHistory',
 }

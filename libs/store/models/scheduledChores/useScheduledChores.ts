@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { incrementHex } from '../../../utils';
 // import { Map } from '../types';
@@ -7,8 +7,8 @@ import * as selectors from './selectors';
 import * as firebase from './firebase';
 import { ScheduledChore } from './types';
 import {
-  addEntityToCollection,
-  Collection,
+  addEntityToOrgCollection,
+  OrgCollection,
   OrgEntityType,
   updateEntitiesFromOrg,
 } from '../../../firebase';
@@ -48,13 +48,13 @@ export default function useScheduledChores() {
 
   const scheduledChoreConfig = {
     transformEntity: transformScheduledChore,
-    collection: Collection.ORG_SCHEDULED_CHORES,
+    collection: OrgCollection.ORG_SCHEDULED_CHORES,
     entityType: OrgEntityType.SCHEDULED_CHORES,
   };
 
   function addScheduledChore(chore: ScheduledChore) {
     if (!orgId) return;
-    addEntityToCollection({
+    addEntityToOrgCollection({
       orgId,
       entity: { ...chore, id: getNextId() },
       ...scheduledChoreConfig,

@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { listenForDocChanges } from '../../../firebase';
-import { Collection } from '../../../firebase/types';
+import { OrgCollection } from '../../../firebase/types';
 import * as log from '../../../logging';
 import { arrayToOrgMap } from './transformers';
 import { FBOrg, OrgsState } from './types';
@@ -61,7 +61,7 @@ const listenForOrgChanges = createAsyncThunk(
     // @ts-expect-error
     const orgId: string = thunkAPI.getState().orgs.currentOrgId;
     listenForDocChanges({
-      collectionName: Collection.ORGS,
+      collectionName: OrgCollection.ORGS,
       docId: orgId,
       callback: (org: FBOrg) => thunkAPI.dispatch(actions.updateOrg(org)),
     });

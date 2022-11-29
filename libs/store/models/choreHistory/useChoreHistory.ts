@@ -3,17 +3,28 @@ import { useDispatch, useSelector } from 'react-redux';
 import { actions } from './reducer';
 import * as selectors from './selectors';
 import * as firebase from './firebase';
-import { HistoryChore } from './types';
+import { CreateHistoryChoreInput, FBHistoryChore, HistoryChore } from './types';
 import {
   addEntityToCollection,
   Collection,
+  deleteEntityFromCollection,
+  listenForDocChanges,
+  listenForDocsChanges,
   OrgEntityType,
   updateEntitiesFromOrg,
+  updateEntityFromCollection,
 } from '../../../firebase';
 import { transformHistoryChore } from './transformers';
+import { ScheduledChore, UIChoreFeedItem } from '../scheduledChores/types';
+import { DateTime } from 'luxon';
+import { transformTimestamp } from '../sharedTransformers';
+import { where } from 'firebase/firestore';
+import { useCallback, useRef, useState } from 'react';
+import { UnixTimestamp } from '../../../dateTime';
 
 export default function useChoreHistory() {
   const dispatch = useDispatch();
+  const unsubscribe = useRef<() => void>();
 
   async function fetchOrgsChoreHistory(orgIds: string[]) {
     return firebase.fetchOrgsChoreHistory(orgIds).then((orgChoreHistory) => {
@@ -27,44 +38,60 @@ export default function useChoreHistory() {
   const historyFeedChores = useSelector(selectors.historyFeedChores);
   const historyFeedChoresArray = useSelector(selectors.historyFeedChoresArray);
 
-  const scheduledChoreConfig = {
-    transformEntity: transformHistoryChore,
-    collection: Collection.ORG_SCHEDULED_CHORES,
-    entityType: OrgEntityType.SCHEDULED_CHORES,
-  };
-
-  function addHistoryChore(chore: HistoryChore) {
+  function addHistoryChore(chore: CreateHistoryChoreInput) {
     if (!orgId) return;
     addEntityToCollection({
       orgId,
       entity: chore,
-      ...scheduledChoreConfig,
+      collection: Collection.CHORE_HISTORY,
     });
   }
 
   function editHistoryChore(chore: HistoryChore) {
     if (!orgId) return;
-
-    const choreHistoryCopy = { ...choreHistory };
-    choreHistoryCopy[chore.id] = chore;
-    updateEntitiesFromOrg({
-      entities: choreHistoryCopy,
-      orgId,
-      ...scheduledChoreConfig,
+    updateEntityFromCollection({
+      entity: chore,
+      collection: Collection.CHORE_HISTORY,
+      transformEntity: transformHistoryChore,
     });
   }
 
   function deleteHistoryChore(chore: HistoryChore) {
-    if (!orgId) return;
-
-    const choreHistoryCopy = { ...choreHistory };
-    delete choreHistoryCopy[chore.id];
-    updateEntitiesFromOrg({
-      entities: choreHistoryCopy,
-      orgId,
-      ...scheduledChoreConfig,
+    deleteEntityFromCollection({
+      entity: chore,
+      collection: Collection.CHORE_HISTORY,
     });
   }
+
+  function getCreateHistoryChoreInputFromScheduledChore(
+    chore: ScheduledChore,
+    dueDate: UnixTimestamp
+  ): CreateHistoryChoreInput {
+    const date = dueDate || DateTime.local().startOf('day').toSeconds();
+    return {
+      orgId: orgId,
+      personId: chore.personId,
+      scheduledChoreId: chore.id,
+      startDate: transformTimestamp.toFB(date),
+      dueDate: transformTimestamp.toFB(date),
+      taskIdsCompleted: [],
+    };
+  }
+
+  const listenForChoreHistoryChanges = useCallback(
+    (id: string) => {
+      unsubscribe.current?.();
+      const _unsubscribe = listenForDocsChanges({
+        collectionName: Collection.CHORE_HISTORY,
+        callback: (entities: FBHistoryChore[]) => {
+          dispatch(actions.setOrgChoreHistory(entities));
+        },
+        queries: [where('orgId', '==', id)],
+      });
+      unsubscribe.current = _unsubscribe;
+    },
+    [dispatch, unsubscribe]
+  );
 
   return {
     historyFeedChores,
@@ -75,5 +102,7 @@ export default function useChoreHistory() {
     editHistoryChore,
     deleteHistoryChore,
     fetchOrgsChoreHistory,
+    getCreateHistoryChoreInputFromScheduledChore,
+    listenForChoreHistoryChanges,
   };
 }

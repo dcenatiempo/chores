@@ -3,7 +3,11 @@ import type { NextPage } from 'next';
 import PageWrapper from '../../components/nav/PageWrapper';
 
 import { Calendar } from '../../components/base';
-import { timestampToISODate, UnixTimestamp } from '../../libs/dateTime';
+import {
+  ISOToTimestamp,
+  timestampToISODate,
+  UnixTimestamp,
+} from '../../libs/dateTime';
 import { DateTime } from 'luxon';
 import ChoreFeedItem from '../../components/chores/ChoreFeedItem';
 import React, { useMemo, useState } from 'react';
@@ -19,11 +23,18 @@ import { CalendarType } from '../../components/base/Calendar/CalendarDay';
 import useChoreHistory from '../../libs/store/models/choreHistory/useChoreHistory';
 import PeopleSelector from '../../components/people/PeopleSelector';
 import { Person } from '../../libs/store/models/orgs/types';
+import Modal from '../../components/base/Modal';
+import { HistoryChore } from '../../libs/store/models/choreHistory/types';
 
 const todaySeconds = DateTime.local().toSeconds();
 
 const SchedulePage: NextPage = () => {
+  const [modalChore, setModalChore] = useState<[string, UIChoreFeedItem]>();
+  // const [showModal, setShowModal] = useState(false);
+  const showModal = !!modalChore;
+
   const {
+    scheduledChores,
     addScheduledChore,
     editScheduledChore,
     deleteScheduledChore,
@@ -31,7 +42,13 @@ const SchedulePage: NextPage = () => {
     feedChoresArray,
   } = useScheduledChores();
 
-  const { historyFeedChoresArray } = useChoreHistory();
+  const {
+    choreHistory,
+    historyFeedChoresArray,
+    addHistoryChore,
+    editHistoryChore,
+    getCreateHistoryChoreInputFromScheduledChore,
+  } = useChoreHistory();
 
   const [calendarStartDate, setCalendarStartDate] = useState(0);
   const [calendarEndDate, setCalendarEndDate] = useState(0);
@@ -72,11 +89,20 @@ const SchedulePage: NextPage = () => {
     };
 
     extrapolatedFeedChoresArray.forEach((c) => {
-      const choreHistory = historyFeedChoresArray.find(
-        (ch) =>
+      const choreHistory = historyFeedChoresArray.find((ch) => {
+        if (ch?.scheduledChoreId === c.id)
+          console.log(
+            c.id,
+            timestampToISODate(c.schedule.dueDate || 0),
+            timestampToISODate(ch?.schedule.dueDate || 0)
+          );
+        return (
           ch?.scheduledChoreId === c.id &&
-          ch.schedule.dueDate === c.schedule.dueDate
-      );
+          timestampToISODate(ch.schedule.dueDate || 0) ===
+            timestampToISODate(c.schedule.dueDate || 0)
+        );
+      });
+
       const choreToShow = choreHistory || c;
 
       const luxonStart = c.schedule.startDate
@@ -147,34 +173,82 @@ const SchedulePage: NextPage = () => {
     calendarStartDate,
   ]);
 
-  function _onClickDailyTask(date: string, choreId: string, taskId: string) {
-    const chore = choresFeed.daily[date].find((c) => c?.id === choreId);
-    const task = chore?.tasks.find((t) => t.id === taskId);
-    if (!!task) task.completed = !task?.completed;
-    // TODO: toggle in FB
-    // setEventsMap({ ...eventsMap });
+  function _onClickDailyTask(
+    date: string,
+    chore: UIChoreFeedItem,
+    taskId: string
+  ) {
+    if (!chore) return;
+
+    const newChore: UIChoreFeedItem = {
+      ...chore,
+      tasks: chore.tasks.map((c) => ({ ...c })),
+    };
+
+    const taskIndex = chore.tasks.findIndex((t) => t.id === taskId);
+    if (taskIndex < 0) return;
+
+    newChore.tasks[taskIndex].completed = !newChore.tasks[taskIndex].completed;
+    setModalChore([date, newChore]);
   }
 
-  function _onClickDailyChore(date: string, choreId: string) {
-    const chore = choresFeed.daily[date].find((c) => c?.id === choreId);
+  function _onClickDailyChore(date: string, chore: UIChoreFeedItem) {
+    if (!chore) return;
+
+    const newChore = {
+      ...chore,
+      tasks: chore.tasks.map((c) => ({ ...c })),
+    };
     chore?.tasks.forEach((t) => {
       t.completed = true;
     });
-    // TODO: toggle in FB
-    // setEventsMap({ ...eventsMap });
+    debugger;
+    setModalChore([date, newChore]);
+  }
+
+  function onCloseModal() {
+    setModalChore(undefined);
+    debugger;
+    if (!modalChore) return;
+    const [date, uiChore] = modalChore;
+    const choreId = uiChore.id;
+    if (!uiChore) return;
+    // if tasks are different, then save
+    const originalChore = choresFeed.daily[date].find((c) => c?.id === choreId);
+    if (!originalChore) return;
+
+    if (JSON.stringify(uiChore.tasks) === JSON.stringify(originalChore.tasks)) {
+      // nothing has changed!
+      return;
+    }
+
+    if (uiChore.idType === 'ScheduledChore') {
+      const newChore = getCreateHistoryChoreInputFromScheduledChore(
+        scheduledChores[choreId],
+        ISOToTimestamp(date)
+      );
+      (newChore.taskIdsCompleted = uiChore.tasks
+        .filter((t) => t.completed)
+        .map((t) => t.id)),
+        addHistoryChore(newChore);
+    } else {
+      const newChore: HistoryChore = {
+        ...choreHistory[choreId],
+        taskIdsCompleted: uiChore.tasks
+          .filter((t) => t.completed)
+          .map((t) => t.id),
+      };
+
+      editHistoryChore(newChore);
+    }
   }
 
   const [people, setPeople] = React.useState<Person[]>([]);
-
+  console.log(modalChore?.[1]);
   return (
     <PageWrapper metaTitle="Chore Schedule">
       <PeopleSelector selected={people} onSelect={setPeople} />
-      <AddOrEditScheduledChoresList
-        addChore={addScheduledChore}
-        editChore={editScheduledChore}
-        deleteChore={deleteScheduledChore}
-        chores={scheduledChoresArray}
-      />
+
       <Calendar
         numWeeks={calendarWeeks}
         date={today}
@@ -244,12 +318,12 @@ const SchedulePage: NextPage = () => {
             return todaysChores.map((c) => {
               if (!people.length || people.find((p) => p.id === c.person.id))
                 return c ? (
-                  <ChoreFeedItem
-                    key={c.id}
-                    chore={c}
-                    onClickTask={(cid, tid) => _onClickDailyTask(key, cid, tid)}
-                    onClickChore={(cid) => _onClickDailyChore(key, cid)}
-                  />
+                  <div
+                    style={{ fontSize: 12 }}
+                    onClick={() => setModalChore([key, c])}
+                  >
+                    {c.name} ({c.person.name})
+                  </div>
                 ) : null;
             });
           return null;
@@ -261,6 +335,25 @@ const SchedulePage: NextPage = () => {
           setCalendarEndDate,
         }}
       />
+      <AddOrEditScheduledChoresList
+        addChore={addScheduledChore}
+        editChore={editScheduledChore}
+        deleteChore={deleteScheduledChore}
+        chores={scheduledChoresArray}
+      />
+      <Modal onClose={onCloseModal} title={'Chore'} visible={showModal}>
+        {modalChore ? (
+          <ChoreFeedItem
+            chore={modalChore[1]}
+            onClickTask={(cid, tid) =>
+              _onClickDailyTask(modalChore[0], modalChore[1], tid)
+            }
+            onClickChore={(cid) =>
+              _onClickDailyChore(modalChore[0], modalChore[1])
+            }
+          />
+        ) : null}
+      </Modal>
     </PageWrapper>
   );
 };

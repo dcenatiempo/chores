@@ -12,6 +12,16 @@ export interface HistoryChore {
   // taskIdsApproved: string[];
 }
 
+export interface CreateHistoryChoreInput {
+  orgId: string;
+  personId: string;
+  scheduledChoreId: string;
+  startDate: FBTimestamp;
+  dueDate: FBTimestamp;
+  taskIdsCompleted: string[];
+  // taskIdsApproved: string[];
+}
+
 export interface FBHistoryChore {
   id: string;
   orgId: string;

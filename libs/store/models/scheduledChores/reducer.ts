@@ -1,12 +1,8 @@
 import { createAsyncThunk, createSlice, PayloadAction } from '@reduxjs/toolkit';
-import {
-  FBScheduledChore,
-  ScheduledChoreData,
-  ScheduledChoreState,
-} from './types';
+import { ScheduledChoreData, ScheduledChoreState } from './types';
 import * as log from '../../../logging';
 import { arrayToMap } from '../sharedTransformers';
-import { Collection, listenForDocChanges } from '../../../firebase';
+import { listenForDocChanges, OrgCollection } from '../../../firebase';
 
 export const initialLastId = '1000';
 
@@ -56,7 +52,7 @@ const listenForScheduledChoreChanges = createAsyncThunk(
     // @ts-expect-error
     const orgId: string = thunkAPI.getState().orgs.currentOrgId;
     listenForDocChanges({
-      collectionName: Collection.ORG_SCHEDULED_CHORES,
+      collectionName: OrgCollection.ORG_SCHEDULED_CHORES,
       docId: orgId,
       callback: (choreData: ScheduledChoreData) => {
         thunkAPI.dispatch(actions.updateScheduledChores(choreData));
