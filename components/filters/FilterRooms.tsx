@@ -79,8 +79,9 @@ export default function FilterRooms({
   }, [roomsArray, level, roomType]);
 
   useEffect(() => {
-    onRoomsChange(roomOptions);
-  }, [onRoomsChange, roomOptions]);
+    if (room) onRoomsChange([room]);
+    else onRoomsChange(roomOptions);
+  }, [onRoomsChange, roomOptions, room]);
 
   return (
     <div>

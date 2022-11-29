@@ -8,6 +8,7 @@
   min-height: var(--input-height);
   min-width: var(--input-height);
   border-radius: 3px;
+  cursor: pointer;
 }
 
 /* takes the shape of its contents */

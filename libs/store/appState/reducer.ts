@@ -3,6 +3,8 @@ import { AppState } from './types';
 
 const initialState: AppState = {
   isDark: true,
+  isKidMode: false,
+  kidModePin: undefined,
 };
 
 export const AppSlice = createSlice({
@@ -11,6 +13,11 @@ export const AppSlice = createSlice({
   reducers: {
     setIsDark: (state, action: PayloadAction<boolean>) => {
       state.isDark = action.payload;
+    },
+    toggleKidMode: (state, action: PayloadAction<string | undefined>) => {
+      const newKidMode = !state.isKidMode;
+      state.isKidMode = newKidMode;
+      state.kidModePin = newKidMode ? action.payload : undefined;
     },
   },
 });

@@ -33,6 +33,7 @@ export interface IconProps {
   size?: number;
   color?: IconColor;
   tooltipTitle?: string;
+  style?: object;
 }
 
 const Icon: FC<IconProps> = ({
@@ -41,18 +42,19 @@ const Icon: FC<IconProps> = ({
   size = 16,
   color,
   tooltipTitle,
+  style,
 }) => {
   const TheIcon = useMemo(() => getIcon(name, outlined), [name, outlined]);
 
   if (!TheIcon) return null;
   if (color)
     return (
-      <span className={`${color}-color`}>
+      <span className={`${color}-color`} style={style}>
         <TheIcon size={size} title={tooltipTitle} />
       </span>
     );
 
-  return <TheIcon size={size} title={tooltipTitle} />;
+  return <TheIcon style={style} size={size} title={tooltipTitle} />;
 };
 
 export default Icon;
@@ -74,6 +76,8 @@ export enum IconName {
   RIGHT_CHEVRON = 'RIGHT_CHEVRON',
   LEFT_CHEVRON = 'LEFT_CHEVRON',
   IN_PROGRESS = 'IN_PROGRESS',
+  THUMBS_UP = 'THUMBS_UP',
+  THUMBS_DOWN = 'THUMBS_DOWN',
 }
 
 const IconMap = {
@@ -109,4 +113,8 @@ const IconMap = {
   RIGHT_CHEVRON_FILL: ri.RiArrowRightSFill,
   IN_PROGRESS_LINE: ri.RiTimeLine,
   IN_PROGRESS_FILL: ri.RiTimeFill,
+  THUMBS_UP_FILL: ri.RiThumbUpFill,
+  THUMBS_UP_LINE: ri.RiThumbUpLine,
+  THUMBS_DOWN_FILL: ri.RiThumbDownFill,
+  THUMBS_DOWN_LINE: ri.RiThumbDownLine,
 };

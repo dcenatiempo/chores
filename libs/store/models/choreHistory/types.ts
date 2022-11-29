@@ -9,7 +9,7 @@ export interface HistoryChore {
   startDate: FBTimestamp;
   dueDate: FBTimestamp;
   taskIdsCompleted: string[];
-  // taskIdsApproved: string[];
+  taskIdsApproved: string[];
 }
 
 export interface CreateHistoryChoreInput {
@@ -19,7 +19,7 @@ export interface CreateHistoryChoreInput {
   startDate: FBTimestamp;
   dueDate: FBTimestamp;
   taskIdsCompleted: string[];
-  // taskIdsApproved: string[];
+  taskIdsApproved: string[];
 }
 
 export interface FBHistoryChore {
@@ -30,7 +30,7 @@ export interface FBHistoryChore {
   startDate: FBTimestamp;
   dueDate: FBTimestamp;
   taskIdsCompleted: string[];
-  // taskIdsApproved: string[];
+  taskIdsApproved: string[];
 }
 
 export interface ChoreHistoryData {

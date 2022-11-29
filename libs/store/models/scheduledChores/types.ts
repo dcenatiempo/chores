@@ -70,6 +70,7 @@ export interface Task {
   rooms?: Room[];
 
   completed?: boolean;
+  approved?: boolean;
 }
 
 export interface ScheduledChore {
@@ -148,6 +149,7 @@ export interface UIChoreFeedItem {
     name: string;
     id: string;
     completed: boolean;
+    approved: boolean | undefined;
   }[];
   person: {
     id: string;

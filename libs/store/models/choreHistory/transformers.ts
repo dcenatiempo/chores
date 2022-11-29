@@ -48,6 +48,7 @@ export function hydrateHistoryChore(
         hydrateHistoryChoreTask(
           t,
           historyChore.taskIdsCompleted,
+          historyChore.taskIdsApproved,
           taskTemplates,
           levels,
           roomTypes,
@@ -65,6 +66,7 @@ export function hydrateHistoryChore(
 export function hydrateHistoryChoreTask(
   scheduledChoreTask: FBTask,
   taskIdsCompleted: string[],
+  taskIdsApproved: string[],
   taskTemplates: Map<TaskTemplate>,
   levels: Map<Level>,
   roomTypes: Map<RoomType>,
@@ -77,6 +79,7 @@ export function hydrateHistoryChoreTask(
   );
   const _rooms = scheduledChoreTask.roomIds?.map((rid) => rooms[rid]);
   const _completed = taskIdsCompleted.includes(scheduledChoreTask.id);
+  const _approved = !!taskIdsApproved?.includes(scheduledChoreTask.id);
   return {
     id: scheduledChoreTask.id,
     taskTemplate,
@@ -84,5 +87,6 @@ export function hydrateHistoryChoreTask(
     roomTypes: _roomTypes,
     rooms: _rooms,
     completed: _completed,
+    approved: _approved,
   };
 }

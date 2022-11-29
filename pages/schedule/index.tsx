@@ -25,12 +25,12 @@ import PeopleSelector from '../../components/people/PeopleSelector';
 import { Person } from '../../libs/store/models/orgs/types';
 import Modal from '../../components/base/Modal';
 import { HistoryChore } from '../../libs/store/models/choreHistory/types';
+import useAppState from '../../libs/store/appState/useAppState';
 
 const todaySeconds = DateTime.local().toSeconds();
 
 const SchedulePage: NextPage = () => {
   const [modalChore, setModalChore] = useState<[string, UIChoreFeedItem]>();
-  // const [showModal, setShowModal] = useState(false);
   const showModal = !!modalChore;
 
   const {
@@ -91,16 +91,11 @@ const SchedulePage: NextPage = () => {
     extrapolatedFeedChoresArray.forEach((c) => {
       const choreHistory = historyFeedChoresArray.find((ch) => {
         if (ch?.scheduledChoreId === c.id)
-          console.log(
-            c.id,
-            timestampToISODate(c.schedule.dueDate || 0),
-            timestampToISODate(ch?.schedule.dueDate || 0)
+          return (
+            ch?.scheduledChoreId === c.id &&
+            timestampToISODate(ch.schedule.dueDate || 0) ===
+              timestampToISODate(c.schedule.dueDate || 0)
           );
-        return (
-          ch?.scheduledChoreId === c.id &&
-          timestampToISODate(ch.schedule.dueDate || 0) ===
-            timestampToISODate(c.schedule.dueDate || 0)
-        );
       });
 
       const choreToShow = choreHistory || c;
@@ -192,6 +187,29 @@ const SchedulePage: NextPage = () => {
     setModalChore([date, newChore]);
   }
 
+  const { isKidMode } = useAppState();
+
+  function _onClickApproveDailyTask(
+    date: string,
+    chore: UIChoreFeedItem,
+    taskId: string
+  ) {
+    if (isKidMode) return;
+    if (!chore) return;
+
+    const newChore: UIChoreFeedItem = {
+      ...chore,
+      tasks: chore.tasks.map((c) => ({ ...c })),
+    };
+
+    const taskIndex = chore.tasks.findIndex((t) => t.id === taskId);
+    if (taskIndex < 0) return;
+
+    newChore.tasks[taskIndex].approved =
+      !newChore.tasks[taskIndex].approved || undefined;
+    setModalChore([date, newChore]);
+  }
+
   function _onClickDailyChore(date: string, chore: UIChoreFeedItem) {
     if (!chore) return;
 
@@ -214,7 +232,6 @@ const SchedulePage: NextPage = () => {
     // if tasks are different, then save
     const originalChore = choresFeed.daily[date].find((c) => c?.id === choreId);
     if (!originalChore) return;
-
     if (JSON.stringify(uiChore.tasks) === JSON.stringify(originalChore.tasks)) {
       // nothing has changed!
       return;
@@ -225,15 +242,21 @@ const SchedulePage: NextPage = () => {
         scheduledChores[choreId],
         ISOToTimestamp(date)
       );
-      (newChore.taskIdsCompleted = uiChore.tasks
+      newChore.taskIdsCompleted = uiChore.tasks
         .filter((t) => t.completed)
-        .map((t) => t.id)),
-        addHistoryChore(newChore);
+        .map((t) => t.id);
+      newChore.taskIdsApproved = uiChore.tasks
+        .filter((t) => t.completed)
+        .map((t) => t.id);
+      addHistoryChore(newChore);
     } else {
       const newChore: HistoryChore = {
         ...choreHistory[choreId],
         taskIdsCompleted: uiChore.tasks
           .filter((t) => t.completed)
+          .map((t) => t.id),
+        taskIdsApproved: uiChore.tasks
+          .filter((t) => t.approved)
           .map((t) => t.id),
       };
 
@@ -242,7 +265,12 @@ const SchedulePage: NextPage = () => {
   }
 
   const [people, setPeople] = React.useState<Person[]>([]);
-  console.log(modalChore?.[1]);
+  const filteredScheduledChores = useMemo(() => {
+    return scheduledChoresArray.filter((c) => {
+      return !people.length || !!people.find((p) => p.id === c.personId);
+    });
+  }, [people, scheduledChoresArray]);
+
   return (
     <PageWrapper metaTitle="Chore Schedule">
       <PeopleSelector selected={people} onSelect={setPeople} />
@@ -347,21 +375,26 @@ const SchedulePage: NextPage = () => {
           setCalendarEndDate,
         }}
       />
-      <AddOrEditScheduledChoresList
-        addChore={addScheduledChore}
-        editChore={editScheduledChore}
-        deleteChore={deleteScheduledChore}
-        chores={scheduledChoresArray}
-      />
+      {isKidMode ? null : (
+        <AddOrEditScheduledChoresList
+          addChore={addScheduledChore}
+          editChore={editScheduledChore}
+          deleteChore={deleteScheduledChore}
+          chores={filteredScheduledChores}
+        />
+      )}
       <Modal onClose={onCloseModal} title={'Chore'} visible={showModal}>
         {modalChore ? (
           <ChoreFeedItem
             chore={modalChore[1]}
-            onClickTask={(cid, tid) =>
+            onClickTask={(tid) =>
               _onClickDailyTask(modalChore[0], modalChore[1], tid)
             }
-            onClickChore={(cid) =>
+            onClickChore={() =>
               _onClickDailyChore(modalChore[0], modalChore[1])
+            }
+            onClickApproveTask={(tid) =>
+              _onClickApproveDailyTask(modalChore[0], modalChore[1], tid)
             }
           />
         ) : null}

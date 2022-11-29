@@ -29,6 +29,7 @@ const AddOrEditChore: FC<AddOrEditChoreProps> = ({
 }) => {
   const { tasksArray } = useCurrentOrg();
   const [roomOptions, setRooms] = useState<Room[]>([]);
+  console.log(roomOptions);
 
   const filteredSurfaces = useMemo(
     () => arrayToMap(surfacesFromRooms(roomOptions)),

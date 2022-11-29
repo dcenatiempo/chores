@@ -115,6 +115,7 @@ export function getUIChoreFeedItem(chore: FeedChore): UIChoreFeedItem {
       name: getTaskName(t),
       id: t.id,
       completed: !!t.completed,
+      approved: t.approved,
     })),
     person: {
       id: chore.person.id,

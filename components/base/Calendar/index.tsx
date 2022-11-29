@@ -45,16 +45,18 @@ const Calendar: FC<CalendarProps> = ({
   calendarState,
   ...rest
 }) => {
-  const [calendarDays, setCalendarDays] = useState(7);
-  const [calendarWeeks, setCalendarWeeks] = useState(5);
-  const [today, setToday] = useState(todaySeconds);
   const calendarViewOptions = [
     { label: 'Month', value: 'm', days: 7, weeks: 5 },
     { label: 'Week', value: 'w', days: 7, weeks: 1 },
     { label: '3 Day', value: '3d', days: 3, weeks: 1 },
     { label: 'Day', value: 'd', days: 1, weeks: 1 },
   ];
-  const [calendarView, setCalendarView] = useState(calendarViewOptions[0]);
+  const [calendarView, setCalendarView] = useState(calendarViewOptions[2]);
+
+  const [calendarDays, setCalendarDays] = useState(calendarView.days);
+  const [calendarWeeks, setCalendarWeeks] = useState(calendarView.weeks);
+  const [today, setToday] = useState(todaySeconds);
+
   function onSelectCalendarView(view?: {
     label: string;
     value: string;

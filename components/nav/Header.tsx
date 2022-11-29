@@ -4,6 +4,7 @@ import { Button, IconButton, IconName } from '../base';
 import { useRouter } from 'next/router';
 import { useSelector } from 'react-redux';
 import { orgsStore } from '../../libs/store';
+import useAppState from '../../libs/store/appState/useAppState';
 
 interface Props {}
 
@@ -67,8 +68,11 @@ const LogInOutButton: FC = () => {
 };
 
 const NavigationButtons: FC = () => {
+  const { isKidMode } = useAppState();
   const router = useRouter();
-  const tabs = ['dashboard', 'household', 'chores', 'schedule', 'settings'];
+  const tabs = isKidMode
+    ? ['schedule', 'settings']
+    : ['dashboard', 'household', 'chores', 'schedule', 'settings'];
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       {tabs.map((tab) => (

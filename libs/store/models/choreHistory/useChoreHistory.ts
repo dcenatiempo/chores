@@ -8,18 +8,15 @@ import {
   addEntityToCollection,
   Collection,
   deleteEntityFromCollection,
-  listenForDocChanges,
   listenForDocsChanges,
-  OrgEntityType,
-  updateEntitiesFromOrg,
   updateEntityFromCollection,
 } from '../../../firebase';
 import { transformHistoryChore } from './transformers';
-import { ScheduledChore, UIChoreFeedItem } from '../scheduledChores/types';
+import { ScheduledChore } from '../scheduledChores/types';
 import { DateTime } from 'luxon';
 import { transformTimestamp } from '../sharedTransformers';
 import { where } from 'firebase/firestore';
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useRef } from 'react';
 import { UnixTimestamp } from '../../../dateTime';
 
 export default function useChoreHistory() {
@@ -75,6 +72,7 @@ export default function useChoreHistory() {
       startDate: transformTimestamp.toFB(date),
       dueDate: transformTimestamp.toFB(date),
       taskIdsCompleted: [],
+      taskIdsApproved: [],
     };
   }
 
