@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 
 import PageWrapper from '../../components/nav/PageWrapper';
 
-import { Calendar } from '../../components/base';
+import { Calendar, Icon, IconName } from '../../components/base';
 import {
   ISOToTimestamp,
   timestampToISODate,
@@ -199,16 +199,14 @@ const SchedulePage: NextPage = () => {
       ...chore,
       tasks: chore.tasks.map((c) => ({ ...c })),
     };
-    chore?.tasks.forEach((t) => {
+    newChore?.tasks.forEach((t) => {
       t.completed = true;
     });
-    debugger;
     setModalChore([date, newChore]);
   }
 
   function onCloseModal() {
     setModalChore(undefined);
-    debugger;
     if (!modalChore) return;
     const [date, uiChore] = modalChore;
     const choreId = uiChore.id;
@@ -314,19 +312,33 @@ const SchedulePage: NextPage = () => {
         renderDay={(date: UnixTimestamp) => {
           const key = timestampToISODate(date);
           const todaysChores = choresFeed.daily[key];
-          if (todaysChores)
-            return todaysChores.map((c) => {
-              if (!people.length || people.find((p) => p.id === c.person.id))
-                return c ? (
-                  <div
-                    style={{ fontSize: 12 }}
-                    onClick={() => setModalChore([key, c])}
-                  >
-                    {c.name} ({c.person.name})
-                  </div>
-                ) : null;
-            });
-          return null;
+          if (!todaysChores) return null;
+          return todaysChores.map((c) => {
+            if (!c) return null;
+            if (people.length && !people.find((p) => p.id === c.person.id))
+              return null;
+
+            const isCompleted = c.tasks.every((t) => t.completed);
+            const isInProgress =
+              !isCompleted && c.tasks.some((t) => t.completed);
+
+            return (
+              <div
+                key={c.name + c.person.name}
+                style={{
+                  fontSize: 12,
+                  textDecoration: isCompleted ? 'line-through' : undefined,
+                  cursor: 'pointer',
+                }}
+                onClick={() => setModalChore([key, c])}
+              >
+                {c.name} ({c.person.name}){' '}
+                {isInProgress ? (
+                  <Icon outlined name={IconName.IN_PROGRESS} />
+                ) : null}
+              </div>
+            );
+          });
         }}
         type={calendarType}
         calendarState={{

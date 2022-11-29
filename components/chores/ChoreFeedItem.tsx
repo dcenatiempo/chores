@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { UIChoreFeedItem } from '../../libs/store/models/scheduledChores/types';
-import { ListItem } from '../base';
+import { Icon, IconName, ListItem } from '../base';
 
 interface ChoreFeedItemProps {
   chore: UIChoreFeedItem;
@@ -22,9 +22,11 @@ const ChoreFeedItem: FC<ChoreFeedItemProps> = ({
 
   return (
     <ListItem>
-      <div style={{ fontSize: 12 }} onClick={_onClickChore}>
+      <div style={{ fontSize: 12, cursor: 'pointer' }} onClick={_onClickChore}>
         {chore.name} ({chore.person.name})
-        {chore.tasks.every((t) => t.completed) ? 'x' : 'o'}
+        {chore.tasks.every((t) => t.completed) ? (
+          <Icon name={IconName.CHECK} />
+        ) : null}
       </div>
       <div
         style={{
@@ -37,7 +39,14 @@ const ChoreFeedItem: FC<ChoreFeedItemProps> = ({
         <ul>
           {chore.tasks.map((t) => (
             <li key={t.id} onClick={() => _onClickTask(t.id)}>
-              {t.name} {t.completed ? 'x' : 'o'}
+              <div
+                style={{
+                  textDecoration: t.completed ? 'line-through' : undefined,
+                  cursor: 'pointer',
+                }}
+              >
+                {t.name} {t.completed}
+              </div>
             </li>
           ))}
         </ul>

@@ -1,5 +1,10 @@
 import { FC, useMemo } from 'react';
-import { timestampToDate, UnixTimestamp } from '../../../libs/dateTime';
+import {
+  getNow,
+  timestampToDate,
+  timestampToISODate,
+  UnixTimestamp,
+} from '../../../libs/dateTime';
 import styles from './Calendar.module.css';
 import { getCalendarCellDate } from './utils';
 
@@ -24,9 +29,11 @@ const CalendarDay: FC<CalendarDayProps> = ({
   );
 
   const dateString = useMemo(() => timestampToDate(date), [date]);
+  const now = timestampToISODate(getNow());
+  const isToday = timestampToISODate(date) === now;
 
   return (
-    <div className={styles.calendarDay}>
+    <div className={`${styles.calendarDay} ${isToday ? styles.today : ''}`}>
       {dateString}
       <div>{renderDay(date)}</div>
     </div>

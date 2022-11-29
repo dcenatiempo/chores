@@ -73,6 +73,7 @@ export enum IconName {
   LOGOUT = 'LOGOUT',
   RIGHT_CHEVRON = 'RIGHT_CHEVRON',
   LEFT_CHEVRON = 'LEFT_CHEVRON',
+  IN_PROGRESS = 'IN_PROGRESS',
 }
 
 const IconMap = {
@@ -106,4 +107,6 @@ const IconMap = {
   LEFT_CHEVRON_FILL: ri.RiArrowLeftSFill,
   RIGHT_CHEVRON_LINE: ri.RiArrowRightSLine,
   RIGHT_CHEVRON_FILL: ri.RiArrowRightSFill,
+  IN_PROGRESS_LINE: ri.RiTimeLine,
+  IN_PROGRESS_FILL: ri.RiTimeFill,
 };

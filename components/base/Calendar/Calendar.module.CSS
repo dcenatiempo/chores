@@ -23,3 +23,7 @@
 .calendarEvent {
   background-color: gray;
 }
+
+.today {
+  background-color: var(--component-bg-color);
+}
