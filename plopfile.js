@@ -19,8 +19,8 @@ module.exports = function plopCLI(plop) {
       },
       {
         type: 'add',
-        path: `components/base/{{PascalCase name}}/{{PascalCase name}}.module.CSS`,
-        templateFile: 'plop-templates/Component.module.CSS.hbs',
+        path: `components/base/{{PascalCase name}}/{{PascalCase name}}.module.css`,
+        templateFile: 'plop-templates/Component.module.css.hbs',
       },
     ],
   });

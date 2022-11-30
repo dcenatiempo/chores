@@ -185,7 +185,7 @@ const ScheduledSelector: FC<ScheduledSelectorProps> = ({
   const intervalOptions: ('week' | 'month')[] = useMemo(() => {
     if (!startDate) return ['month'];
     return ['week', 'month'];
-  }, [startDate, minFrequency, interval]);
+  }, [startDate]);
 
   const frequencyOptions = useMemo(() => {
     const num = interval === 'week' ? MaxFrequency.WEEK : MaxFrequency.MONTH;
