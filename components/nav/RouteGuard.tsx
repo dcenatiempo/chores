@@ -3,7 +3,7 @@ import { useRouter } from 'next/router';
 
 import { useIsAuthenticated } from '../../libs/authentication';
 
-const publicPaths = ['/', '/login'];
+const publicPaths = ['/', '/login', '/settings'];
 
 interface Props {
   children?: React.ReactNode;

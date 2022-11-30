@@ -8,6 +8,8 @@ export default function useUser() {
 
   const user = useSelector(selectors.user);
 
+  const isAuthenticated = useSelector(selectors.isAuthenticated);
+
   async function fetchUser(userId: string) {
     return firebase.fetchUser(userId).then((user) => {
       if (!user) return;
@@ -18,6 +20,7 @@ export default function useUser() {
 
   return {
     user,
+    isAuthenticated,
     fetchUser,
   };
 }

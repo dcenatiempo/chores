@@ -1,15 +1,16 @@
-import { FC } from 'react';
-import { logout, useIsAuthenticated } from '../../libs/authentication';
+import { logout } from '../../libs/authentication';
 import { Button, IconButton, IconName } from '../base';
 import { useRouter } from 'next/router';
-import { useSelector } from 'react-redux';
-import { orgsStore } from '../../libs/store';
 import useAppState from '../../libs/store/appState/useAppState';
+import useUser from '../../libs/store/models/user/useUser';
+import React from 'react';
+import Link from 'next/link';
+import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
 
 interface Props {}
 
-const Header: FC<Props> = () => {
-  const orgName = useSelector(orgsStore.selectors.name);
+function Header({}: Props) {
+  const { orgName } = useCurrentOrg();
 
   return (
     <header style={styles.container}>
@@ -20,13 +21,17 @@ const Header: FC<Props> = () => {
           justifyContent: 'space-between',
         }}
       >
-        <h1 style={styles.title}>{orgName} Chores</h1>
+        <Link href={'/'} passHref>
+          <a>
+            <h1 style={styles.title}>{orgName} Chores</h1>
+          </a>
+        </Link>
         <LogInOutButton />
       </div>
       <NavigationButtons />
     </header>
   );
-};
+}
 
 export default Header;
 
@@ -40,9 +45,10 @@ const styles = {
   },
 };
 
-const LogInOutButton: FC = () => {
+function LogInOutButton() {
   const router = useRouter();
-  const { isAuthenticated } = useIsAuthenticated();
+  const { isAuthenticated } = useUser();
+
   if (router.asPath.startsWith('/login')) return null;
   return isAuthenticated ? (
     <IconButton
@@ -65,14 +71,17 @@ const LogInOutButton: FC = () => {
       size={36}
     />
   );
-};
+}
 
-const NavigationButtons: FC = () => {
+function NavigationButtons() {
   const { isKidMode } = useAppState();
+  const { isAuthenticated } = useUser();
   const router = useRouter();
-  const tabs = isKidMode
-    ? ['schedule', 'settings']
-    : ['dashboard', 'household', 'chores', 'schedule', 'settings'];
+  const tabs = React.useMemo(() => {
+    if (!isAuthenticated) return ['settings'];
+    if (isKidMode) return ['schedule', 'settings'];
+    return ['dashboard', 'household', 'chores', 'schedule', 'settings'];
+  }, [isKidMode, isAuthenticated]);
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>
       {tabs.map((tab) => (
@@ -86,4 +95,4 @@ const NavigationButtons: FC = () => {
       ))}
     </div>
   );
-};
+}

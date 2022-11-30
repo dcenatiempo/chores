@@ -25,7 +25,7 @@ const LoginPage: NextPage = () => {
 
   useEffect(() => {
     if (!isAuthenticated) return;
-    let returnUrl = router.query.returnUrl || '/';
+    let returnUrl = router.query.returnUrl || '/schedule';
     returnUrl = Array.isArray(returnUrl) ? returnUrl[0] : returnUrl;
     router.push(returnUrl);
   }, [isAuthenticated, router]);
