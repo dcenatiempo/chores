@@ -6,6 +6,7 @@ export type ButtonType = 'fill' | 'outline' | 'sentance' | 'invisible';
 
 export interface ButtonProps {
   style?: object;
+  className?: string;
   disabled?: boolean;
   label?: string;
   onClick: () => void;
@@ -23,6 +24,7 @@ const Button: FC<ButtonProps> = ({
   children,
   label,
   onClick = () => {},
+  className = '',
   ...rest
 }) => {
   const style = useMemo(() => {
@@ -41,10 +43,17 @@ const Button: FC<ButtonProps> = ({
   }, [type, disabled, color]);
 
   return (
-    <button className={style} onClick={onClick} disabled={disabled} {...rest}>
+    <button
+      className={`${style} ${className}`}
+      onClick={onClick}
+      disabled={disabled}
+      {...rest}
+    >
       {label}
       {/* todo: no children, just icon? */}
-      <div style={{ paddingLeft: label ? 10 : 0 }}>{children}</div>
+      <div style={{ display: 'flex', paddingLeft: label ? 10 : 0 }}>
+        {children}
+      </div>
     </button>
   );
 };

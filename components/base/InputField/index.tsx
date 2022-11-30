@@ -19,7 +19,7 @@ const InputField: FC<InputFieldProps> = ({
 }) => {
   const derivedId = id || label;
   return (
-    <div className={`${styles.IiputField} ${inline ? styles.inline : ''}`}>
+    <div className={`${styles.inputField} ${inline ? styles.inline : ''}`}>
       <InputLabel id={derivedId}>{label}</InputLabel>
 
       <div

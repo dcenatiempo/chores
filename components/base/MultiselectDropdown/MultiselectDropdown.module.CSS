@@ -1,0 +1,56 @@
+.select {
+    background: var(--component-bg-color);
+    color: var(--text-color);
+    padding: 0 5px;
+    font-size: 1rem;
+}
+
+.select option{
+    padding: 0 10px;
+}
+
+.textInput {
+    display: flex;
+    flex-direction: row;
+    margin: 0;
+    color: var(--text-color);
+    background-color: var(--component-bg-color);
+    font-size: 1rem;
+    border-style: solid;
+    border-width: 1px;
+    padding: .5rem;
+    min-height: var(--input-height);
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.focused {
+    outline: 2px solid orange;
+}
+
+.textInputReset {
+    border-style: none;
+    border-width: 0px;
+    padding: 0;
+    min-height: var(--input-height);
+    flex: 1;
+}
+
+.textInputReset:focus {
+    outline: 0px none transparent;
+  }
+
+.tag {
+    display: flex;
+    border-radius: 50px;
+    color: var(--bg-color);
+    background-color: var(--text-color);
+    align-items: center;
+    padding-left: 16px;
+
+}
+
+.tagRemove {
+    margin-left: 10px;
+    border-radius: 50px;
+}

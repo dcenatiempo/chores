@@ -246,6 +246,7 @@ const ScheduledSelector: FC<ScheduledSelectorProps> = ({
 
       {showWeekly ? (
         <MultiselectDropdown
+          requireSelected
           options={weeklyOptions}
           valueKey={(o) => o?.value || ''}
           labelKey={(o) => o?.label || ''}

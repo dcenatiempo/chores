@@ -13,6 +13,8 @@ export interface IconButtonProps {
   type?: ButtonType;
   onFocus?: () => void;
   onBlur?: () => void;
+  style?: object;
+  className?: string;
 }
 
 const IconButton: FC<IconButtonProps> = ({

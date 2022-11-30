@@ -16,7 +16,7 @@ interface DropdownProps<T> extends InputFieldProps {
   requireSelected?: boolean;
 }
 
-export default function Dropdown2<T>({
+export default function Dropdown<T>({
   id,
   options,
   selected,
