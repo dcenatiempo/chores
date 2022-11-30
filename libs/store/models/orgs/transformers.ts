@@ -3,15 +3,16 @@ import { db } from '../../../firebase';
 import { Collection, FBReference } from '../../../firebase/types';
 import { transformAction } from '../actions/transformers';
 import { transformRoomType } from '../roomTypes/transformers';
-import { FBRoomType, RoomType } from '../roomTypes/types';
+import { RoomType } from '../roomTypes/types';
 import { Task } from '../scheduledChores/types';
 import {
+  arrayToMap,
   mapToArray,
   transformMap,
   transformTimestamp,
 } from '../sharedTransformers';
 import { transformSurfaceTemplate } from '../surfaces/transformers';
-import { FBSurface, Surface, SurfaceTemplate } from '../surfaces/types';
+import { SurfaceTemplate } from '../surfaces/types';
 import { Map, OrgMap } from '../types';
 import {
   ChoreTemplate,
@@ -204,7 +205,9 @@ export const transformRoom = {
       id,
       name,
       levelId: transformLevel.dehydrate(room.level),
-      surfaces: transformMap(room.surfaces, transformSurface.toFB),
+      surfaceIds: mapToArray(room.surfaces).map(
+        transformSurfaceTemplate.dehydrate
+      ),
       roomTypeId: transformRoomType.dehydrate(room.roomType),
     };
   },
@@ -220,8 +223,10 @@ export const transformRoom = {
       name,
       level: transformLevel.hydrate(levelId, levels),
       roomType: transformRoomType.hydrate(room.roomTypeId, roomTypes),
-      surfaces: transformMap(room.surfaces, (surface) =>
-        transformSurface.fromFB(surface, surfaces)
+      surfaces: arrayToMap(
+        room.surfaceIds.map((id) =>
+          transformSurfaceTemplate.hydrate(id, surfaces)
+        )
       ),
     };
   },
@@ -236,34 +241,32 @@ export const transformRoomTypeRef = {
   },
 };
 
-const transformSurface = {
-  toFB(surface: Surface): FBSurface {
-    // TODO: how to do custom surface
-    return {
-      id: surface.id,
-      name: surface.name,
-      surfaceTemplateId: transformSurfaceTemplate.dehydrate(
-        surface.surfaceTemplate
-      ),
-    };
-  },
-  fromFB(surface: FBSurface, surfaces: Map<SurfaceTemplate>): Surface {
-    return {
-      id: surface.id,
-      name: surface.name,
-      surfaceTemplate: transformSurfaceTemplate.hydrate(
-        surface.surfaceTemplateId,
-        surfaces
-      ),
-    };
-  },
-  dehydrate(surface: Surface): string {
-    return surface.id;
-  },
-  hydrate(surfaceId: string, surfaces: Map<Surface>) {
-    return surfaces[surfaceId];
-  },
-};
+// const transformSurface = {
+//   toFB(surface: SurfaceTemplate): FBSurfaceTemplate {
+//     // TODO: how to do custom surface
+//     return {
+//       id: surface.id,
+//       name: surface.name,
+//       surfaceTemplateId: transformSurfaceTemplate.dehydrate(surface),
+//     };
+//   },
+//   fromFB(surface: FBSurface, surfaces: Map<SurfaceTemplate>): Surface {
+//     return {
+//       id: surface.id,
+//       name: surface.name,
+//       surfaceTemplate: transformSurfaceTemplate.hydrate(
+//         surface.surfaceTemplateId,
+//         surfaces
+//       ),
+//     };
+//   },
+//   dehydrate(surface: Surface): string {
+//     return surface.id;
+//   },
+//   hydrate(surfaceId: string, surfaces: Map<Surface>) {
+//     return surfaces[surfaceId];
+//   },
+// };
 
 // TODO: what if T is not an org?
 export function arrayToOrgMap<T>(array: T[], field: string = 'id'): OrgMap<T> {
@@ -298,11 +301,7 @@ export function getChoreRooms(c: ChoreTemplate, allRooms: Room[]): Map<Room> {
   Object.values(c.taskTemplates).forEach((t) => {
     const surfaceId = t.surfaceTemplate.id;
     allRooms.forEach((r) => {
-      if (
-        Object.values(r.surfaces).find(
-          (s) => s.surfaceTemplate.id === surfaceId
-        )
-      )
+      if (Object.values(r.surfaces).find((s) => s.id === surfaceId))
         rooms[r.id] === r;
     });
   });
@@ -334,9 +333,7 @@ export function getTaskRooms(t: TaskTemplate, allRooms: Room[]): Map<Room> {
   const rooms: Map<Room> = {};
   const surfaceId = t.surfaceTemplate.id;
   allRooms.forEach((r) => {
-    if (
-      Object.values(r.surfaces).find((s) => s.surfaceTemplate.id === surfaceId)
-    )
+    if (Object.values(r.surfaces).find((s) => s.id === surfaceId))
       rooms[r.id] = r;
   });
   return rooms;

@@ -5,7 +5,7 @@ import {
   arrayToMap,
   mapToArray,
 } from '../../libs/store/models/sharedTransformers';
-import { Surface } from '../../libs/store/models/surfaces/types';
+import { SurfaceTemplate } from '../../libs/store/models/surfaces/types';
 import AddOrEditList from '../base/AddOrEditList';
 import AddOrEditRoom from './AddOrEditRoom';
 import RoomListItem from './RoomListItem';
@@ -27,7 +27,7 @@ const AddOrEditRoomsList: FC<AddOrEditRoomsListProps> = ({
   const [roomId, setRoomId] = useState('');
   const [roomType, setRoomType] = useState<RoomType | undefined>();
   const [level, setLevel] = useState<Level | undefined>();
-  const [surfaces, setSurfaces] = useState<Surface[]>([]);
+  const [surfaces, setSurfaces] = useState<SurfaceTemplate[]>([]);
 
   const disabled = !isFormValid();
 

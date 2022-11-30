@@ -2,12 +2,7 @@ import { UnixTimestamp } from '../../../dateTime';
 import { FBTimestamp } from '../../../firebase';
 import { Action, FBAction } from '../actions/types';
 import { FBRoomType, RoomType } from '../roomTypes/types';
-import {
-  FBSurface,
-  FBSurfaceTemplate,
-  Surface,
-  SurfaceTemplate,
-} from '../surfaces/types';
+import { FBSurfaceTemplate, SurfaceTemplate } from '../surfaces/types';
 import { BaseSlice, Map, OrgMap } from '../types';
 
 // export interface Settings {
@@ -63,7 +58,7 @@ export interface FBRoom {
   id: string;
   name: string;
   levelId: string;
-  surfaces: Map<FBSurface>;
+  surfaceIds: string[];
   roomTypeId: string;
 }
 
@@ -71,7 +66,7 @@ export interface Room {
   id: string;
   name: string;
   level: Level;
-  surfaces: Map<Surface>;
+  surfaces: Map<SurfaceTemplate>;
   roomType: RoomType;
 }
 

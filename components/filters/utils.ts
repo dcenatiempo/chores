@@ -7,8 +7,8 @@ export function surfacesFromRooms(rooms: Room[]) {
   const siuMap: Map<SurfaceTemplate> = {};
   rooms.forEach((r) => {
     Object.values(r.surfaces).forEach((s) => {
-      const key = s.surfaceTemplate.id;
-      if (!siuMap[key]) siuMap[key] = s.surfaceTemplate;
+      const key = s.id;
+      if (!siuMap[key]) siuMap[key] = s;
     });
   });
   return mapToArray(siuMap);

@@ -1,14 +1,13 @@
 import { defaultMemoize, createSelector } from 'reselect';
 import { RootState } from '../../store';
 import { roomTypes } from '../roomTypes/selectors';
-import { surfaceTemplates, surfaceTemplatesArray } from '../surfaces/selectors';
+import { surfaceTemplates } from '../surfaces/selectors';
 import { SurfaceTemplate } from '../../models/surfaces/types';
 import { mapToArray, transformMap } from '../sharedTransformers';
 import { transformOrg } from './transformers';
 import { initialLastId } from './reducer';
 import { Level, Room } from './types';
 import { Map } from '../types';
-import { actions } from '../actions/selectors';
 import { RoomType } from '../roomTypes/types';
 
 const fbOrgsMap = defaultMemoize((state: RootState) => state.orgs.orgsMap);
@@ -99,7 +98,7 @@ const surfacesInUse = createSelector(surfaceTemplates, roomsArray, (st, ra) => {
   const siuMap: Map<SurfaceTemplate> = {};
   ra.forEach((r) => {
     Object.values(r.surfaces).forEach((s) => {
-      const key = s.surfaceTemplate.id;
+      const key = s.id;
       if (!siuMap[key] && st[key]) siuMap[key] = st[key];
     });
   });

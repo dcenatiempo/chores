@@ -1,10 +1,7 @@
 import { FC, useMemo, useState } from 'react';
 import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
 import { useSurfaces } from '../../libs/store/models/surfaces';
-import {
-  Surface,
-  SurfaceTemplate,
-} from '../../libs/store/models/surfaces/types';
+import { SurfaceTemplate } from '../../libs/store/models/surfaces/types';
 import { TextInput } from '../base';
 import Dropdown from '../base/Dropdown';
 import { AddButton } from '../buttons';
