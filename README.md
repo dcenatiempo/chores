@@ -52,7 +52,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 # TODO - Post MVP Features
 
-- parent approval of task/chore completion
+- ~~parent approval of task/chore completion~~
 - rewards tied to chores / points tied to chores
 - custom actions, surfaces, room types
 - account creation
