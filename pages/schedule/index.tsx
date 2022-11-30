@@ -183,7 +183,11 @@ const SchedulePage: NextPage = () => {
     const taskIndex = chore.tasks.findIndex((t) => t.id === taskId);
     if (taskIndex < 0) return;
 
-    newChore.tasks[taskIndex].completed = !newChore.tasks[taskIndex].completed;
+    const newValue = !newChore.tasks[taskIndex].completed;
+
+    newChore.tasks[taskIndex].completed = newValue;
+    if (!newValue && newChore.tasks[taskIndex].approved)
+      newChore.tasks[taskIndex].approved = false;
     setModalChore([date, newChore]);
   }
 
@@ -271,6 +275,18 @@ const SchedulePage: NextPage = () => {
     });
   }, [people, scheduledChoresArray]);
 
+  const { header, body } = modalChore
+    ? ChoreFeedItem({
+        isKidMode,
+        chore: modalChore[1],
+        onClickTask: (tid) =>
+          _onClickDailyTask(modalChore[0], modalChore[1], tid),
+        onClickChore: () => _onClickDailyChore(modalChore[0], modalChore[1]),
+        onClickApproveTask: (tid) =>
+          _onClickApproveDailyTask(modalChore[0], modalChore[1], tid),
+      })
+    : { header: null, body: null };
+
   return (
     <PageWrapper metaTitle="Chore Schedule">
       <PeopleSelector selected={people} onSelect={setPeople} />
@@ -351,8 +367,10 @@ const SchedulePage: NextPage = () => {
               return null;
 
             const isCompleted = c.tasks.every((t) => t.completed);
+            const isApproved = c.tasks.every((t) => t.approved);
             const isInProgress =
-              !isCompleted && c.tasks.some((t) => t.completed);
+              !isApproved && c.tasks.some((t) => t.completed);
+            if (isCompleted) console.log(isCompleted, isApproved, isInProgress);
 
             return (
               <div
@@ -362,13 +380,16 @@ const SchedulePage: NextPage = () => {
                   marginBottom: 4,
                   textDecoration: isCompleted ? 'line-through' : undefined,
                   cursor: disabled ? undefined : 'pointer',
+                  display: 'flex',
+                  justifyContent: 'space-between',
                 }}
                 onClick={disabled ? undefined : () => setModalChore([key, c])}
               >
-                {c.name} ({c.person.name}){' '}
+                {c.name} ({c.person.name})
                 {isInProgress ? (
                   <Icon outlined name={IconName.IN_PROGRESS} />
                 ) : null}
+                {isApproved ? <Icon name={IconName.THUMBS_UP} /> : null}
               </div>
             );
           });
@@ -389,21 +410,8 @@ const SchedulePage: NextPage = () => {
           chores={filteredScheduledChores}
         />
       )}
-      <Modal onClose={onCloseModal} title={''} visible={showModal}>
-        {modalChore ? (
-          <ChoreFeedItem
-            chore={modalChore[1]}
-            onClickTask={(tid) =>
-              _onClickDailyTask(modalChore[0], modalChore[1], tid)
-            }
-            onClickChore={() =>
-              _onClickDailyChore(modalChore[0], modalChore[1])
-            }
-            onClickApproveTask={(tid) =>
-              _onClickApproveDailyTask(modalChore[0], modalChore[1], tid)
-            }
-          />
-        ) : null}
+      <Modal onClose={onCloseModal} title={header} visible={showModal}>
+        {body}
       </Modal>
     </PageWrapper>
   );

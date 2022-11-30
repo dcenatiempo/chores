@@ -8,7 +8,7 @@ import styles from './Modal.module.css';
 export interface ModalProps {
   children?: React.ReactNode;
   onClose: () => void;
-  title: string;
+  title: React.ReactNode;
   visible: boolean;
 }
 
@@ -39,13 +39,14 @@ const ModalContent: FC<Omit<ModalProps, 'visible'>> = ({
       <div className={styles.modalWrapper}>
         <div className={styles.modal}>
           <div className={styles.header}>
+            {title && <div className={styles.title}>{title}</div>}
+
             <IconButton
               type="invisible"
               iconName={IconName.X}
               onClick={onClickClose}
             />
           </div>
-          {title && <div className={styles.title}>{title}</div>}
           <div className={styles.body}>{children}</div>
         </div>
       </div>

@@ -5,6 +5,7 @@
 .header {
   display: flex;
   justify-content: flex-end;
+  align-items: center;
   font-size: 25px;
 }
 
@@ -29,6 +30,7 @@
   max-height: 90vh;
   border-radius: 15px;
   padding: 15px;
+  pointer-events: all;
 }
 
 .overlay {

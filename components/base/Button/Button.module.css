@@ -9,6 +9,12 @@
   min-width: var(--input-height);
   border-radius: 3px;
   cursor: pointer;
+  transition: opacity 140ms;
+}
+
+.button:hover {
+  opacity: .75;
+
 }
 
 /* takes the shape of its contents */

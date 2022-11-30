@@ -1,22 +1,20 @@
-import { FC } from 'react';
-import useAppState from '../../libs/store/appState/useAppState';
 import { UIChoreFeedItem } from '../../libs/store/models/scheduledChores/types';
-import { Button, Icon, IconButton, IconName, ListItem } from '../base';
+import { Button, IconButton, IconName } from '../base';
 
 interface ChoreFeedItemProps {
   chore: UIChoreFeedItem;
   onClickChore?: () => void;
   onClickTask?: (taskId: string) => void;
   onClickApproveTask?: (taskId: string) => void;
+  isKidMode: boolean;
 }
-const ChoreFeedItem: FC<ChoreFeedItemProps> = ({
+export default function ChoreFeedItemChoreFeedItemProps({
   chore,
   onClickChore,
   onClickTask,
   onClickApproveTask,
-}) => {
-  const { isKidMode } = useAppState();
-
+  isKidMode,
+}: ChoreFeedItemProps) {
   function _onClickChore() {
     onClickChore?.();
   }
@@ -29,19 +27,13 @@ const ChoreFeedItem: FC<ChoreFeedItemProps> = ({
     onClickApproveTask?.(id);
   }
 
-  return (
-    <div style={{ display: 'flex', flexDirection: 'column' }}>
+  return {
+    header: (
       <div style={{ fontSize: 20, cursor: 'pointer' }} onClick={_onClickChore}>
         {chore.name} ({chore.person.name})
-        <Icon
-          style={{
-            visibility: chore.tasks.every((t) => t.completed)
-              ? undefined
-              : 'hidden',
-          }}
-          name={IconName.CHECK}
-        />
       </div>
+    ),
+    body: (
       <div
         style={{
           display: 'flex',
@@ -86,8 +78,6 @@ const ChoreFeedItem: FC<ChoreFeedItemProps> = ({
           })}
         </ul>
       </div>
-    </div>
-  );
-};
-
-export default ChoreFeedItem;
+    ),
+  };
+}
