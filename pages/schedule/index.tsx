@@ -4,6 +4,7 @@ import PageWrapper from '../../components/nav/PageWrapper';
 
 import { Calendar, Icon, IconName } from '../../components/base';
 import {
+  getNow,
   ISOToTimestamp,
   timestampToISODate,
   UnixTimestamp,
@@ -27,9 +28,8 @@ import Modal from '../../components/base/Modal';
 import { HistoryChore } from '../../libs/store/models/choreHistory/types';
 import useAppState from '../../libs/store/appState/useAppState';
 
-const todaySeconds = DateTime.local().toSeconds();
-
 const SchedulePage: NextPage = () => {
+  const now = getNow();
   const [modalChore, setModalChore] = useState<[string, UIChoreFeedItem]>();
   const showModal = !!modalChore;
 
@@ -55,7 +55,7 @@ const SchedulePage: NextPage = () => {
   const [calendarType, setCalendarType] = useState<CalendarType>('rigid');
   const [calendarDays, setCalendarDays] = useState(7);
   const [calendarWeeks, setCalendarWeeks] = useState(5);
-  const [today, setToday] = useState(todaySeconds);
+  const [today, setToday] = useState(now);
 
   const extrapolatedFeedChoresArray = useMemo(() => {
     let extrapolated: FeedChore[] = [];
@@ -339,6 +339,10 @@ const SchedulePage: NextPage = () => {
         }}
         renderDay={(date: UnixTimestamp) => {
           const key = timestampToISODate(date);
+          const nowDate = timestampToISODate(now);
+          const isToday = key === nowDate;
+          const disabled = date > now && !isToday;
+
           const todaysChores = choresFeed.daily[key];
           if (!todaysChores) return null;
           return todaysChores.map((c) => {
@@ -354,11 +358,12 @@ const SchedulePage: NextPage = () => {
               <div
                 key={c.name + c.person.name}
                 style={{
-                  fontSize: 12,
+                  fontSize: 20,
+                  marginBottom: 4,
                   textDecoration: isCompleted ? 'line-through' : undefined,
-                  cursor: 'pointer',
+                  cursor: disabled ? undefined : 'pointer',
                 }}
-                onClick={() => setModalChore([key, c])}
+                onClick={disabled ? undefined : () => setModalChore([key, c])}
               >
                 {c.name} ({c.person.name}){' '}
                 {isInProgress ? (
@@ -374,6 +379,7 @@ const SchedulePage: NextPage = () => {
           setCalendarStartDate,
           setCalendarEndDate,
         }}
+        now={now}
       />
       {isKidMode ? null : (
         <AddOrEditScheduledChoresList
@@ -383,7 +389,7 @@ const SchedulePage: NextPage = () => {
           chores={filteredScheduledChores}
         />
       )}
-      <Modal onClose={onCloseModal} title={'Chore'} visible={showModal}>
+      <Modal onClose={onCloseModal} title={''} visible={showModal}>
         {modalChore ? (
           <ChoreFeedItem
             chore={modalChore[1]}

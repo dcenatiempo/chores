@@ -1,8 +1,8 @@
-import { FC, useMemo } from 'react';
-import { UnixTimestamp } from '../../../libs/dateTime';
+import { useMemo } from 'react';
+import { timestampToISODate, UnixTimestamp } from '../../../libs/dateTime';
 import styles from './Calendar.module.css';
 import CalendarDay, { CalendarType } from './CalendarDay';
-import { getCalendarRowDateRange } from './utils';
+import { getCalendarCellDate, getCalendarRowDateRange } from './utils';
 
 export interface CalendarWeekProps {
   numWeeks: number;
@@ -16,15 +16,17 @@ export interface CalendarWeekProps {
   ) => React.ReactNode;
   type: CalendarType;
   calendarStartDate: UnixTimestamp;
+  now: UnixTimestamp;
 }
 
-const CalendarWeek: FC<CalendarWeekProps> = ({
+export default function CalendarWeek({
   numDays,
   renderWeek,
   weekIndex,
   calendarStartDate,
   renderDay,
-}) => {
+  now,
+}: CalendarWeekProps) {
   const { start, end } = useMemo(
     () => getCalendarRowDateRange(calendarStartDate, weekIndex, numDays),
     [calendarStartDate, weekIndex, numDays]
@@ -34,18 +36,21 @@ const CalendarWeek: FC<CalendarWeekProps> = ({
       {renderWeek(start, end, numDays)}
 
       <div className={styles.calendarWeek}>
-        {[...Array(numDays)].map((_, di) => (
-          <CalendarDay
-            dayIndex={di}
-            weekIndex={weekIndex}
-            calendarStartDate={calendarStartDate}
-            key={`${weekIndex}-${di}`}
-            renderDay={renderDay}
-          />
-        ))}
+        {[...Array(numDays)].map((_, di) => {
+          const date = getCalendarCellDate(calendarStartDate, weekIndex, di);
+          const nowDate = timestampToISODate(now);
+          const isToday = timestampToISODate(date) === nowDate;
+
+          return (
+            <CalendarDay
+              key={`${weekIndex}-${di}`}
+              renderDay={renderDay}
+              isToday={isToday}
+              date={date}
+            />
+          );
+        })}
       </div>
     </div>
   );
-};
-
-export default CalendarWeek;
+}

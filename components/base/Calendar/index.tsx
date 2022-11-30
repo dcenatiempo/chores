@@ -1,5 +1,4 @@
-import { DateTime } from 'luxon';
-import { FC, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   fmt,
   getNow,
@@ -17,8 +16,6 @@ import { CalendarType } from './CalendarDay';
 import CalendarWeek from './CalendarWeek';
 import { getCalendarStartDate } from './utils';
 
-const todaySeconds = DateTime.local().toSeconds();
-
 export interface CalendarProps {
   calendarState: {
     calendarStartDate: UnixTimestamp;
@@ -35,16 +32,18 @@ export interface CalendarProps {
     numCells: number
   ) => React.ReactNode;
   type: CalendarType;
+  now: UnixTimestamp;
 }
 
-const Calendar: FC<CalendarProps> = ({
+export default function Calendar({
   numWeeks,
   numDays,
   date,
   type = 'rigid',
   calendarState,
+  now,
   ...rest
-}) => {
+}: CalendarProps) {
   const calendarViewOptions = [
     { label: 'Month', value: 'm', days: 7, weeks: 5 },
     { label: 'Week', value: 'w', days: 7, weeks: 1 },
@@ -55,7 +54,7 @@ const Calendar: FC<CalendarProps> = ({
 
   const [calendarDays, setCalendarDays] = useState(calendarView.days);
   const [calendarWeeks, setCalendarWeeks] = useState(calendarView.weeks);
-  const [today, setToday] = useState(todaySeconds);
+  const [today, setToday] = useState(now);
 
   function onSelectCalendarView(view?: {
     label: string;
@@ -142,6 +141,7 @@ const Calendar: FC<CalendarProps> = ({
       </div>
       {[...Array(calendarWeeks)].map((_, wi) => (
         <CalendarWeek
+          now={now}
           calendarStartDate={calendarState.calendarStartDate}
           numWeeks={calendarWeeks}
           key={`${wi}`}
@@ -153,6 +153,4 @@ const Calendar: FC<CalendarProps> = ({
       ))}
     </div>
   );
-};
-
-export default Calendar;
+}

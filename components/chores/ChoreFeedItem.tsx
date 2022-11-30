@@ -30,8 +30,8 @@ const ChoreFeedItem: FC<ChoreFeedItemProps> = ({
   }
 
   return (
-    <ListItem>
-      <div style={{ fontSize: 12, cursor: 'pointer' }} onClick={_onClickChore}>
+    <div style={{ display: 'flex', flexDirection: 'column' }}>
+      <div style={{ fontSize: 20, cursor: 'pointer' }} onClick={_onClickChore}>
         {chore.name} ({chore.person.name})
         <Icon
           style={{
@@ -86,7 +86,7 @@ const ChoreFeedItem: FC<ChoreFeedItemProps> = ({
           })}
         </ul>
       </div>
-    </ListItem>
+    </div>
   );
 };
 
