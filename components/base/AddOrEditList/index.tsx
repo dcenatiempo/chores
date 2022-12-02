@@ -5,6 +5,7 @@ import Card from '../Card';
 import Modal from '../Modal';
 import ResourceList from './ResourceList';
 import { CanDelete } from './ResourceListItem';
+import styles from './AddOrEditList.module.css';
 
 export interface AddOrEditResourceListProps<T> {
   resources: T[] | undefined;
@@ -93,10 +94,18 @@ function AddOrEditResourceList<T>({
         {addOrEditResource}
 
         {showModal === 'add' ? (
-          <AddButton disabled={disabled} onClick={_onClickAdd} />
+          <AddButton
+            className={styles.bottomButton}
+            disabled={disabled}
+            onClick={_onClickAdd}
+          />
         ) : null}
         {showModal === 'edit' ? (
-          <SaveButton disabled={disabled} onClick={_onClickSave} />
+          <SaveButton
+            className={styles.bottomButton}
+            disabled={disabled}
+            onClick={_onClickSave}
+          />
         ) : null}
       </Modal>
     </>

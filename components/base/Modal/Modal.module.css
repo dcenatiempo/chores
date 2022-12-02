@@ -22,6 +22,8 @@
   pointer-events: none;
 }
 
+
+
 .modal {
   background-color: var(--component-bg-color);
   /* min-width: 500px; */
@@ -32,6 +34,13 @@
   padding: 15px;
   pointer-events: all;
   overflow: scroll;
+}
+
+.smallScreen .modal {
+  max-height: 96vh;
+  align-self: end;
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
 }
 
 .overlay {

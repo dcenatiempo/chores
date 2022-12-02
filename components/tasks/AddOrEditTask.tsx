@@ -45,6 +45,7 @@ const AddOrEditTask: FC<AddOrEditTaskProps> = ({
           display: 'flex',
           flexDirection: 'row',
           alignItems: 'end',
+          flexWrap: 'wrap',
           columnGap: 10,
           paddingLeft: 10,
           paddingRight: 10,

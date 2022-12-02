@@ -50,8 +50,7 @@ const AddOrEditChore: FC<AddOrEditChoreProps> = ({
       <div
         style={{
           display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'end',
+          flexDirection: 'column',
           columnGap: 10,
           paddingLeft: 10,
           paddingRight: 10,

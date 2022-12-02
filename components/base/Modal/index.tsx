@@ -1,6 +1,7 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { useSSR, usePortal } from '../../../libs/hooks';
+import { useScreenSize } from '../../../libs/store/appState/useAppState';
 import { IconName } from '../Icon';
 import IconButton from '../IconButton';
 import styles from './Modal.module.css';
@@ -24,10 +25,9 @@ const ModalContent: FC<Omit<ModalProps, 'visible'>> = ({
   children,
   title,
 }) => {
+  const { isSmallScreen } = useScreenSize();
   const portal = usePortal('modal-root');
   const { isBrowser } = useSSR();
-
-  const overlayRef = useRef<HTMLDivElement>(null);
 
   function onClickClose() {
     onClose();
@@ -36,7 +36,11 @@ const ModalContent: FC<Omit<ModalProps, 'visible'>> = ({
   const modalContent = (
     <>
       <div className={styles.overlay} onClick={onClose} />
-      <div className={styles.modalWrapper}>
+      <div
+        className={`${styles.modalWrapper} ${
+          isSmallScreen ? styles.smallScreen : ''
+        }`}
+      >
         <div className={styles.modal}>
           <div className={styles.header}>
             {title && <div className={styles.title}>{title}</div>}
