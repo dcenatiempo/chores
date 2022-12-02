@@ -22,6 +22,7 @@ export default function ScreenSizeListener({}) {
     window.addEventListener('resize', onResize, true);
 
     return () => window.removeEventListener('resize', onResize);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return null;

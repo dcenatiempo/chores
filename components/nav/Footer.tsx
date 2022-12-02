@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import styles from './styles.module.css';
+import styles from './NavStyles.module.css';
 
 interface Props {}
 

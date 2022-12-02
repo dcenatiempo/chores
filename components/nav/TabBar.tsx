@@ -1,36 +1,19 @@
-import { Button, IconButton, IconName } from '../base';
+import { Button } from '../base';
 import { useRouter } from 'next/router';
 import { useKidMode } from '../../libs/store/appState/useAppState';
 import useUser from '../../libs/store/models/user/useUser';
 import React from 'react';
-import Link from 'next/link';
-import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
+import styles from './NavStyles.module.css';
 
 interface Props {}
 
 export default function TabBar({}: Props) {
   return (
-    <footer style={styles.container}>
+    <footer className={styles.tabBar}>
       <NavigationButtons />
     </footer>
   );
 }
-
-const styles = {
-  container: {
-    position: 'fixed',
-    left: 0,
-    right: 0,
-    bottom: 0,
-    display: 'flex',
-    justifyContent: 'space-between',
-    flex: 'row',
-    height: 50,
-  },
-  title: {
-    color: '#0070f3',
-  },
-};
 
 function NavigationButtons() {
   const { isKidMode } = useKidMode();
