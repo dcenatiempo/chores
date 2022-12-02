@@ -23,7 +23,6 @@ function Header({}: Props) {
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'space-between',
-          backgroundColor: isSmallScreen ? 'pink' : undefined,
         }}
       >
         <Link href={'/'} passHref>

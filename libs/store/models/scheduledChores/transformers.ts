@@ -66,6 +66,9 @@ export function hydrateScheduledChore(
   roomTypes: Map<RoomType>,
   rooms: Map<Room>
 ): FeedChore {
+  const person = scheduledChore.personId
+    ? people[scheduledChore.personId]
+    : undefined;
   return cleanFromObject(
     {
       id: scheduledChore.id,
@@ -76,7 +79,7 @@ export function hydrateScheduledChore(
       tasks: scheduledChore.tasks.map((t) =>
         hydrateScheduledChoreTask(t, taskTemplates, levels, roomTypes, rooms)
       ),
-      person: people[scheduledChore.personId],
+      person,
       levels: scheduledChore.levelIds?.map((id) => levels[id]),
       roomTypes: scheduledChore.roomTypeIds?.map((id) => roomTypes[id]),
       rooms: scheduledChore.roomIds?.map((id) => rooms[id]),
@@ -107,6 +110,12 @@ export function hydrateScheduledChoreTask(
 }
 
 export function getUIChoreFeedItem(chore: FeedChore): UIChoreFeedItem {
+  const person = chore.person
+    ? {
+        id: chore.person.id,
+        name: chore.person.firstName,
+      }
+    : undefined;
   return {
     id: chore.id,
     idType: chore.idType,
@@ -117,9 +126,6 @@ export function getUIChoreFeedItem(chore: FeedChore): UIChoreFeedItem {
       completed: !!t.completed,
       approved: t.approved,
     })),
-    person: {
-      id: chore.person.id,
-      name: chore.person.firstName,
-    },
+    person,
   };
 }

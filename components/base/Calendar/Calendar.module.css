@@ -1,11 +1,32 @@
-.calendar {
+.calendarWrapper {
 
+}
+
+.calendarControls {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 8px;
+}
+
+.calendar {
+  border-top-width: 1px;
+  border-bottom-width: 1px;
+  border-left-width: 0px;
+  border-right-width: 0px;
+  border-style: solid;
 }
 
 .calendarWeekWrapper {
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;
+  border-width: 0px;
+  border-bottom-width: 1px;
+  border-style: solid;
+}
+.calendarWeekWrapper:last-child {
+  border-bottom-width: 0px;
 }
 .calendarWeek {
   display: grid;
@@ -15,15 +36,44 @@
 .calendarDay {
   flex: 1;
   flex-basis: 100px;
-  border-width: 1px;
+  border-width: 0;
+  border-right-width: 1px;
   border-style: solid;
   min-height: 100px;
 }
 
+.calendarDay:last-child {
+  border-right-width: 0px;
+}
+
+.calendarDayContent {
+   padding: 8px 4px;
+}
+
 .calendarEvent {
+  border-radius: 4px;
   background-color: gray;
+  padding: 4px;
+  font-size: 20px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: var(--primary-color);
+  color: var(--light-color)
+}
+.disabledCalendarEvent {
+  cursor: initial;
+}
+.completedCalendarEvent {
+  text-decoration: line-through;
 }
 
 .today {
   background-color: var(--component-bg-color);
+}
+
+.dateWrapper { 
+  padding: 8px 0 0 8px;
 }

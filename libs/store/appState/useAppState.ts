@@ -5,6 +5,7 @@ import { actions } from './reducer';
 export function useScreenSize() {
   const dispatch = useDispatch();
   const isSmallScreen = useSelector(selectors.isSmallScreen);
+  const { screenWidth } = useSelector(selectors.device);
 
   function setScreenWidth(val: number) {
     dispatch(actions.setScreenWidth(val));
@@ -30,6 +31,7 @@ export function useScreenSize() {
     setScreenWidth,
     setScreenDimensions,
     isSmallScreen,
+    screenWidth,
   };
 }
 

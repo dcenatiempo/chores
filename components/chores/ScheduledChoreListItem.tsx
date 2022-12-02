@@ -52,7 +52,7 @@ const ScheduledChoreListItem: FC<ScheduledChoreListItemProps> = ({
       roomTypesMap,
       roomsMap
     );
-    const personName = c.person.firstName;
+    const personName = c.person?.firstName || 'unassigned';
     const choreName = c.name;
     const locationsMap = c.tasks.reduce<{
       levels: Map<Level>;

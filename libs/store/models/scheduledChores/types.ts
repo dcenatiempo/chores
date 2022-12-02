@@ -77,7 +77,7 @@ export interface ScheduledChore {
   id: string;
   name: string;
   tasks: FBTask[];
-  personId: string;
+  personId?: string;
   schedule: Schedule;
 
   // in whole organiztion OR
@@ -95,7 +95,7 @@ export interface FBScheduledChore {
   id: string;
   name: string;
   tasks: FBTask[];
-  personId: string;
+  personId?: string;
   schedule: FBSchedule;
 
   // in whole organiztion OR
@@ -115,7 +115,7 @@ export interface FeedChore {
   scheduledChoreId: string;
   name: string;
   tasks: Task[];
-  person: Person;
+  person?: Person;
   schedule: Schedule;
 
   // in whole organiztion OR
@@ -151,8 +151,10 @@ export interface UIChoreFeedItem {
     completed: boolean;
     approved: boolean | undefined;
   }[];
-  person: {
-    id: string;
-    name: string;
-  };
+  person:
+    | {
+        id: string;
+        name: string;
+      }
+    | undefined;
 }

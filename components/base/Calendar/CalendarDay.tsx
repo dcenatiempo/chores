@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { timestampToDate, UnixTimestamp } from '../../../libs/dateTime';
+import { fmt, timestampToString, UnixTimestamp } from '../../../libs/dateTime';
 import styles from './Calendar.module.css';
 
 export type CalendarType = 'centered' | 'start' | 'rigid';
@@ -15,12 +15,21 @@ export default function CalendarDay({
   isToday,
   date,
 }: CalendarDayProps) {
-  const dateString = useMemo(() => timestampToDate(date), [date]);
+  const dateString = useMemo(() => timestampToString(date, fmt.DATE), [date]);
+
+  const dayString = useMemo(
+    () => timestampToString(date, fmt.DAY_S).toUpperCase(),
+    [date]
+  );
 
   return (
     <div className={`${styles.calendarDay} ${isToday ? styles.today : ''}`}>
-      {dateString}
-      <div style={{ padding: 4 }}>{renderDay(date)}</div>
+      <div className={styles.dateWrapper}>
+        <div>{dayString}</div>
+        <div>{dateString}</div>
+      </div>
+
+      <div className={styles.calendarDayContent}>{renderDay(date)}</div>
     </div>
   );
 }

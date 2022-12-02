@@ -10,6 +10,10 @@
     display: flex;
     justify-content: center;
     align-items: center;
+    /* position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0; */
   }
 
   .pageWrapper {
@@ -25,8 +29,23 @@
     align-items: center; */
   }
 
-  .container {
+  .webContainer {
     min-height: 100vh;
     display: flex;
     flex-direction: column;
+  }
+
+
+  /*
+   MOBILE CSS
+  */
+  .mobileContainer {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .mobileMain {
+    padding: 50px 0;
+    flex: 1;
   }

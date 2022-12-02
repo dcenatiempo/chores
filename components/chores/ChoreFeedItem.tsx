@@ -30,7 +30,7 @@ export default function ChoreFeedItemChoreFeedItemProps({
   return {
     header: (
       <div style={{ fontSize: 20, cursor: 'pointer' }} onClick={_onClickChore}>
-        {chore.name} ({chore.person.name})
+        {chore.name} ({chore.person?.name || 'unassigned'})
       </div>
     ),
     body: (

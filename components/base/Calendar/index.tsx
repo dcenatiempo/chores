@@ -7,6 +7,7 @@ import {
   timestampToString,
   UnixTimestamp,
 } from '../../../libs/dateTime';
+import { useScreenSize } from '../../../libs/store/appState/useAppState';
 import Button from '../Button';
 import Dropdown from '../Dropdown';
 import { IconName } from '../Icon';
@@ -15,6 +16,13 @@ import styles from './Calendar.module.css';
 import { CalendarType } from './CalendarDay';
 import CalendarWeek from './CalendarWeek';
 import { getCalendarStartDate } from './utils';
+
+const webCalendarViewOptions = [
+  { label: 'Month', value: 'm', days: 7, weeks: 5 },
+  { label: 'Week', value: 'w', days: 7, weeks: 1 },
+  { label: '3 Day', value: '3d', days: 3, weeks: 1 },
+  { label: 'Day', value: 'd', days: 1, weeks: 1 },
+];
 
 export interface CalendarProps {
   calendarState: {
@@ -44,13 +52,10 @@ export default function Calendar({
   now,
   ...rest
 }: CalendarProps) {
-  const calendarViewOptions = [
-    { label: 'Month', value: 'm', days: 7, weeks: 5 },
-    { label: 'Week', value: 'w', days: 7, weeks: 1 },
-    { label: '3 Day', value: '3d', days: 3, weeks: 1 },
-    { label: 'Day', value: 'd', days: 1, weeks: 1 },
-  ];
-  const [calendarView, setCalendarView] = useState(calendarViewOptions[2]);
+  const { isSmallScreen } = useScreenSize();
+  const [calendarView, setCalendarView] = useState(
+    webCalendarViewOptions[isSmallScreen ? 3 : 3]
+  );
 
   const [calendarDays, setCalendarDays] = useState(calendarView.days);
   const [calendarWeeks, setCalendarWeeks] = useState(calendarView.weeks);
@@ -110,20 +115,20 @@ export default function Calendar({
   }
 
   return (
-    <div className={styles.calendar}>
-      <Dropdown
-        requireSelected
-        options={calendarViewOptions}
-        valueKey={(o) => o?.value || ''}
-        labelKey={(o) => o?.label || ''}
-        id={'calendar-view'}
-        onSelect={onSelectCalendarView}
-        selected={calendarView}
-        label={'Calendar View'}
-      />
-      <div
-        style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}
-      >
+    <div className={styles.calendarWrapper}>
+      {isSmallScreen ? null : (
+        <Dropdown
+          requireSelected
+          options={webCalendarViewOptions}
+          valueKey={(o) => o?.value || ''}
+          labelKey={(o) => o?.label || ''}
+          id={'calendar-view'}
+          onSelect={onSelectCalendarView}
+          selected={calendarView}
+          label={'Calendar View'}
+        />
+      )}
+      <div className={styles.calendarControls}>
         <Button label="Today" onClick={() => setToday(getNow())} />
         <IconButton
           outlined
@@ -139,18 +144,20 @@ export default function Calendar({
           onClick={() => onClickChangeDate('next')}
         />
       </div>
-      {[...Array(calendarWeeks)].map((_, wi) => (
-        <CalendarWeek
-          now={now}
-          calendarStartDate={calendarState.calendarStartDate}
-          numWeeks={calendarWeeks}
-          key={`${wi}`}
-          type={type}
-          {...rest}
-          weekIndex={wi}
-          numDays={calendarDays}
-        />
-      ))}
+      <div className={styles.calendar}>
+        {[...Array(calendarWeeks)].map((_, wi) => (
+          <CalendarWeek
+            now={now}
+            calendarStartDate={calendarState.calendarStartDate}
+            numWeeks={calendarWeeks}
+            key={`${wi}`}
+            type={type}
+            {...rest}
+            weekIndex={wi}
+            numDays={calendarDays}
+          />
+        ))}
+      </div>
     </div>
   );
 }

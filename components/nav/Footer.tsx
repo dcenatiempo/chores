@@ -1,6 +1,5 @@
 import { FC } from 'react';
 import styles from './styles.module.css';
-import Image from 'next/image';
 
 interface Props {}
 
@@ -8,7 +7,7 @@ const Footer: FC<Props> = () => {
   return (
     <footer className={styles.footer}>
       <a
-        href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template&utm_campaign=create-next-app"
+        href="https://dcenatiempo.com"
         target="_blank"
         rel="noopener noreferrer"
       >

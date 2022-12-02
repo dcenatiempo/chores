@@ -42,7 +42,7 @@ const AddOrEditScheduledChoresList: FC<AddOrEditScheduledChoresListProps> = ({
   const [levels, setLevels] = useState<Level[]>([]);
   const [roomTypes, setRoomTypes] = useState<RoomType[]>([]);
 
-  const { chores: choresMap } = useCurrentOrg();
+  const { chores: choresMap, rooms: roomsMap } = useCurrentOrg();
   const { getNextId } = useScheduledChores();
 
   const disabled = !isFormValid();
@@ -61,6 +61,8 @@ const AddOrEditScheduledChoresList: FC<AddOrEditScheduledChoresListProps> = ({
     setInterval(scheduledChore?.schedule?.interval);
     setWeekly(scheduledChore?.schedule?.weekly);
     setMonthly(scheduledChore?.schedule?.monthly);
+
+    setRooms(scheduledChore?.roomIds?.map((id) => roomsMap[id]) || []);
   }
 
   function clearForm() {
@@ -77,7 +79,7 @@ const AddOrEditScheduledChoresList: FC<AddOrEditScheduledChoresListProps> = ({
 
   function isFormValid() {
     // if (!choreTemplateId) return false;
-    if (!personId) return false;
+    // if (!personId) return false;
     if (!frequency) return false;
     if (!interval) return false;
     if (!weekly && !monthly) return false;

@@ -37,6 +37,9 @@ export function hydrateHistoryChore(
     startDate: transformTimestamp.fromFB(historyChore.startDate),
     dueDate: transformTimestamp.fromFB(historyChore.dueDate),
   };
+  const person = scheduledChore.personId
+    ? people[scheduledChore.personId]
+    : undefined;
   return cleanFromObject(
     {
       id: historyChore.id,
@@ -55,7 +58,7 @@ export function hydrateHistoryChore(
           rooms
         )
       ),
-      person: people[scheduledChore.personId],
+      person,
       levels: scheduledChore.levelIds?.map((id) => levels[id]),
       roomTypes: scheduledChore.roomTypeIds?.map((id) => roomTypes[id]),
       rooms: scheduledChore.roomIds?.map((id) => rooms[id]),

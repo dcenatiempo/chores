@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 
 import PageWrapper from '../../components/nav/PageWrapper';
 
-import { Calendar, Icon, IconName } from '../../components/base';
+import { Calendar } from '../../components/base';
 import {
   getNow,
   ISOToTimestamp,
@@ -27,6 +27,7 @@ import { Person } from '../../libs/store/models/orgs/types';
 import Modal from '../../components/base/Modal';
 import { HistoryChore } from '../../libs/store/models/choreHistory/types';
 import { useKidMode } from '../../libs/store/appState/useAppState';
+import CalendarEvent from '../../components/base/Calendar/CalendarEvent';
 
 const SchedulePage: NextPage = () => {
   const now = getNow();
@@ -250,7 +251,7 @@ const SchedulePage: NextPage = () => {
         .filter((t) => t.completed)
         .map((t) => t.id);
       newChore.taskIdsApproved = uiChore.tasks
-        .filter((t) => t.completed)
+        .filter((t) => t.approved)
         .map((t) => t.id);
       addHistoryChore(newChore);
     } else {
@@ -311,7 +312,7 @@ const SchedulePage: NextPage = () => {
               const calendarEndDiff = calendarEnd.diff(itemEnd, 'days').days;
               if (
                 calendarEndDiff < 0 ||
-                !people.find((p) => p.id === item.item.person.id)
+                !people.find((p) => p.id === item.item.person?.id)
               ) {
                 return acc;
               }
@@ -334,7 +335,6 @@ const SchedulePage: NextPage = () => {
                   <div
                     style={{
                       flex: numCells - weekStartDiff - endDiff,
-                      backgroundColor: 'pink',
                       padding: 5,
                       margin: 2,
                     }}
@@ -363,33 +363,24 @@ const SchedulePage: NextPage = () => {
           if (!todaysChores) return null;
           return todaysChores.map((c) => {
             if (!c) return null;
-            if (people.length && !people.find((p) => p.id === c.person.id))
+            if (people.length && !people.find((p) => p.id === c.person?.id))
               return null;
 
             const isCompleted = c.tasks.every((t) => t.completed);
             const isApproved = c.tasks.every((t) => t.approved);
             const isInProgress =
               !isApproved && c.tasks.some((t) => t.completed);
-
+            if (!c.person) console.log(c);
             return (
-              <div
-                key={c.name + c.person.name}
-                style={{
-                  fontSize: 20,
-                  marginBottom: 4,
-                  textDecoration: isCompleted ? 'line-through' : undefined,
-                  cursor: disabled ? undefined : 'pointer',
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                }}
-                onClick={disabled ? undefined : () => setModalChore([key, c])}
-              >
-                {c.name} ({c.person.name})
-                {isInProgress ? (
-                  <Icon outlined name={IconName.IN_PROGRESS} />
-                ) : null}
-                {isApproved ? <Icon name={IconName.THUMBS_UP} /> : null}
-              </div>
+              <CalendarEvent
+                key={c.name + c.person?.name}
+                description={`${c.name} (${c.person?.name || 'unassigned'})`}
+                disabled={disabled}
+                onClick={() => setModalChore([key, c])}
+                isCompleted={isCompleted}
+                isInProgress={isInProgress}
+                isApproved={isApproved}
+              />
             );
           });
         }}

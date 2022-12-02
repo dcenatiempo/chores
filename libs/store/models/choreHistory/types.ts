@@ -14,7 +14,7 @@ export interface HistoryChore {
 
 export interface CreateHistoryChoreInput {
   orgId: string;
-  personId: string;
+  personId?: string;
   scheduledChoreId: string;
   startDate: FBTimestamp;
   dueDate: FBTimestamp;
