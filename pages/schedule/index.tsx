@@ -26,7 +26,7 @@ import PeopleSelector from '../../components/people/PeopleSelector';
 import { Person } from '../../libs/store/models/orgs/types';
 import Modal from '../../components/base/Modal';
 import { HistoryChore } from '../../libs/store/models/choreHistory/types';
-import useAppState from '../../libs/store/appState/useAppState';
+import { useKidMode } from '../../libs/store/appState/useAppState';
 
 const SchedulePage: NextPage = () => {
   const now = getNow();
@@ -191,7 +191,7 @@ const SchedulePage: NextPage = () => {
     setModalChore([date, newChore]);
   }
 
-  const { isKidMode } = useAppState();
+  const { isKidMode } = useKidMode();
 
   function _onClickApproveDailyTask(
     date: string,
@@ -370,7 +370,6 @@ const SchedulePage: NextPage = () => {
             const isApproved = c.tasks.every((t) => t.approved);
             const isInProgress =
               !isApproved && c.tasks.some((t) => t.completed);
-            if (isCompleted) console.log(isCompleted, isApproved, isInProgress);
 
             return (
               <div

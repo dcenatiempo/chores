@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import useAppState from '../../libs/store/appState/useAppState';
+import { useDarkMode } from '../../libs/store/appState/useAppState';
 
 enum Theme {
   LIGHT = 'theme-light',
@@ -7,7 +7,7 @@ enum Theme {
 }
 
 export default function ThemeListener() {
-  const { isDark } = useAppState();
+  const { isDark } = useDarkMode();
 
   useEffect(() => {
     const body = document.querySelector('body');

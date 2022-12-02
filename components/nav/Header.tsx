@@ -1,7 +1,10 @@
 import { logout } from '../../libs/authentication';
 import { Button, IconButton, IconName } from '../base';
 import { useRouter } from 'next/router';
-import useAppState from '../../libs/store/appState/useAppState';
+import {
+  useKidMode,
+  useScreenSize,
+} from '../../libs/store/appState/useAppState';
 import useUser from '../../libs/store/models/user/useUser';
 import React from 'react';
 import Link from 'next/link';
@@ -11,6 +14,7 @@ interface Props {}
 
 function Header({}: Props) {
   const { orgName } = useCurrentOrg();
+  const { isSmallScreen } = useScreenSize();
 
   return (
     <header style={styles.container}>
@@ -19,6 +23,7 @@ function Header({}: Props) {
           display: 'flex',
           flexDirection: 'row',
           justifyContent: 'space-between',
+          backgroundColor: isSmallScreen ? 'pink' : undefined,
         }}
       >
         <Link href={'/'} passHref>
@@ -74,7 +79,7 @@ function LogInOutButton() {
 }
 
 function NavigationButtons() {
-  const { isKidMode } = useAppState();
+  const { isKidMode } = useKidMode();
   const { isAuthenticated } = useUser();
   const router = useRouter();
   const tabs = React.useMemo(() => {

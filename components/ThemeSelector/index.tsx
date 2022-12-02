@@ -1,5 +1,5 @@
 import { FC } from 'react';
-import useAppState from '../../libs/store/appState/useAppState';
+import { useDarkMode } from '../../libs/store/appState/useAppState';
 import { Switch } from '../base';
 import styles from './ThemeSelector.module.css';
 
@@ -8,7 +8,7 @@ export interface ThemeSelectorProps {
 }
 
 const ThemeSelector: FC<ThemeSelectorProps> = ({ children }) => {
-  const { isDark, setIsDark } = useAppState();
+  const { isDark, setIsDark } = useDarkMode();
 
   return (
     <div className={styles.themeSelector}>

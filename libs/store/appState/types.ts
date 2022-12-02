@@ -1,5 +1,11 @@
 export interface AppState {
-  isDark: boolean;
-  isKidMode: boolean;
-  kidModePin: string | undefined;
+  device: {
+    isDark: boolean;
+    screenWidth: number;
+    screenHeight: number;
+  };
+  application: {
+    isKidMode: boolean;
+    kidModePin: string | undefined;
+  };
 }

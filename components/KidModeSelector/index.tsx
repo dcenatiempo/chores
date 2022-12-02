@@ -1,5 +1,5 @@
 import { FC, useState } from 'react';
-import useAppState from '../../libs/store/appState/useAppState';
+import { useKidMode } from '../../libs/store/appState/useAppState';
 import { IconButton, IconName, PasswordInput, Switch } from '../base';
 import Modal from '../base/Modal';
 import styles from './KidModeSelector.module.css';
@@ -9,7 +9,7 @@ export interface ThemeSelectorProps {
 }
 
 const ThemeSelector: FC<ThemeSelectorProps> = ({ children }) => {
-  const { isKidMode, toggleKidMode } = useAppState();
+  const { isKidMode, toggleKidMode } = useKidMode();
   const [pin, setPin] = useState<string>('');
   const [showModal, setShowModal] = useState(false);
 

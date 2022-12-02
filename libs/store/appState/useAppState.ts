@@ -2,13 +2,55 @@ import { useDispatch, useSelector } from 'react-redux';
 import * as selectors from './selectors';
 import { actions } from './reducer';
 
-export default function useAppState() {
+export function useScreenSize() {
   const dispatch = useDispatch();
-  const { isDark, isKidMode, kidModePin } = useSelector(selectors.appState);
+  const isSmallScreen = useSelector(selectors.isSmallScreen);
+
+  function setScreenWidth(val: number) {
+    dispatch(actions.setScreenWidth(val));
+  }
+
+  function setScreenHeight(val: number) {
+    dispatch(actions.setScreenHeight(val));
+  }
+
+  function setScreenDimensions({
+    height,
+    width,
+  }: {
+    height: number;
+    width: number;
+  }) {
+    dispatch(actions.setScreenHeight(height));
+    dispatch(actions.setScreenWidth(width));
+  }
+
+  return {
+    setScreenHeight,
+    setScreenWidth,
+    setScreenDimensions,
+    isSmallScreen,
+  };
+}
+
+export function useDarkMode() {
+  const dispatch = useDispatch();
+  const isDark = useSelector(selectors.isDark);
 
   function setIsDark(val: boolean) {
     dispatch(actions.setIsDark(val));
   }
+
+  return {
+    isDark,
+    setIsDark,
+  };
+}
+
+export function useKidMode() {
+  const dispatch = useDispatch();
+  const { isKidMode, kidModePin } = useSelector(selectors.application);
+
   function toggleKidMode(pin: string) {
     const newPin = isKidMode ? undefined : pin;
     if (isKidMode && pin !== kidModePin) return false;
@@ -17,8 +59,6 @@ export default function useAppState() {
   }
 
   return {
-    isDark,
-    setIsDark,
     isKidMode,
     toggleKidMode,
   };
