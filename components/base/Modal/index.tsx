@@ -28,20 +28,34 @@ const ModalContent: FC<Omit<ModalProps, 'visible'>> = ({
   const { isSmallScreen } = useScreenSize();
   const portal = usePortal('modal-root');
   const { isBrowser } = useSSR();
+  const [closing, setClosing] = useState(false);
+  console.log('closing', closing);
 
   function onClickClose() {
-    onClose();
+    setClosing(true);
+    setTimeout(
+      () => {
+        setClosing(false);
+        onClose();
+      },
+      isSmallScreen ? 200 : 95
+    );
   }
 
   const modalContent = (
     <>
-      <div className={styles.overlay} onClick={onClose} />
+      <div
+        className={`${styles.overlay} ${closing ? styles.closing : ''}  ${
+          isSmallScreen ? styles.smallScreen : ''
+        }`}
+        onClick={onClose}
+      />
       <div
         className={`${styles.modalWrapper} ${
           isSmallScreen ? styles.smallScreen : ''
         }`}
       >
-        <div className={styles.modal}>
+        <div className={`${styles.modal} ${closing ? styles.closing : ''}`}>
           <div className={styles.header}>
             {title && <div className={styles.title}>{title}</div>}
 

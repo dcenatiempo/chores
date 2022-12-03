@@ -58,6 +58,7 @@ export default function ChoreFeedItemChoreFeedItemProps({
                     style={{
                       textDecoration: t.completed ? 'line-through' : undefined,
                       cursor: 'pointer',
+                      fontSize: 16,
                     }}
                     onClick={() => _onClickTask(t.id)}
                     label={`${t.name}`}

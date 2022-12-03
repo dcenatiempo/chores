@@ -7,6 +7,13 @@ export default function ScreenSizeListener({}) {
   const { setScreenDimensions } = useScreenSize();
 
   useEffect(() => {
+    setScreenDimensions({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    });
+  }, [setScreenDimensions]);
+
+  useEffect(() => {
     function onResize(e: UIEvent) {
       clearTimeout(timer);
       timer = setTimeout(() => {
