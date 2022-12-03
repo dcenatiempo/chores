@@ -15,6 +15,7 @@ import {
   deleteDoc,
   addDoc,
   collection,
+  enableIndexedDbPersistence,
 } from 'firebase/firestore';
 import {
   transformChore,
@@ -53,6 +54,18 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 const db = getFirestore(app);
+
+enableIndexedDbPersistence(db).catch((err) => {
+  if (err.code == 'failed-precondition') {
+    // Multiple tabs open, persistence can only be enabled
+    // in one tab at a a time.
+    // ...
+  } else if (err.code == 'unimplemented') {
+    // The current browser does not support all of the
+    // features required to enable persistence
+    // ...
+  }
+});
 
 async function fetchDocs<T>(
   collectionName: Collection | OrgCollection,
