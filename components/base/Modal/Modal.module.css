@@ -37,7 +37,8 @@
 }
 
 .smallScreen .modal {
-  max-height: 96vh;
+  height: 96vh;
+  width: 100vw;
   align-self: end;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
