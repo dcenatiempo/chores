@@ -29,7 +29,6 @@ const PageWrapper: FC<PageWrapperProps> = ({ children, ...rest }) => {
     <div className={styles.webContainer}>
       <Head {...rest} />
       <Header />
-      screenSize = {screenWidth}
       <RouteGuard>
         <main className={styles.webMain}>{children}</main>
       </RouteGuard>

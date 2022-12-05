@@ -47,29 +47,19 @@ const AddOrEditChore: FC<AddOrEditChoreProps> = ({
         initialRoomType={initialRoomType}
         onRoomsChange={setRooms}
       />
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'column',
-          columnGap: 10,
-          paddingLeft: 10,
-          paddingRight: 10,
-        }}
-      >
-        <TextInput value={name} onChange={setName} label="Name" />
-
-        <MultiselectDropdown
-          options={taskOptions}
-          valueKey={(option) => option?.id || ''}
-          labelKey={(option) =>
-            `${option?.action.name} ${option?.surfaceTemplate?.name}`
-          }
-          id={'defaultPeople'}
-          onSelect={setTasks}
-          selected={tasks}
-          label={'Tasks'}
-        />
-      </div>
+      <TextInput value={name} onChange={setName} label="Name" />
+      <br />
+      <MultiselectDropdown
+        options={taskOptions}
+        valueKey={(option) => option?.id || ''}
+        labelKey={(option) =>
+          `${option?.action.name} ${option?.surfaceTemplate?.name}`
+        }
+        id={'defaultPeople'}
+        onSelect={setTasks}
+        selected={tasks}
+        label={'Tasks'}
+      />
     </>
   );
 };

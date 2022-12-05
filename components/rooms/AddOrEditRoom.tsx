@@ -34,7 +34,7 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
   const { surfaceTemplates } = useSurfaces();
 
   return (
-    <Card>
+    <>
       <br />
       <TextInput value={name} label="name" onChange={setName} />
       <br />
@@ -61,7 +61,7 @@ const AddOrEditRoom: FC<AddOrEditRoomProps> = ({
         onSelect={setSurfaces}
         detached={roomType?.name === 'none'}
       />
-    </Card>
+    </>
   );
 };
 

@@ -91,22 +91,25 @@ function AddOrEditResourceList<T>({
         }}
         title={`${showModal === 'edit' ? 'EDIT' : 'ADD'} ${singularName}`}
       >
-        {addOrEditResource}
+        <div style={{ marginLeft: 10, marginRight: 10 }}>
+          {addOrEditResource}
+          <br />
 
-        {showModal === 'add' ? (
-          <AddButton
-            className={styles.bottomButton}
-            disabled={disabled}
-            onClick={_onClickAdd}
-          />
-        ) : null}
-        {showModal === 'edit' ? (
-          <SaveButton
-            className={styles.bottomButton}
-            disabled={disabled}
-            onClick={_onClickSave}
-          />
-        ) : null}
+          {showModal === 'add' ? (
+            <AddButton
+              className={styles.bottomButton}
+              disabled={disabled}
+              onClick={_onClickAdd}
+            />
+          ) : null}
+          {showModal === 'edit' ? (
+            <SaveButton
+              className={styles.bottomButton}
+              disabled={disabled}
+              onClick={_onClickSave}
+            />
+          ) : null}
+        </div>
       </Modal>
     </>
   );

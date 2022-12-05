@@ -20,20 +20,13 @@ const AddPerson: FC<AddOrEditPersonProps> = ({
   setBirthday,
 }) => {
   return (
-    <div
-      style={{
-        display: 'flex',
-        flexDirection: 'row',
-        alignItems: 'end',
-        columnGap: 10,
-        paddingLeft: 10,
-        paddingRight: 10,
-      }}
-    >
+    <>
       <TextInput label="First" value={firstName} onChange={setFirstName} />
+      <br />
       <TextInput label="Last" value={lastName} onChange={setLastName} />
+      <br />
       <DateSelector id="birthday" onChange={setBirthday} date={birthday} />
-    </div>
+    </>
   );
 };
 

@@ -40,29 +40,17 @@ const AddOrEditTask: FC<AddOrEditTaskProps> = ({
         onRoomsChange={setRooms}
       />
 
-      <div
-        style={{
-          display: 'flex',
-          flexDirection: 'row',
-          alignItems: 'end',
-          flexWrap: 'wrap',
-          columnGap: 10,
-          paddingLeft: 10,
-          paddingRight: 10,
-        }}
-      >
-        <ActionsSelector selected={action} onSelect={setAction} />
-        <Dropdown
-          options={surfaceOptions}
-          valueKey={(option) => option?.id || ''}
-          labelKey={(option) => option?.name || ''}
-          id={'surface'}
-          onSelect={setSurfaceTemplate}
-          selected={surfaceTemplate}
-          label={'Surface'}
-        />
-      </div>
+      <ActionsSelector selected={action} onSelect={setAction} />
       <br />
+      <Dropdown
+        options={surfaceOptions}
+        valueKey={(option) => option?.id || ''}
+        labelKey={(option) => option?.name || ''}
+        id={'surface'}
+        onSelect={setSurfaceTemplate}
+        selected={surfaceTemplate}
+        label={'Surface'}
+      />
     </>
   );
 };

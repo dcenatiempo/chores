@@ -86,18 +86,20 @@ export default function FilterRooms({
   return (
     <div>
       Filter By
+      <br />
       <LevelSelector
         onSelect={_setLevel}
         selected={level}
         levels={levelsInUse}
       />
+      <br />
       <RoomTypeSelector
         selected={roomType}
         onSelect={_setRoomType}
         roomTypes={roomTypeOptions}
       />
-      <RoomSelector selected={room} onSelect={_setRoom} rooms={roomOptions} />
       <br />
+      <RoomSelector selected={room} onSelect={_setRoom} rooms={roomOptions} />
       <br />
     </div>
   );
