@@ -1,6 +1,6 @@
 import { FC, useEffect, useRef, useState } from 'react';
 import ReactDOM from 'react-dom';
-import { useSSR, usePortal } from '../../../libs/hooks';
+import { useSSR, usePortal, useInterval } from '../../../libs/hooks';
 import { useScreenSize } from '../../../libs/store/appState/useAppState';
 import { IconName } from '../Icon';
 import IconButton from '../IconButton';
@@ -28,34 +28,44 @@ const ModalContent: FC<Omit<ModalProps, 'visible'>> = ({
   const { isSmallScreen } = useScreenSize();
   const portal = usePortal('modal-root');
   const { isBrowser } = useSSR();
-  const [closing, setClosing] = useState(false);
-  console.log('closing', closing);
+  const [hidden, setHidden] = useState(true);
 
   function onClickClose() {
-    setClosing(true);
+    setHidden(true);
+
     setTimeout(
       () => {
-        setClosing(false);
         onClose();
       },
-      isSmallScreen ? 200 : 95
+      isSmallScreen ? 501 : 151
     );
+  }
+
+  useEffect(() => {
+    if (!portal || !isBrowser) return;
+    setTimeout(() => {
+      onClickOpen();
+    }, 50);
+  }, [isBrowser, portal]);
+
+  function onClickOpen() {
+    setHidden(false);
   }
 
   const modalContent = (
     <>
       <div
-        className={`${styles.overlay} ${closing ? styles.closing : ''}  ${
+        className={`${styles.overlay} ${hidden ? styles.hidden : ''}  ${
           isSmallScreen ? styles.smallScreen : ''
         }`}
-        onClick={onClose}
+        onClick={onClickClose}
       />
       <div
         className={`${styles.modalWrapper} ${
           isSmallScreen ? styles.smallScreen : ''
         }`}
       >
-        <div className={`${styles.modal} ${closing ? styles.closing : ''}`}>
+        <div className={`${styles.modal} ${hidden ? styles.hidden : ''}`}>
           <div className={styles.header}>
             {title && <div className={styles.title}>{title}</div>}
 

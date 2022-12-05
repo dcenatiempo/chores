@@ -64,7 +64,7 @@ Check out our [Next.js deployment documentation](https://nextjs.org/docs/deploym
 
 - hover states
 - better filtering
-- persistent cache
+- ~~persistent cache~~
 - ~~better dropdowns~~
 - ~~better multiselect~~
 - ~~calendar controls (change range of calendar)~~

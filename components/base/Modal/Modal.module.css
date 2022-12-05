@@ -9,6 +9,10 @@
   font-size: 25px;
 }
 
+.title {
+  flex: 1;
+}
+
 .modalWrapper {
   position: fixed;
   top: 0;
@@ -22,8 +26,6 @@
   pointer-events: none;
 }
 
-
-
 .modal {
   background-color: var(--component-bg-color);
   /* min-width: 500px; */
@@ -34,8 +36,9 @@
   padding: 15px;
   pointer-events: all;
   overflow: scroll;
-  animation-name: fadeIn;
-  animation-duration: 200ms;
+  opacity: 1;
+  transition: opacity 150ms;
+  transition-timing-function: ease;
 }
 
 .smallScreen .modal {
@@ -45,8 +48,9 @@
   align-self: end;
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
-  animation-name: slideUp;
-  animation-duration: 200ms;
+  transform: translateY(0vh);
+  transition: transform 250ms;
+  opacity: 1;
 }
 
 .overlay {
@@ -56,56 +60,24 @@
   width: 100vw;
   height: 100vh;
   background-color: rgba(0, 0, 0, 0.5);
-  animation-name: fadeIn;
-  animation-duration: 200ms;
+  opacity: 1;
+  transition: opacity 150ms;
+  transition-timing-function: ease;
 }
 
-.title {
-  flex: 1;
+.overlay.smallScreen {
+  transition: opacity 500ms;
 }
 
-.overlay.closing {
-  animation-name: fadeOut;
-  animation-duration: 100ms;
-}
-.smallScreen.overlay.closing {
-  animation-name: fadeOut;
-  animation-duration: 200ms;
+.overlay.hidden {
+  opacity: 0;
 }
 
-.modal.closing {
-  animation-name: fadeOut;
-  animation-duration: 100ms;
+.modal.hidden {
+  opacity: 0;
 }
 
-.smallScreen .modal.closing {
-  animation-name: slideDown;
-  animation-duration: 200ms;
-}
-@keyframes slideDown {
-  0%   {transform: translateY(0vh); }
-  25%  {transform: translateY(25vh); }
-  50%  {transform: translateY(60vh); }
-  100% {transform: translateY(100vh);}
-}
-
-@keyframes fadeOut {
-  0%   {opacity: 1 }
-  25%  {opacity: .8 }
-  50%  {opacity: .6 }
-  100% {opacity: 0 }
-}
-
-@keyframes slideUp {
-  0%   {transform: translateY(100vh)}
-  25%  {transform: translateY(60vh)}
-  50%  {transform: translateY(25vh)}
-  100% {transform: translateY(0vh)}
-}
-
-@keyframes fadeIn {
-  0%   {opacity: 0 }
-  25%  {opacity: .6 }
-  50%  {opacity: .8 }
-  100% {opacity: 1 }
+.smallScreen .modal.hidden {
+  transform: translateY(100vh);
+  opacity: 1;
 }
