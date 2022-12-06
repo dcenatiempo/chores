@@ -1,5 +1,4 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from 'react';
-import { useInterval } from '../../../libs/hooks';
+import { ChangeEvent, useCallback, useMemo } from 'react';
 import InputField, { InputFieldProps } from '../InputField';
 import styles from './MultiselectDropdown.module.css';
 

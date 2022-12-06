@@ -21,7 +21,9 @@ const options = [
 const SettingsPage: NextPage = () => {
   const { isAuthenticated } = useUser();
   const [multiSelected, setMultiSelected] = React.useState<string[]>([]);
-  const [selected, setSelected] = React.useState<string>();
+  const [selected, setSelected] = React.useState<
+    { label: string; id: string } | undefined
+  >();
   return (
     <PageWrapper metaTitle="Chore Settings">
       <ThemeSelector />
