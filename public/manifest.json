@@ -71,7 +71,11 @@
       },
       {
         "src": "/icon/icon-256x256.png",
-        "type": "image/png", "sizes": "256x256 any"
+        "type": "image/png", "sizes": "256x256"
+      },
+      {
+        "src": "/icon/icon-256x256.png",
+        "type": "image/png", "sizes": "any"
       },
       {
         "src": "/icon/icon-384x384.png",
