@@ -25,7 +25,7 @@ const ThemeSelector: FC<ThemeSelectorProps> = ({ children }) => {
 
   return (
     <div className={styles.themeSelector}>
-      Kid Mode
+      <div style={{ flex: 1 }}>Kid Mode</div>
       <Switch value={isKidMode} onChange={onChange} />
       <Modal
         onClose={() => {

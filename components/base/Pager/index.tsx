@@ -8,6 +8,8 @@ import React, {
 } from 'react';
 import styles from './Pager.module.css';
 import useResizeObserver from 'use-resize-observer';
+import Button from '../Button';
+import { useScreenSize } from '../../../libs/store/appState/useAppState';
 
 let timer: NodeJS.Timeout;
 
@@ -65,7 +67,6 @@ export default function Pager({
   const onScroll = useCallback(
     (e: React.UIEvent) => {
       if (isAutoScrollingRef.current) return;
-      console.log('xxxx onManualScroll');
 
       isManualScrolling.current = true;
       clearTimeout(timer);
@@ -95,6 +96,32 @@ export default function Pager({
         ? _children.map((c, i) => <Page key={`${i}`}>{c}</Page>)
         : _children}
     </div>
+  );
+}
+
+export function PagerTabs({
+  tabs,
+  pageIndex,
+  setPageIndex,
+}: {
+  tabs: string[];
+  pageIndex: number;
+  setPageIndex: (index: number) => void;
+}) {
+  const { isSmallScreen } = useScreenSize();
+
+  return (
+    <>
+      {tabs.map((b, i) => (
+        <Button
+          type={pageIndex === i ? 'fill' : 'outline'}
+          key={b}
+          label={b}
+          onClick={() => setPageIndex(i)}
+          style={{ flex: isSmallScreen ? 1 : 'unset' }}
+        />
+      ))}
+    </>
   );
 }
 

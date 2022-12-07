@@ -40,9 +40,16 @@ export default function ChoreFeedItemChoreFeedItemProps({
           flexDirection: 'row',
           alignItems: 'center',
           columnGap: 10,
+          paddingLeft: 10,
+          paddingRight: 10,
         }}
       >
-        <ul>
+        <ul
+          style={{
+            width: '100%',
+            paddingLeft: 0,
+          }}
+        >
           {chore.tasks.map((t) => {
             const disabled = isKidMode || !t.completed;
 

@@ -2,7 +2,7 @@ import type { NextPage } from 'next';
 
 import PageWrapper from '../../components/nav/PageWrapper';
 
-import { Calendar } from '../../components/base';
+import { Calendar, Pager, PagerTabs } from '../../components/base';
 import {
   getNow,
   ISOToTimestamp,
@@ -288,118 +288,153 @@ const SchedulePage: NextPage = () => {
       })
     : { header: null, body: null };
 
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageCount, setPageCount] = useState(0);
+  const buttons = isKidMode ? undefined : ['Calendar', 'Chores'];
+
   return (
     <PageWrapper metaTitle="Chore Schedule">
-      <PeopleSelector selected={people} onSelect={setPeople} />
+      {buttons ? (
+        <div
+          style={{
+            display: 'flex',
+            columnGap: 10,
+            padding: 10,
+          }}
+        >
+          <PagerTabs
+            pageIndex={pageIndex}
+            setPageIndex={setPageIndex}
+            tabs={buttons}
+          />
+        </div>
+      ) : null}
+      <div
+        style={{
+          paddingLeft: 10,
+          paddingRight: 10,
+        }}
+      >
+        <PeopleSelector selected={people} onSelect={setPeople} />
+      </div>
+      <br />
+      <Pager
+        pageIndex={pageIndex}
+        onChangePageIndex={setPageIndex}
+        onChangePageCount={setPageCount}
+      >
+        <div style={{ marginLeft: -20, left: 10, position: 'relative' }}>
+          <Calendar
+            numWeeks={calendarWeeks}
+            date={today}
+            numDays={calendarDays}
+            renderWeek={(
+              startDate: UnixTimestamp,
+              endDate: UnixTimestamp,
+              numCells: number
+            ) => {
+              const calendarEnd = DateTime.fromSeconds(calendarEndDate);
+              const weekStart = DateTime.fromSeconds(startDate);
+              const weekEnd = DateTime.fromSeconds(endDate);
 
-      <Calendar
-        numWeeks={calendarWeeks}
-        date={today}
-        numDays={calendarDays}
-        renderWeek={(
-          startDate: UnixTimestamp,
-          endDate: UnixTimestamp,
-          numCells: number
-        ) => {
-          const calendarEnd = DateTime.fromSeconds(calendarEndDate);
-          const weekStart = DateTime.fromSeconds(startDate);
-          const weekEnd = DateTime.fromSeconds(endDate);
+              const thisWeeksChores = choresFeed.multiDay.reduce<
+                React.ReactNode[]
+              >((acc, item) => {
+                const itemStart = DateTime.fromSeconds(item.startDate);
+                const itemEnd = DateTime.fromSeconds(item.endDate);
+                const calendarEndDiff = calendarEnd.diff(itemEnd, 'days').days;
+                if (
+                  calendarEndDiff < 0 ||
+                  !people.find((p) => p.id === item.item.person?.id)
+                ) {
+                  return acc;
+                }
 
-          const thisWeeksChores = choresFeed.multiDay.reduce<React.ReactNode[]>(
-            (acc, item) => {
-              const itemStart = DateTime.fromSeconds(item.startDate);
-              const itemEnd = DateTime.fromSeconds(item.endDate);
-              const calendarEndDiff = calendarEnd.diff(itemEnd, 'days').days;
-              if (
-                calendarEndDiff < 0 ||
-                !people.find((p) => p.id === item.item.person?.id)
-              ) {
-                return acc;
-              }
+                let endDiff = weekEnd.diff(itemEnd, 'days').days;
 
-              let endDiff = weekEnd.diff(itemEnd, 'days').days;
+                if (endDiff >= 7) return acc;
+                if (endDiff <= 0) endDiff = 0; // this is not due this week
+                let weekStartDiff = itemStart.diff(weekStart, 'days').days;
+                if (weekStartDiff >= 7) return acc;
+                if (weekStartDiff < 0) weekStartDiff = 0;
 
-              if (endDiff >= 7) return acc;
-              if (endDiff <= 0) endDiff = 0; // this is not due this week
-              let weekStartDiff = itemStart.diff(weekStart, 'days').days;
-              if (weekStartDiff >= 7) return acc;
-              if (weekStartDiff < 0) weekStartDiff = 0;
-
-              return [
-                ...acc,
-                <div
-                  key={`${item.item.id}`}
-                  style={{ display: 'flex', flexDirection: 'row' }}
-                >
-                  <div style={{ flex: weekStartDiff }} />
+                return [
+                  ...acc,
                   <div
-                    style={{
-                      flex: numCells - weekStartDiff - endDiff,
-                      padding: 5,
-                      margin: 2,
-                    }}
+                    key={`${item.item.id}`}
+                    style={{ display: 'flex', flexDirection: 'row' }}
                   >
-                    {item.item.name} {item.item.id}
-                  </div>
-                  <div style={{ flex: endDiff }} />
-                </div>,
-              ];
-            },
-            []
-          );
-          return (
-            <div style={{ display: 'flex', flexDirection: 'column' }}>
-              {thisWeeksChores}
-            </div>
-          );
-        }}
-        renderDay={(date: UnixTimestamp) => {
-          const key = timestampToISODate(date);
-          const nowDate = timestampToISODate(now);
-          const isToday = key === nowDate;
-          const disabled = date > now && !isToday;
+                    <div style={{ flex: weekStartDiff }} />
+                    <div
+                      style={{
+                        flex: numCells - weekStartDiff - endDiff,
+                        padding: 5,
+                        margin: 2,
+                      }}
+                    >
+                      {item.item.name} {item.item.id}
+                    </div>
+                    <div style={{ flex: endDiff }} />
+                  </div>,
+                ];
+              }, []);
+              return (
+                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                  {thisWeeksChores}
+                </div>
+              );
+            }}
+            renderDay={(date: UnixTimestamp) => {
+              const key = timestampToISODate(date);
+              const nowDate = timestampToISODate(now);
+              const isToday = key === nowDate;
+              const disabled = date > now && !isToday;
 
-          const todaysChores = choresFeed.daily[key];
-          if (!todaysChores) return null;
-          return todaysChores.map((c) => {
-            if (!c) return null;
-            if (people.length && !people.find((p) => p.id === c.person?.id))
-              return null;
+              const todaysChores = choresFeed.daily[key];
+              if (!todaysChores) return null;
+              return todaysChores.map((c) => {
+                if (!c) return null;
+                if (people.length && !people.find((p) => p.id === c.person?.id))
+                  return null;
 
-            const isCompleted = c.tasks.every((t) => t.completed);
-            const isApproved = c.tasks.every((t) => t.approved);
-            const isInProgress =
-              !isApproved && c.tasks.some((t) => t.completed);
-            if (!c.person) console.log(c);
-            return (
-              <CalendarEvent
-                key={c.name + c.person?.name}
-                description={`${c.name} (${c.person?.name || 'unassigned'})`}
-                disabled={disabled}
-                onClick={() => setModalChore([key, c])}
-                isCompleted={isCompleted}
-                isInProgress={isInProgress}
-                isApproved={isApproved}
-              />
-            );
-          });
-        }}
-        type={calendarType}
-        calendarState={{
-          calendarStartDate,
-          setCalendarStartDate,
-          setCalendarEndDate,
-        }}
-        now={now}
-      />
-      {isKidMode ? null : (
-        <AddOrEditScheduledChoresList
-          addChore={addScheduledChore}
-          editChore={editScheduledChore}
-          deleteChore={deleteScheduledChore}
-          chores={filteredScheduledChores}
-        />
-      )}
+                const isCompleted = c.tasks.every((t) => t.completed);
+                const isApproved = c.tasks.every((t) => t.approved);
+                const isInProgress =
+                  !isApproved && c.tasks.some((t) => t.completed);
+                if (!c.person) console.log(c);
+                return (
+                  <CalendarEvent
+                    key={c.name + c.person?.name}
+                    description={`${c.name} (${
+                      c.person?.name || 'unassigned'
+                    })`}
+                    disabled={disabled}
+                    onClick={() => setModalChore([key, c])}
+                    isCompleted={isCompleted}
+                    isInProgress={isInProgress}
+                    isApproved={isApproved}
+                  />
+                );
+              });
+            }}
+            type={calendarType}
+            calendarState={{
+              calendarStartDate,
+              setCalendarStartDate,
+              setCalendarEndDate,
+            }}
+            now={now}
+          />
+        </div>
+        {isKidMode ? null : (
+          <AddOrEditScheduledChoresList
+            addChore={addScheduledChore}
+            editChore={editScheduledChore}
+            deleteChore={deleteScheduledChore}
+            chores={filteredScheduledChores}
+          />
+        )}
+      </Pager>
       <Modal onClose={onCloseModal} title={header} visible={showModal}>
         {body}
       </Modal>

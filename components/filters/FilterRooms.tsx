@@ -92,13 +92,11 @@ export default function FilterRooms({
         selected={level}
         levels={levelsInUse}
       />
-      <br />
       <RoomTypeSelector
         selected={roomType}
         onSelect={_setRoomType}
         roomTypes={roomTypeOptions}
       />
-      <br />
       <RoomSelector selected={room} onSelect={_setRoom} rooms={roomOptions} />
       <br />
     </div>

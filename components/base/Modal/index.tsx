@@ -32,6 +32,7 @@ const ModalContent: FC<Omit<ModalProps, 'visible'>> = ({
 
   function onClickClose() {
     setHidden(true);
+    toggleStuff(false);
 
     setTimeout(
       () => {
@@ -49,6 +50,7 @@ const ModalContent: FC<Omit<ModalProps, 'visible'>> = ({
   }, [isBrowser, portal]);
 
   function onClickOpen() {
+    toggleStuff(true);
     setHidden(false);
   }
 
@@ -82,5 +84,12 @@ const ModalContent: FC<Omit<ModalProps, 'visible'>> = ({
   );
 
   if (!portal || !isBrowser) return null;
+
   return ReactDOM.createPortal(modalContent, portal);
 };
+
+function toggleStuff(on: boolean) {
+  const body = document.querySelector('body');
+  if (!body) return;
+  body.dataset.portal = on ? '1' : '0';
+}

@@ -63,8 +63,21 @@ function AddOrEditResourceList<T>({
     <>
       <Card>
         <>
-          <div style={{ paddingLeft: 10, paddingRight: 10, fontSize: 20 }}>
-            {pluralName}
+          <div
+            style={{
+              display: 'flex',
+              paddingLeft: 10,
+              paddingRight: 10,
+              fontSize: 20,
+            }}
+          >
+            <div style={{ flex: 1 }}>{pluralName}</div>
+            {onClickAdd ? (
+              <Button
+                onClick={() => setShowModal('add')}
+                label={`Add ${singularName}`}
+              />
+            ) : null}
           </div>
           <ResourceList
             resources={resources}
@@ -75,12 +88,6 @@ function AddOrEditResourceList<T>({
             }
             keyExtractor={keyExtractor}
           />
-          {onClickAdd ? (
-            <Button
-              onClick={() => setShowModal('add')}
-              label={`Add ${singularName}`}
-            />
-          ) : null}
         </>
       </Card>
       <Modal

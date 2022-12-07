@@ -117,16 +117,19 @@ export default function Calendar({
   return (
     <div className={styles.calendarWrapper}>
       {isSmallScreen ? null : (
-        <Dropdown
-          requireSelected
-          options={webCalendarViewOptions}
-          valueKey={(o) => o?.value || ''}
-          labelKey={(o) => o?.label || ''}
-          id={'calendar-view'}
-          onSelect={onSelectCalendarView}
-          selected={calendarView}
-          label={'Calendar View'}
-        />
+        <div style={{ paddingLeft: 10, paddingRight: 10 }}>
+          <Dropdown
+            requireSelected
+            options={webCalendarViewOptions}
+            valueKey={(o) => o?.value || ''}
+            labelKey={(o) => o?.label || ''}
+            id={'calendar-view'}
+            onSelect={onSelectCalendarView}
+            selected={calendarView}
+            label={'Calendar View'}
+          />
+          <br />
+        </div>
       )}
       <div className={styles.calendarControls}>
         <Button label="Today" onClick={() => setToday(getNow())} />
@@ -136,14 +139,15 @@ export default function Calendar({
           iconName={IconName.LEFT_CHEVRON}
           onClick={() => onClickChangeDate('prev')}
         />
-        {timestampToString(today, `${fmt.MONTH_L} ${fmt.YEAR_L}`)}
         <IconButton
           outlined
           type="sentance"
           iconName={IconName.RIGHT_CHEVRON}
           onClick={() => onClickChangeDate('next')}
         />
+        {timestampToString(today, `${fmt.MONTH_L}, ${fmt.DATE} ${fmt.YEAR_L}`)}
       </div>
+      <br />
       <div className={styles.calendar}>
         {[...Array(calendarWeeks)].map((_, wi) => (
           <CalendarWeek

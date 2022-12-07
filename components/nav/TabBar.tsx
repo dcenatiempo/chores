@@ -21,7 +21,7 @@ function NavigationButtons() {
   const router = useRouter();
   const tabs = React.useMemo(() => {
     if (isKidMode) return ['schedule', 'settings'];
-    return ['dashboard', 'household', 'chores', 'schedule', 'settings'];
+    return ['household', 'chores', 'schedule', 'settings'];
   }, [isKidMode]);
 
   if (!isAuthenticated) return null;

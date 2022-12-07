@@ -12,7 +12,7 @@ const ThemeSelector: FC<ThemeSelectorProps> = ({ children }) => {
 
   return (
     <div className={styles.themeSelector}>
-      Dark Mode
+      <div style={{ flex: 1 }}>Dark Mode</div>
       <Switch value={isDark} onChange={setIsDark} />
     </div>
   );

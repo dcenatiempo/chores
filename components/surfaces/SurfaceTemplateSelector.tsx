@@ -21,7 +21,7 @@ const SurfaceTemplateSelector: FC<SurfaceTemplateSelectorProps> = ({
   const [surface, setSurface] = useState<SurfaceTemplate>();
   const [surfaceName, setSurfaceName] = useState<string>('');
 
-  const { customSurfacesArray, getNextId } = useCurrentOrg();
+  const { customSurfacesArray } = useCurrentOrg();
   const { detachedSurfacesTemplatesArray, attachedSurfacesTemplatesArray } =
     useSurfaces();
   const surfaceTemplatesArray = detached
@@ -70,7 +70,6 @@ const SurfaceTemplateSelector: FC<SurfaceTemplateSelectorProps> = ({
         selected={surface}
         id="surfaces"
       />
-      xxx
       <AddButton disabled={!surface} onClick={onAdd} />
     </div>
   );

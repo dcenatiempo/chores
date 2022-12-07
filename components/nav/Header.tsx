@@ -9,12 +9,14 @@ import useUser from '../../libs/store/models/user/useUser';
 import React from 'react';
 import Link from 'next/link';
 import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
+import { isAuthenticated } from '../../libs/store/models/user/selectors';
 
 interface Props {}
 
 function Header({}: Props) {
   const { orgName } = useCurrentOrg();
-  const { isSmallScreen } = useScreenSize();
+  const { isKidMode } = useKidMode();
+  const { isAuthenticated } = useUser();
 
   return (
     <header style={styles.container}>
@@ -30,7 +32,7 @@ function Header({}: Props) {
             <h1 style={styles.title}>{orgName} Chores</h1>
           </a>
         </Link>
-        <LogInOutButton />
+        {!isKidMode || !isAuthenticated ? <LogInOutButton /> : null}
       </div>
       <NavigationButtons />
     </header>
@@ -49,7 +51,7 @@ const styles = {
   },
 };
 
-function LogInOutButton() {
+export function LogInOutButton() {
   const router = useRouter();
   const { isAuthenticated } = useUser();
 
@@ -84,7 +86,7 @@ function NavigationButtons() {
   const tabs = React.useMemo(() => {
     if (!isAuthenticated) return ['settings'];
     if (isKidMode) return ['schedule', 'settings'];
-    return ['dashboard', 'household', 'chores', 'schedule', 'settings'];
+    return ['household', 'chores', 'schedule', 'settings'];
   }, [isKidMode, isAuthenticated]);
   return (
     <div style={{ display: 'flex', flexDirection: 'row' }}>

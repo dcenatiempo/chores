@@ -26,45 +26,48 @@ const SettingsPage: NextPage = () => {
   >();
   return (
     <PageWrapper metaTitle="Chore Settings">
-      <ThemeSelector />
-      {isAuthenticated ? <KidModeSelector /> : null}
-      <MultiselectDropdown
-        options={options}
-        valueKey={(o) => o?.id}
-        labelKey={(o) => o?.label}
-        id={'multiselect'}
-        onSelect={(items) => setMultiSelected(items.map((x) => x.id))}
-        selected={multiSelected}
-        label={'multiselect'}
-      />
-      <Dropdown
-        options={options}
-        valueKey={(o) => o?.id || ''}
-        labelKey={(o) => o?.label || ''}
-        id={'select'}
-        onSelect={setSelected}
-        selected={selected}
-        label={'select'}
-      />
+      <div style={{ paddingLeft: 10, paddingRight: 10 }}>
+        <ThemeSelector />
+        <br />
+        {isAuthenticated ? <KidModeSelector /> : null}
+        <MultiselectDropdown
+          options={options}
+          valueKey={(o) => o?.id}
+          labelKey={(o) => o?.label}
+          id={'multiselect'}
+          onSelect={(items) => setMultiSelected(items.map((x) => x.id))}
+          selected={multiSelected}
+          label={'multiselect'}
+        />
+        <Dropdown
+          options={options}
+          valueKey={(o) => o?.id || ''}
+          labelKey={(o) => o?.label || ''}
+          id={'select'}
+          onSelect={setSelected}
+          selected={selected}
+          label={'select'}
+        />
 
-      <NativeMultiselectDropdown
-        options={options}
-        valueKey={(o) => o?.id}
-        labelKey={(o) => o?.label}
-        id={'native-multiselect'}
-        onSelect={(items) => setMultiSelected(items.map((x) => x.id))}
-        selected={multiSelected}
-        label={'native-multiselect'}
-      />
-      <NativeDropdown
-        options={options}
-        valueKey={(o) => o?.id}
-        labelKey={(o) => o?.label}
-        id={'native-select'}
-        onSelect={setSelected}
-        selected={selected}
-        label={'native-select'}
-      />
+        <NativeMultiselectDropdown
+          options={options}
+          valueKey={(o) => o?.id}
+          labelKey={(o) => o?.label}
+          id={'native-multiselect'}
+          onSelect={(items) => setMultiSelected(items.map((x) => x.id))}
+          selected={multiSelected}
+          label={'native-multiselect'}
+        />
+        <NativeDropdown
+          options={options}
+          valueKey={(o) => o?.id}
+          labelKey={(o) => o?.label}
+          id={'native-select'}
+          onSelect={setSelected}
+          selected={selected}
+          label={'native-select'}
+        />
+      </div>
     </PageWrapper>
   );
 };

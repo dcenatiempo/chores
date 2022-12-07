@@ -21,7 +21,7 @@ body[data-theme="theme-dark"] {
   --text-color: var(--light-color);
   --basic-color: var(--light-color);
   --bg-color: var(--dark-color);
-  --component-bg-color: #22343c;
+  --component-bg-color: #3f3f3f;
   --danger-color: rgb(250, 62, 62);
   --warn-color: rgb(255, 215, 70);
   --action-color: rgb(0, 115, 255);
@@ -76,7 +76,7 @@ a {
 
 body {
   color: var(--text-color);
-  background-color: var(--bg-color);
+  background-color: var(--dark-color);
 }
 
 * {

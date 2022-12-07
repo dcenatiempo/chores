@@ -10,7 +10,7 @@ import { Level } from '../../libs/store/models/orgs/types';
 import { useMemo, useState } from 'react';
 import { RoomType } from '../../libs/store/models/roomTypes/types';
 import RoomTypeSelector from '../../components/roomTypes/RoomTypeSelector';
-import { Button, Pager } from '../../components/base';
+import { Pager, PagerTabs } from '../../components/base';
 
 const HouseholdPage: NextPage = () => {
   const {
@@ -62,18 +62,20 @@ const HouseholdPage: NextPage = () => {
     ? ['Rooms', 'Levels', 'People']
     : ['Levels', 'People'];
 
-  console.log('xxx pageCount', pageCount);
   return (
     <PageWrapper metaTitle="Chore Household">
-      <div style={{ display: 'flex' }}>
-        {buttons.map((b, i) => (
-          <Button
-            type={pageIndex === i ? 'outline' : 'fill'}
-            key={b}
-            label={b}
-            onClick={() => setPageIndex(i)}
-          />
-        ))}
+      <div
+        style={{
+          display: 'flex',
+          columnGap: 10,
+          padding: 10,
+        }}
+      >
+        <PagerTabs
+          pageIndex={pageIndex}
+          setPageIndex={setPageIndex}
+          tabs={buttons}
+        />
       </div>
       <Pager
         pageIndex={pageIndex}
@@ -92,7 +94,7 @@ const HouseholdPage: NextPage = () => {
               selected={roomType}
               roomTypes={uniqueRoomTypes}
             />
-
+            <br />
             <AddOrEditRoomsList
               rooms={roomsToShow}
               addRoom={addRoom}

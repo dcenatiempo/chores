@@ -9,15 +9,16 @@ const createElement = (id: string): HTMLElement => {
   const el = document.createElement('div');
 
   el.setAttribute('id', id);
+  el.setAttribute('style', `position: fixed; z-index: 100;`);
 
   return el;
 };
 
 const usePortal = (
-  selectId: string = getId(),
+  portalId: string = getId(),
   getContainer?: () => HTMLElement | null | undefined
 ): HTMLElement | null => {
-  const id = `${selectId}`;
+  const id = `${portalId}`;
   const { isBrowser } = useSSR();
   const [elSnapshot, setElSnapshot] = useState<HTMLElement | null>(
     isBrowser ? createElement(id) : null
@@ -32,6 +33,7 @@ const usePortal = (
     if (!hasElement) {
       parentElement.appendChild(el);
     }
+
     setElSnapshot(el);
   }, []);
 

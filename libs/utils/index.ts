@@ -6,6 +6,15 @@ export function toCamelCase(str: string): string {
     .replace(/\s+/g, '');
 }
 
+export function capitalize(str: string) {
+  if (!str) return '';
+  return str[0].toUpperCase() + str.substr(1);
+}
+
+export function toPascalCase(str: string) {
+  return capitalize(toCamelCase(str));
+}
+
 export function cleanFromObject<T>(obj: object, blacklist: any[]) {
   return Object.keys(obj).reduce((newObj, key) => {
     // @ts-expect-error

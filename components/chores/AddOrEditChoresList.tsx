@@ -43,6 +43,7 @@ const AddOrEditChoresList: FC<AddOrEditChoresListProps> = ({
     setChoreId(chore?.id || '');
     setTasks(mapToArray(chore?.taskTemplates));
     setName(chore?.name || '');
+    console.log('xxx', chore);
   }
 
   function clearForm() {
