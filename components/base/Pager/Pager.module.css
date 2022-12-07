@@ -1,0 +1,24 @@
+.observableWidth {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  overflow: scroll;
+  scroll-snap-type: x mandatory;
+}
+
+.fullWidth {
+  display: flex;
+  flex-direction: row;
+}
+
+.page {
+  flex: 1 0 100%;
+  scroll-snap-align: unset;
+  scroll-snap-stop: normal; /* always? */
+
+  padding: 0 20px
+}
+
+.manualScrolling .page {
+  scroll-snap-align: center;
+}

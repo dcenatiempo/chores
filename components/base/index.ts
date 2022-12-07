@@ -18,3 +18,5 @@ export * from './ListItem';
 export { default as ListItem } from './ListItem';
 export * from './Calendar';
 export { default as Calendar } from './Calendar';
+export * from './Pager';
+export { default as Pager } from './Pager';

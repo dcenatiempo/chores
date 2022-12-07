@@ -10,6 +10,7 @@ import { Level } from '../../libs/store/models/orgs/types';
 import { useMemo, useState } from 'react';
 import { RoomType } from '../../libs/store/models/roomTypes/types';
 import RoomTypeSelector from '../../components/roomTypes/RoomTypeSelector';
+import { Button, Pager } from '../../components/base';
 
 const HouseholdPage: NextPage = () => {
   const {
@@ -54,38 +55,65 @@ const HouseholdPage: NextPage = () => {
         (roomType ? r.roomType.id === roomType?.id : true)
     );
   }, [roomsArray, level, roomType]);
+
+  const [pageIndex, setPageIndex] = useState(0);
+  const [pageCount, setPageCount] = useState(0);
+  const buttons = showRooms
+    ? ['Rooms', 'Levels', 'People']
+    : ['Levels', 'People'];
+
+  console.log('xxx pageCount', pageCount);
   return (
     <PageWrapper metaTitle="Chore Household">
-      <LevelSelector
-        onSelect={setLevel}
-        selected={level}
-        levels={uniqueLevels}
-      />
-      <RoomTypeSelector
-        onSelect={setRoomType}
-        selected={roomType}
-        roomTypes={uniqueRoomTypes}
-      />
-      {showRooms ? (
-        <AddOrEditRoomsList
-          rooms={roomsToShow}
-          addRoom={addRoom}
-          deleteRoom={deleteRoom}
-          editRoom={editRoom}
+      <div style={{ display: 'flex' }}>
+        {buttons.map((b, i) => (
+          <Button
+            type={pageIndex === i ? 'outline' : 'fill'}
+            key={b}
+            label={b}
+            onClick={() => setPageIndex(i)}
+          />
+        ))}
+      </div>
+      <Pager
+        pageIndex={pageIndex}
+        onChangePageIndex={setPageIndex}
+        onChangePageCount={setPageCount}
+      >
+        {showRooms ? (
+          <div>
+            <LevelSelector
+              onSelect={setLevel}
+              selected={level}
+              levels={uniqueLevels}
+            />
+            <RoomTypeSelector
+              onSelect={setRoomType}
+              selected={roomType}
+              roomTypes={uniqueRoomTypes}
+            />
+
+            <AddOrEditRoomsList
+              rooms={roomsToShow}
+              addRoom={addRoom}
+              deleteRoom={deleteRoom}
+              editRoom={editRoom}
+            />
+          </div>
+        ) : null}
+        <AddOrEditLevelsList
+          levels={levelsArray}
+          addLevel={addLevel}
+          deleteLevel={deleteLevel}
+          editLevel={editLevel}
         />
-      ) : null}
-      <AddOrEditLevelsList
-        levels={levelsArray}
-        addLevel={addLevel}
-        deleteLevel={deleteLevel}
-        editLevel={editLevel}
-      />
-      <AddOrEditPeopleList
-        people={peopleArray}
-        addPerson={addPerson}
-        deletePerson={deletePerson}
-        editPerson={editPerson}
-      />
+        <AddOrEditPeopleList
+          people={peopleArray}
+          addPerson={addPerson}
+          deletePerson={deletePerson}
+          editPerson={editPerson}
+        />
+      </Pager>
     </PageWrapper>
   );
 };
