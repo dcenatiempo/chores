@@ -8,12 +8,14 @@ interface Props {
   peopleOptions?: Person[];
   selected: Person[];
   onSelect: (people: Person[]) => void;
+  label?: string;
 }
 
 export default function PeopleSelector({
   peopleOptions,
   selected,
   onSelect,
+  label = 'Filter by People',
 }: Props) {
   const { peopleArray } = useCurrentOrg();
   const _peopleOptions = useMemo(
@@ -29,7 +31,7 @@ export default function PeopleSelector({
       id={'people-selector'}
       onSelect={(person) => onSelect(person ? [person] : [])}
       selected={selected ? selected[0] : undefined}
-      label={'Filter by People'}
+      label={label}
     />
   );
 }

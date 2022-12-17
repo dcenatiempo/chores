@@ -55,13 +55,13 @@
   background-color: gray;
   padding: 4px;
   font-size: 20px;
-  margin-bottom: 8px;
   cursor: pointer;
   display: flex;
   justify-content: space-between;
   align-items: center;
   background-color: var(--primary-color);
-  color: var(--light-color)
+  color: var(--light-color);
+  min-height: var(--input-height);
 }
 .disabledCalendarEvent {
   cursor: initial;

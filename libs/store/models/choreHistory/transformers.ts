@@ -37,9 +37,14 @@ export function hydrateHistoryChore(
     startDate: transformTimestamp.fromFB(historyChore.startDate),
     dueDate: transformTimestamp.fromFB(historyChore.dueDate),
   };
-  const person = scheduledChore.personId
+
+  const scheduledPerson = scheduledChore.personId
     ? people[scheduledChore.personId]
     : undefined;
+  const historyPerson = historyChore.personId
+    ? people[historyChore.personId]
+    : undefined;
+  const person = historyPerson || scheduledPerson;
   return cleanFromObject(
     {
       id: historyChore.id,

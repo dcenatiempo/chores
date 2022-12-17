@@ -2,7 +2,13 @@ import type { NextPage } from 'next';
 
 import PageWrapper from '../../components/nav/PageWrapper';
 
-import { Calendar, Pager, PagerTabs } from '../../components/base';
+import {
+  Calendar,
+  IconButton,
+  IconName,
+  Pager,
+  PagerTabs,
+} from '../../components/base';
 import {
   getNow,
   ISOToTimestamp,
@@ -28,11 +34,15 @@ import Modal from '../../components/base/Modal';
 import { HistoryChore } from '../../libs/store/models/choreHistory/types';
 import { useKidMode } from '../../libs/store/appState/useAppState';
 import CalendarEvent from '../../components/base/Calendar/CalendarEvent';
+import useCurrentOrg from '../../libs/store/models/orgs/useCurrentOrg';
 
 const SchedulePage: NextPage = () => {
   const now = getNow();
   const [modalChore, setModalChore] = useState<[string, UIChoreFeedItem]>();
-  const showModal = !!modalChore;
+  const [showModal, setShowModal] = useState(false);
+  const [showAddPersonModal, setShowAddPersonModal] = useState(false);
+  const [personId, setPersonId] = useState<string>('');
+  const { people: peopleMap } = useCurrentOrg();
 
   const {
     scheduledChores,
@@ -169,6 +179,35 @@ const SchedulePage: NextPage = () => {
     calendarStartDate,
   ]);
 
+  function onClickAddPerson(key: string, c: UIChoreFeedItem) {
+    setModalChore([key, c]);
+    setShowAddPersonModal(true);
+    setPersonId(c?.person?.id || '');
+  }
+
+  function onCloseAddPerson() {
+    // add person to chore
+    if (!modalChore) return;
+    const [date, c] = modalChore;
+    if (!c) return;
+
+    const newPerson = peopleMap?.[personId];
+
+    const newChore = {
+      ...c,
+      person: newPerson
+        ? { id: newPerson.id, name: newPerson.firstName }
+        : undefined,
+    };
+
+    maybeSaveChore(date, newChore);
+
+    // close modal
+    setModalChore(undefined);
+    setShowAddPersonModal(false);
+    setPersonId('');
+  }
+
   function _onClickDailyTask(
     date: string,
     chore: UIChoreFeedItem,
@@ -226,18 +265,16 @@ const SchedulePage: NextPage = () => {
       t.completed = true;
     });
     setModalChore([date, newChore]);
+    setShowModal(true);
   }
 
-  function onCloseModal() {
-    setModalChore(undefined);
-    if (!modalChore) return;
-    const [date, uiChore] = modalChore;
+  function maybeSaveChore(date: string, uiChore: UIChoreFeedItem) {
     const choreId = uiChore.id;
     if (!uiChore) return;
     // if tasks are different, then save
     const originalChore = choresFeed.daily[date].find((c) => c?.id === choreId);
     if (!originalChore) return;
-    if (JSON.stringify(uiChore.tasks) === JSON.stringify(originalChore.tasks)) {
+    if (JSON.stringify(uiChore) === JSON.stringify(originalChore)) {
       // nothing has changed!
       return;
     }
@@ -247,6 +284,7 @@ const SchedulePage: NextPage = () => {
         scheduledChores[choreId],
         ISOToTimestamp(date)
       );
+      newChore.personId = uiChore.person?.id;
       newChore.taskIdsCompleted = uiChore.tasks
         .filter((t) => t.completed)
         .map((t) => t.id);
@@ -257,6 +295,7 @@ const SchedulePage: NextPage = () => {
     } else {
       const newChore: HistoryChore = {
         ...choreHistory[choreId],
+        personId: uiChore.person?.id || choreHistory[choreId].personId,
         taskIdsCompleted: uiChore.tasks
           .filter((t) => t.completed)
           .map((t) => t.id),
@@ -267,6 +306,14 @@ const SchedulePage: NextPage = () => {
 
       editHistoryChore(newChore);
     }
+  }
+
+  function onCloseModal() {
+    setModalChore(undefined);
+    setShowModal(false);
+    if (!modalChore) return;
+    const [date, uiChore] = modalChore;
+    maybeSaveChore(date, uiChore);
   }
 
   const [people, setPeople] = React.useState<Person[]>([]);
@@ -379,7 +426,7 @@ const SchedulePage: NextPage = () => {
                 ];
               }, []);
               return (
-                <div style={{ display: 'flex', flexDirection: 'column' }}>
+                <div style={{ display: 'grid', flexDirection: 'column' }}>
                   {thisWeeksChores}
                 </div>
               );
@@ -392,30 +439,56 @@ const SchedulePage: NextPage = () => {
 
               const todaysChores = choresFeed.daily[key];
               if (!todaysChores) return null;
-              return todaysChores.map((c) => {
-                if (!c) return null;
-                if (people.length && !people.find((p) => p.id === c.person?.id))
-                  return null;
+              return (
+                <div
+                  style={{
+                    display: 'grid',
+                    gridTemplateColumns: '1fr max-content',
+                    alignItems: 'start',
+                    gridGap: 8,
+                  }}
+                >
+                  {todaysChores.map((c) => {
+                    if (!c) return null;
+                    if (
+                      people.length &&
+                      !people.find((p) => p.id === c.person?.id)
+                    )
+                      return null;
 
-                const isCompleted = c.tasks.every((t) => t.completed);
-                const isApproved = c.tasks.every((t) => t.approved);
-                const isInProgress =
-                  !isApproved && c.tasks.some((t) => t.completed);
-                if (!c.person) console.log(c);
-                return (
-                  <CalendarEvent
-                    key={c.name + c.person?.name}
-                    description={`${c.name} (${
-                      c.person?.name || 'unassigned'
-                    })`}
-                    disabled={disabled}
-                    onClick={() => setModalChore([key, c])}
-                    isCompleted={isCompleted}
-                    isInProgress={isInProgress}
-                    isApproved={isApproved}
-                  />
-                );
-              });
+                    const isCompleted = c.tasks.every((t) => t.completed);
+                    const isApproved = c.tasks.every((t) => t.approved);
+                    const isInProgress =
+                      !isApproved && c.tasks.some((t) => t.completed);
+                    return (
+                      <>
+                        <CalendarEvent
+                          key={c.name + c.person?.name}
+                          description={`${c.name} (${
+                            c.person?.name || 'unassigned'
+                          })`}
+                          disabled={disabled}
+                          onClick={() => {
+                            setModalChore([key, c]);
+                            setShowModal(true);
+                          }}
+                          isCompleted={isCompleted}
+                          isInProgress={isInProgress}
+                          isApproved={isApproved}
+                        />
+                        {c.person ? (
+                          <div />
+                        ) : (
+                          <IconButton
+                            iconName={IconName.ADD_PERSON}
+                            onClick={() => onClickAddPerson(key, c)}
+                          />
+                        )}
+                      </>
+                    );
+                  })}
+                </div>
+              );
             }}
             type={calendarType}
             calendarState={{
@@ -437,6 +510,16 @@ const SchedulePage: NextPage = () => {
       </Pager>
       <Modal onClose={onCloseModal} title={header} visible={showModal}>
         {body}
+      </Modal>
+      <Modal
+        onClose={onCloseAddPerson}
+        title={'Add Person'}
+        visible={showAddPersonModal}
+      >
+        <PeopleSelector
+          selected={personId ? [peopleMap[personId]] : []}
+          onSelect={(p) => setPersonId(p?.[0]?.id)}
+        />
       </Modal>
     </PageWrapper>
   );
