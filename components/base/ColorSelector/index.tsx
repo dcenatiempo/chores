@@ -1,6 +1,6 @@
 import { ChangeEvent } from 'react';
 import InputField from '../InputField';
-import styles from './colorSelector.module.css';
+import styles from './ColorSelector.module.css';
 
 interface ColorSelectorProps {
   id: string;
