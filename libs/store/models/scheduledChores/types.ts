@@ -155,6 +155,7 @@ export interface UIChoreFeedItem {
     | {
         id: string;
         name: string;
+        color: string;
       }
     | undefined;
 }

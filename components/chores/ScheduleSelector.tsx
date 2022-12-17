@@ -5,8 +5,7 @@ import {
   timestampToISODate,
   UnixTimestamp,
 } from '../../libs/dateTime';
-import { Dropdown, Switch } from '../base';
-import { DateSelector } from '../base/DateSelector';
+import { Dropdown, Switch, DateSelector } from '../base';
 import MultiselectDropdown from '../base/MultiselectDropdown';
 
 enum MaxFrequency {

@@ -21,6 +21,7 @@ const AddOrEditPeopleList: FC<AddPeopleProps> = ({
   const [firstName, setFirstName] = useState('');
   const [lastName, setLastName] = useState('');
   const [birthday, setBirthday] = useState<number>();
+  const [color, setColor] = useState('');
 
   const disabled = !isFormValid();
 
@@ -29,6 +30,7 @@ const AddOrEditPeopleList: FC<AddPeopleProps> = ({
     setFirstName(person?.firstName || '');
     setLastName(person?.lastName || '');
     setBirthday(person?.birthday);
+    setColor(person?.color || '');
   }
 
   function clearForm() {
@@ -36,6 +38,7 @@ const AddOrEditPeopleList: FC<AddPeopleProps> = ({
     setFirstName('');
     setLastName('');
     setBirthday(undefined);
+    setColor('');
   }
 
   function isFormValid() {
@@ -51,6 +54,7 @@ const AddOrEditPeopleList: FC<AddPeopleProps> = ({
       firstName: firstName,
       lastName: lastName,
       birthday: birthday,
+      color: color,
     } as Person);
   }
 
@@ -82,6 +86,8 @@ const AddOrEditPeopleList: FC<AddPeopleProps> = ({
           setLastName={setLastName}
           birthday={birthday}
           setBirthday={setBirthday}
+          color={color}
+          setColor={setColor}
         />
       }
       setResourceToEdit={setForm}

@@ -20,3 +20,5 @@ export * from './Calendar';
 export { default as Calendar } from './Calendar';
 export * from './Pager';
 export { default as Pager } from './Pager';
+export * from './DateSelector';
+export * from './ColorSelector';

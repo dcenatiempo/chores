@@ -15,6 +15,7 @@ body[data-theme="theme-light"] {
   --action-color: rgb(0, 115, 255);
   --success-color: rgb(7, 193, 72);
   --border-color: rgb(189, 189, 189);
+  --neutral-color: rgb(100, 100, 100);
 }
 body[data-theme="theme-dark"] {
   --primary-color: #49afd9;
@@ -27,6 +28,7 @@ body[data-theme="theme-dark"] {
   --action-color: rgb(0, 115, 255);
   --success-color: rgb(7, 193, 72);
   --border-color: rgb(26, 26, 26);
+  --neutral-color: rgb(100, 100, 100);
 }
 
 .basic-color {

@@ -164,6 +164,7 @@ export const transformPerson = {
       ...(person.birthday
         ? { birthday: transformTimestamp.toFB(person.birthday) }
         : undefined),
+      color: person.color || '',
     };
   },
   fromFB(person: FBPerson): Person {
@@ -173,6 +174,7 @@ export const transformPerson = {
       birthday: person.birthday
         ? transformTimestamp.fromFB(person.birthday)
         : undefined,
+      color: person.color || '',
     };
   },
   dehydrate(person: Person): string {

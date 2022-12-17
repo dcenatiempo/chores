@@ -114,6 +114,7 @@ export function getUIChoreFeedItem(chore: FeedChore): UIChoreFeedItem {
     ? {
         id: chore.person.id,
         name: chore.person.firstName,
+        color: chore.person.color,
       }
     : undefined;
   return {

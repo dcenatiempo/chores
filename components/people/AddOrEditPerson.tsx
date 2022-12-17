@@ -1,6 +1,5 @@
 import { FC } from 'react';
-import { TextInput } from '../base';
-import { DateSelector } from '../base/DateSelector';
+import { ColorSelector, DateSelector, TextInput } from '../base';
 
 interface AddOrEditPersonProps {
   firstName: string;
@@ -9,6 +8,8 @@ interface AddOrEditPersonProps {
   setLastName: (lastName: string) => void;
   birthday: number | undefined;
   setBirthday: (birthday: number | undefined) => void;
+  color: string;
+  setColor: (color: string) => void;
 }
 
 const AddPerson: FC<AddOrEditPersonProps> = ({
@@ -18,6 +19,8 @@ const AddPerson: FC<AddOrEditPersonProps> = ({
   setLastName,
   birthday,
   setBirthday,
+  color,
+  setColor,
 }) => {
   return (
     <>
@@ -25,7 +28,14 @@ const AddPerson: FC<AddOrEditPersonProps> = ({
       <br />
       <TextInput label="Last" value={lastName} onChange={setLastName} />
       <br />
-      <DateSelector id="birthday" onChange={setBirthday} date={birthday} />
+      <DateSelector
+        id="birthday"
+        onChange={setBirthday}
+        date={birthday}
+        label="Birthday"
+      />
+      <br />
+      <ColorSelector id="person-color" onChange={setColor} color={color} />
     </>
   );
 };

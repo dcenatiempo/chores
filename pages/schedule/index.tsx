@@ -475,6 +475,7 @@ const SchedulePage: NextPage = () => {
                           isCompleted={isCompleted}
                           isInProgress={isInProgress}
                           isApproved={isApproved}
+                          color={c.person?.color}
                         />
                         {c.person ? (
                           <div />

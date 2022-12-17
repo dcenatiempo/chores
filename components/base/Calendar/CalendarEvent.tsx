@@ -10,6 +10,7 @@ export interface CalendarEventProps {
   isInProgress: boolean;
   isApproved: boolean;
   onClick: () => void;
+  color?: string;
 }
 
 const CalendarEvent: FC<CalendarEventProps> = ({
@@ -19,10 +20,12 @@ const CalendarEvent: FC<CalendarEventProps> = ({
   isCompleted,
   isInProgress,
   isApproved,
+  color,
 }) => {
   return (
     <>
       <div
+        style={{ backgroundColor: color }}
         className={`${styles.calendarEvent} ${
           disabled ? styles.disabledCalendarEvent : ''
         } ${isCompleted ? styles.completedCalendarEvent : ''}`}
