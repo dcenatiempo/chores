@@ -196,7 +196,11 @@ const SchedulePage: NextPage = () => {
     const newChore = {
       ...c,
       person: newPerson
-        ? { id: newPerson.id, name: newPerson.firstName }
+        ? {
+            id: newPerson.id,
+            name: newPerson.firstName,
+            color: newPerson.color,
+          }
         : undefined,
     };
 

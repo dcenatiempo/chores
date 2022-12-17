@@ -83,7 +83,7 @@ export interface Person {
   firstName: string;
   lastName?: string;
   birthday?: UnixTimestamp;
-  color?: string;
+  color: string;
 }
 
 export interface FBTaskTemplate {
