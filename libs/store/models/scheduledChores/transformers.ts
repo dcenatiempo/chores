@@ -94,7 +94,7 @@ export function hydrateScheduledChoreTask(
   roomTypes: Map<RoomType>,
   rooms: Map<Room>
 ): Task {
-  const taskTemplate = taskTemplates[task.taskTemplateId];
+  const taskTemplate = taskTemplates?.[task.taskTemplateId];
   const _levels = task.levelIds?.map((lid) => levels[lid]);
   const _roomTypes = task.roomTypeIds?.map((rtid) => roomTypes[rtid]);
   const _rooms = task.roomIds?.map((rid) => rooms[rid]);

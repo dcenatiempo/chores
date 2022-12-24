@@ -133,7 +133,9 @@ const AddOrEditScheduledChoresList: FC<AddOrEditScheduledChoresListProps> = ({
     if (!id) return setTaskIds([]);
 
     const choreTemplate = choresMap[id];
-    setScheduledChoreName(choreTemplate.name);
+    setScheduledChoreName(
+      choreTemplate?.name || `missing chore template id: ${choreTemplate.id}`
+    );
     setTaskIds(mapToArray(choreTemplate?.taskTemplates)?.map((t) => t.id));
   }
 

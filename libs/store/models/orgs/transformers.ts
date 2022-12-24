@@ -293,8 +293,9 @@ export function getTaskName(t: Task | TaskTemplate) {
   // const roomNameWithSpace = roomName ? `${roomName} ` : '';
   // @ts-expect-error
   const tt: TaskTemplate = t.taskTemplate || t;
-  const action = tt.action.name;
-  const surface = tt.surfaceTemplate.name;
+  const action = tt?.action?.name;
+  const surface =
+    tt?.surfaceTemplate?.name || `missing taskTemplate id ${tt.id}`;
   return `${action} ${surface}`.trim();
 }
 
